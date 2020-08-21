@@ -48,3 +48,16 @@
   line-height: 30px;
   text-align: center;
 }
+#addProductForm{
+  position: absolute;
+  background-color: gold;
+  z-index: 1;
+  height: 200px;
+  width:500px;
+  border-style: solid;
+  border-width: 1px;
+}
+.addItem label{
+  width:200px;
+
+}

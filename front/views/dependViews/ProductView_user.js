@@ -38,17 +38,17 @@ var treeElements = [
     { id: "3", title: "03. A Homage to Shame", duration: "5:52" },
 
 ];
-export const treeArrayFull = {
+export const treeArrayFull_user = {
     cols: [
         {
             rows: [
                 {
-                    view: "tree", id: "myTree", width: 250, data: treeClass, select: treeElements, on: {
+                    view: "tree", id: "myTree_user", width: 250, data: treeClass, select: treeElements, on: {
                         onSelectChange: function () {
                             selected = $$("myTree").getSelectedId();
                             if (isNaN(selected)) {
-                                $$("myList").clearAll();
-                                $$("myList").parse(window[selected]); // reference to the id-matching variable
+                                $$("myList_user").clearAll();
+                                $$("myList_user").parse(window[selected]); // reference to the id-matching variable
                             }
                         }
                     }
@@ -56,12 +56,12 @@ export const treeArrayFull = {
 
             ]
         },
-        { view: "resizer" },
+        { view: "resizer" },//temp
         {
             rows: [
                 {
                     view: "datatable",
-                    id: "myList",
+                    id: "myList_user",
                     autoConfig: true,
                     data: selected,
                     columns: [

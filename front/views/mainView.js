@@ -1,36 +1,29 @@
-import { toolbar,toolbar_user } from './dependViews/toolBar.js';
-import { treeArrayFull } from './dependViews/regProductView.js';
-import { treeArrayFull_user } from './dependViews/regProductView_user.js';
 
+import { toolbar } from './dependViews/toolBar.js';
+import { tree } from './dependViews/tree.js';
+import { registerUsers } from './dependViews/registerUsersView.js';
 
 
 const mainPage = {
     width: 200,
     header: "TESTING",
     height: 1000,
+    id: "tabView",
     view: "tabview",
     cells: [
         {
             header: "Учет оборудования",
 
             rows: [
-                /*  {
-                      cols: [
-                          { view: "text", id: "filterClass", width: 100 },//filter
-                        
-                      ]
-                  },*/
                 toolbar,
-                treeArrayFull,
+                tree,
 
             ]
         },
         {
-            header: "Учет оборудования(Сотрудник)",
-
+            header: "Учет сотрудников",
             rows: [
-                treeArrayFull_user,
-
+                registerUsers,
             ]
         },
         {
@@ -42,9 +35,12 @@ const mainPage = {
     ]
 };
 
+
+
+
 webix.ui({
     rows: [
-        mainPage
+        mainPage,
+
     ]
 });
-
