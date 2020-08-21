@@ -2,6 +2,7 @@
 import { toolbar } from './dependViews/toolBar.js';
 import { tree } from './dependViews/tree.js';
 import { registerUsers } from './dependViews/registerUsersView.js';
+import { UsersToolbar } from "./dependViews/userToolbar.js";
 
 
 const mainPage = {
@@ -23,6 +24,7 @@ const mainPage = {
         {
             header: "Учет сотрудников",
             rows: [
+                UsersToolbar,
                 registerUsers,
             ]
         },

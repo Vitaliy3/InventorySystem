@@ -27,17 +27,22 @@ export const registerUserForm = webix.ui({
                     return true;
                 }
             },
-            user(value) {
+            surname(value) {
                 if (webix.rules.isNotEmpty(value)) {
                     return true;
                 }
             },
-            status(value) {
+            patronymic(value) {
                 if (webix.rules.isNotEmpty(value)) {
                     return true;
                 }
             },
-            inventoryNumber(value) {
+            login(value) {
+                if (webix.rules.isNotEmpty(value)) {
+                    return true;
+                }
+            },
+            password(value) {
                 if (webix.rules.isNotEmpty(value)) {
                     return true;
                 }
@@ -46,6 +51,8 @@ export const registerUserForm = webix.ui({
     }
 });
 function registerUser() {
+    let values = $$("registerUserForm").getValues();
+
     promise.then(
         response => {
             $$("myList").add(response);
