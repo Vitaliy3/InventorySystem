@@ -1,5 +1,6 @@
 import { User } from './../../../models/UserModel.js';
-export const registerUserForm = webix.ui({
+import { UsersList } from './../../const.js';
+export const updateUserForm = webix.ui({
     view: "window",
     width: 400,
     height: 500,
@@ -7,7 +8,7 @@ export const registerUserForm = webix.ui({
     autofit: false,
     body: {
         view: "form",
-        id: "registerUserForm",
+        id: "updateUserForm",
         scroll: false,
         width: 400,
         elements: [
@@ -15,10 +16,9 @@ export const registerUserForm = webix.ui({
             { view: "text", name: "surname", label: "Фамилия", labelWidth: 90 },
             { view: "text", name: "patronymic", label: "Отчество", labelWidth: 90 },
             { view: "text", name: "login", label: "Логин", labelWidth: 90 },
-            { view: "text", /*type: "password"*/ name: "password", label: "Пароль", labelWidth: 90 },
             {
                 margin: 5, cols: [
-                    { view: "button", label: "Зарегистрировать", type: "form", click: registerUser },
+                    { view: "button", label: "Зарегистрировать", type: "form", click: updateUser },
                     { view: "button", label: "Отмена", click: closeForm }
                 ]
             }],
@@ -43,32 +43,31 @@ export const registerUserForm = webix.ui({
                     return true;
                 }
             },
-            password(value) {
-                if (webix.rules.isNotEmpty(value)) {
-                    return true;
-                }
-            },
         }
     }
 });
-function registerUser() {
-    if ($$("registerUserForm").validate()) {
-        let formValues = $$("registerUserForm").getValues();
-        let user = new User(formValues);
-        let promise = user.registerUser();
+function updateUser() {
+    if ($$("updateUserForm").validate()) {
+        let formValues = $$("updateUserForm").getValues();
+        let row = $$(UsersList).getSelectedItem();
+        row.name = formValues.name;
+        row.surname = formValues.surname;
+        row.patronymic = formValues.patronymic;
+        row.login = formValues.login;
+        let user = new User(row);
+        let promise = user.updateUser();
         promise.then(
             result => {
-                console.log(result);
-                $$("usersList").add(result);
-                webix.message("success register");
-                $$('registerUserForm').clear();
-                $$('registerUserForm').clearValidation();
+                let datatable = $$(UsersList);
+                datatable.updateItem(result.id, result)
+                updateUserForm.hide();
+                webix.message("success update");
             }, err => {
-                webix.message("not register:" + err);
+                webix.message("not success update:" + err);
             })
     }
 }
 
 function closeForm() {
-    registerUserForm.hide();
+    updateUserForm.hide();
 }

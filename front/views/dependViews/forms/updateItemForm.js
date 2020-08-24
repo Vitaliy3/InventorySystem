@@ -23,7 +23,7 @@ export const updateItemForm = webix.ui({
 function updateItem() {
     let formValues = $$("updateItemForm").getValues();
     let row = $$("myList").getSelectedItem();
-    row.name = formValues.name;//changed value
+    row.name = formValues.name;
     let product = new Product(row);
     let promise = product.updateProduct();
     promise.then(

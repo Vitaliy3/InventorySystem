@@ -1,3 +1,4 @@
+import { TreeList } from '../views/const.js';
 export class Product {
     constructor(product) {
         this.id = product.id;
@@ -5,14 +6,16 @@ export class Product {
         this.user = product.user;
         this.status = product.status;
         this.inventoryNumber = product.inventoryNumber;
-        this.class=this.class;
-        this.subclass=this.subclass;
+        this.class = this.class;
+        this.subclass = this.subclass;
     }
     addProduct() {
         return new Promise((resolve, reject) => {
-            this.id = +($$('myList').getLastId()) + 1;
+            this.id = +($$('myList').getLastId()) + 3;
             if (true) {
-                resolve(this);
+                resolve({
+                    id: this.id, class: this.class, subclass: this.subclass, name: this.name, status: "На складе", user: "Ivan", inventoryNumber: "11"
+                });
             } else {
                 let error = new Error(get.status);
                 error.code = get.status;
@@ -38,15 +41,22 @@ export class Product {
         });
     }
     getAllProducts() {
-        return [
-            { id: "1", fkClass: "1", fk_subClass: "1", name: "name1", user: "user1", status: "ok", inventoryNumber: "11" },
-            { id: "2", fkClass: "1", fk_subClass: "1", name: "name1", user: "user1", status: "ok", inventoryNumber: "11" },
-            { id: "3", fkClass: "1", fk_subClass: "1", name: "name1", user: "user1", status: "ok", inventoryNumber: "11" },
-            { id: "4", fkClass: "1", fk_subClass: "1", name: "name1", user: "user1", status: "ok", inventoryNumber: "11" },
-            { id: "5", fkClass: "1", fk_subClass: "1", name: "name1", user: "user1", status: "ok", inventoryNumber: "11" },
-            { id: "6", fkClass: "2", fk_subClass: "2", name: "name2", user: "user2", status: "ok", inventoryNumber: "11" },
-            { id: "7", fkClass: "2", fk_subClass: "1", name: "name2", user: "user1", status: "ok", inventoryNumber: "11" },
-        ];
+        $$(TreeList).showProgress({});
+        return new Promise((resolve, object) => {
+            let arr = [
+                { id: "1", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
+                { id: "2", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
+                { id: "3", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
+                { id: "4", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
+                { id: "5", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
+                { id: "6", class: "2", subclass: "2", name: "name2", user: "user2", status: "на складе", inventoryNumber: "11" },
+                { id: "7", class: "2", subclass: "2", name: "name2", user: "user2", status: "на складе", inventoryNumber: "11" },
+            ];
+            setTimeout(() => {
+                resolve(arr);
+            }, 2000);
+        });
+
     }
     pushClassSub() {
 
@@ -58,18 +68,21 @@ export class Product {
     getClassSubclass() {
         let str = [
             {
-                class: "1", value: "Столы", data: [
-                    { subclass: "1", value: "Компьютерный" },
-                ]
-            },
-            {
-                class: "2", value: "Стулья", data: [
-                    { subclass: "1", value: "Для офиса" },
-                    { subclass: "2", value: "Для дома" },
-                ]
-            },
-        ];
+                class: "0", value: "All", open: true, data: [
+                    {
+                        class: "1", value: "Столы", open: true, data: [
+                            { subclass: "1", value: "Компьютерный" },
+                        ]
+                    },
+                    {
+                        class: "2", value: "Стулья", open: true, data: [
+                            { subclass: "2", value: "Для офиса" },
+                            { subclass: "3", value: "Для дома" },
+                        ]
+                    },
 
+                ]
+            }];
 
         return str;
     }

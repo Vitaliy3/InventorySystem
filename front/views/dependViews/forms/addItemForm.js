@@ -1,4 +1,6 @@
 import { Product } from '../../../models/ProductModel.js';
+import { Tree, TreeList } from './../../const.js';
+
 export const addItemForm = webix.ui({
     view: "window",
     width: 600,
@@ -12,8 +14,6 @@ export const addItemForm = webix.ui({
         width: 600,
         elements: [
             { view: "text", name: "name", label: "Название", labelWidth: 90 },
-            { view: "text", name: "user", label: "Сотрудник", labelWidth: 90 },
-            { view: "text", name: "status", label: "Статус", labelWidth: 90 },
             { view: "text", name: "inventoryNumber", label: "Инвентарный номер", labelWidth: 150 },
             {
                 margin: 5, cols: [
@@ -23,16 +23,6 @@ export const addItemForm = webix.ui({
             }],
         rules: {
             name(value) {
-                if (webix.rules.isNotEmpty(value)) {
-                    return true;
-                }
-            },
-            user(value) {
-                if (webix.rules.isNotEmpty(value)) {
-                    return true;
-                }
-            },
-            status(value) {
                 if (webix.rules.isNotEmpty(value)) {
                     return true;
                 }
@@ -49,17 +39,17 @@ function addProduct() {
     if ($$("addItemForm").validate()) {
         let formValues = $$("addItemForm").getValues();
 
-        let myTree = $$("myTree");
+        let myTree = $$(Tree);
         let item = myTree.getSelectedItem();//get class and subclass
         let product = new Product(formValues);
         product.class = myTree.getItem(item.$parent).class;
         product.subclass = item.subclass;
-
-        console.log("PRODUCT:", product);
         let promise = product.addProduct();
         promise.then(
             response => {
-                $$("myList").add(response);
+                console.log(response);
+                $$(TreeList).add(response);
+                $$(TreeList).refreshColumns();
                 webix.message("success add");
                 $$('addItemForm').clear();
                 $$('addItemForm').clearValidation();
