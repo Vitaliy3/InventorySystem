@@ -2,22 +2,20 @@ import { Product } from '../../models/ProductModel.js';
 import { addItemForm } from './forms/addItemForm.js';
 import { updateItemForm } from './forms/updateItemForm.js';
 import { Tree, TreeList } from './../const.js';
-import { authorizeForm } from './forms/authorization.js';
+import { hide } from './tree.js';
 export const toolbar = {
   view: "toolbar",
+  hidden: hide,
   id: "myToolbar",
   cols: [
     { view: "button", id: "addProduct", value: "Добавить оборудование", width: 200, height: 50, click: addProduct },
     { view: "button", id: "updateProduct", value: "Изменить название оборудования", width: 300, height: 50, align: "", click: updateProduct },
     { view: "button", id: "deleteProduct", value: "Удалить оборудование", width: 200, height: 50, align: "", click: deleteProduct },
     { view: "button", id: "writeProduct", value: "Списать оборудование", width: 200, height: 50, align: "", click: writeProduct },
-    { view: "button", id: "authorize", value: "Войти", width: 200, height: 50, align: "", click: authorize },//временно расположена здесь 
   ],
 }
 
-function authorize() {
-  authorizeForm.show({ x: 400, y: 100 });
-}
+
 //добавление оборудования
 function addProduct() {
   let row = $$(Tree).getSelectedItem();

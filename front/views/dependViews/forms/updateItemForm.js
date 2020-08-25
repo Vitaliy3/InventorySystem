@@ -29,7 +29,7 @@ function updateItem() {
     promise.then(
         result => {
             let datatable = $$("myList");
-            datatable.updateItem(result.id, result)
+            datatable.updateItem(result.id, result.name)
             updateItemForm.hide();
         },
         err => {

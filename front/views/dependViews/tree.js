@@ -1,8 +1,8 @@
-import { Product } from '../../models/ProductModel.js';
+
 import { Tree, TreeList } from './../const.js';
-let product = new Product({});
-let treeData = product.getClassSubclass();
-function getNeedProducts(item) { //возр оборудование в классе/подклассе
+export const hide = false;
+
+export function getNeedProducts(item, id) { //возр оборудование в классе/подклассе
     let result = [];
     if (item.$level == 1) {
         document.getElementById("myfilterClass").value = "";
@@ -13,12 +13,11 @@ function getNeedProducts(item) { //возр оборудование в клас
         document.getElementById("myfilterSubclass").value = "";
     }
     if (item.$level == 3) {
-        document.getElementById("myfilterClass").value = $$("myTree").getItem(item.$parent).class;
+        document.getElementById("myfilterClass").value = $$(id).getItem(item.$parent).class;
         document.getElementById("myfilterSubclass").value = item.subclass;
     }
     return result;
 }
-
 export const tree = {
     header: "TEST",
     cols: [
@@ -28,12 +27,14 @@ export const tree = {
                     view: "tree",
                     id: Tree,
                     width: 250,
-                    data: treeData,
+                    columns: [
+                        { id: "name", class: "class", fillspace: true, },
+                    ],
                     select: "true",
                     on: {
                         onSelectChange: function () {
                             let item = $$(Tree).getSelectedItem();
-                            $$(TreeList).parse(getNeedProducts(item));
+                            $$(TreeList).parse(getNeedProducts(item, Tree));
                             $$(TreeList).filterByAll();//refresh data after change tree column
                         }
                     }
@@ -53,8 +54,8 @@ export const tree = {
 
                     columns: [
                         { id: "name", class: "class", header: ["Название", { content: "selectFilter" }], fillspace: true, },
-                        { id: "user", header: ["Сотрудник", { content: "selectFilter" }], auttowidth: true, fillspace: true },
-                        { id: "status", header: ["Статус", { content: "selectFilter" }], auttowidth: true, fillspace: true },
+                        { id: "user", hidden: hide, header: ["Сотрудник", { content: "selectFilter" }], auttowidth: true, fillspace: true },
+                        { id: "status", hidden: hide, header: ["Статус", { content: "selectFilter" }], auttowidth: true, fillspace: true },
                         { id: "inventoryNumber", header: ["Инвентарный номер", { content: "textFilter" }], fillspace: true },
                     ]
                 }]

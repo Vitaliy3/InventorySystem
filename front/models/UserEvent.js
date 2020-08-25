@@ -11,14 +11,24 @@ export class InventoryEvent {
     addEvent() {
 
     }
+    getEventsDate() {
+        return new Promise((resolve, object) => {
+            let events = [
+                { id: "1", user: "Ivan", date: "01.01.2020", event: "Выдан сотруднику", product: "Стол ***" },
+                { id: "2", user: "Ivan1", date: "01.01.2020", event: "Выдан сотруднику", product: "Стол ***" },
+                { id: "3", user: "Ivan2", date: "01.01.2020", event: "Выдан сотруднику", product: "Стол ***" },
+            ];
+            resolve(events);
+        });
+    }
     getAllEvents() {
         $$(UserEvent).showProgress({
             hide: true
         });
         return new Promise((resolve, object) => {
-            let date = new Date("2020", "08", "01", "14", "55");
-            let date1 = new Date("2020", "08", "07", "14", "55");
-            let date2 = new Date("2020", "08", "11", "14", "55");
+            let date = "2020.08.01";
+            let date1 = "2020.08.07";
+            let date2 = "2020.08.11";
             let allEvents = [
                 { id: "1", user: "Ivan", date: date, event: "Выдан сотруднику", product: "Стол ***" },
                 { id: "2", user: "Ivan1", date: date1, event: "Выдан сотруднику", product: "Стол ***" },
@@ -40,3 +50,5 @@ export class InventoryEvent {
     }
 
 }
+
+

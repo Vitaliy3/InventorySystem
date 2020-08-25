@@ -12,7 +12,7 @@ export class User {
         return new Promise((resolve, object) => {
             if (true) {
                 resolve(this);
-            } 
+            }
         });
     }
     deleteUser() {
@@ -47,8 +47,10 @@ export class User {
             }
         });
     }
-    getAllUsers() {
-        $$(UsersList).showProgress({});
+    getAllUsers(id) {
+        if (id != "") {
+            $$(UsersList).showProgress({});
+        }
         return new Promise((resolve, reject) => {
             let arr = [
                 { id: 1, name: "Ivan", surname: "Ivanovich", patronymic: "Ivanov", login: "IvanIvan", },
@@ -57,7 +59,8 @@ export class User {
             ];
             setTimeout(() => {
                 resolve(arr);
-            }, 500);
+            }, 0);
         })
     }
+
 }
