@@ -1,8 +1,8 @@
-export const Tree = "myTree";
-export const TreeList = "myList";
-export const UsersList = "usersList";
-export const MoveTree = "moveTree";
-export const MoveProdTree = "moveProdTree";
-export const MoveProduct = "moveProd";
-export const UserEvent = "userEvents";
-export const EventToolbar = "EventToolbar";
+export const RegproductsTree = "myTree";
+export const TreeDatatable = "myList";
+export const UsersDatatable = "usersList";
+export const MoveProductTree = "moveTree";
+export const MoveProdDatatable = "moveProdTree";
+export const DragProdDatatable = "moveProd";
+export const UserEventsDatatable = "userEvents";
+export const EventsToolbar = "EventToolbar";

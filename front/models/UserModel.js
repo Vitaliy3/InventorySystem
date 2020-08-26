@@ -1,4 +1,4 @@
-import { UsersList } from '../views/const.js';
+import { UsersDatatable } from '../views/const.js';
 export class User {
     constructor(user) {
         this.id = user.id;
@@ -49,7 +49,7 @@ export class User {
     }
     getAllUsers(id) {
         if (id != "") {
-            $$(UsersList).showProgress({});
+            $$(UsersDatatable).showProgress({});
         }
         return new Promise((resolve, reject) => {
             let arr = [

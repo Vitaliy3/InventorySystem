@@ -1,7 +1,7 @@
 import { Product } from '../../models/ProductModel.js';
 import { addItemForm } from './forms/addItemForm.js';
 import { updateItemForm } from './forms/updateItemForm.js';
-import { Tree, TreeList } from './../const.js';
+import { RegproductsTree, TreeDatatable } from './../const.js';
 import { hide } from './tree.js';
 export const toolbar = {
   view: "toolbar",
@@ -18,7 +18,7 @@ export const toolbar = {
 
 //добавление оборудования
 function addProduct() {
-  let row = $$(Tree).getSelectedItem();
+  let row = $$(RegproductsTree).getSelectedItem();
   if (row) {
     if (row.$level == 3) {
       addItemForm.show({ x: 400, y: 200 });
@@ -32,10 +32,11 @@ function addProduct() {
 
 //обновить данные пользователя
 function updateProduct() {
-  let row = $$(TreeList).getSelectedItem();
+  let row = $$(TreeDatatable).getSelectedItem();
   if (row) {
     $$('updateItemForm').setValues({
-      name: row.name
+      name: row.name,
+      inventoryNumber: row.inventoryNumber
     });
     updateItemForm.show({ x: 400, y: 200 });
   } else {
@@ -43,13 +44,13 @@ function updateProduct() {
   }
 }
 function deleteProduct() {
-  let row = $$(TreeList).getSelectedItem();
+  let row = $$(TreeDatatable).getSelectedItem();
   if (row) {
     let product = new Product(row);
     let promise = product.deleteProduct();
     promise.then(
       result => {
-        $$(TreeList).remove(result.id);
+        $$(TreeDatatable).remove(result.id);
       },
       err => {
         alert("err" + err);
@@ -59,12 +60,12 @@ function deleteProduct() {
   }
 }
 function writeProduct() {
-  let row = $$(TreeList).getSelectedItem();
+  let row = $$(TreeDatatable).getSelectedItem();
   let product = new Product(row);
   let promise = product.writeProduct();
   promise.then(
     result => {
-      let datatable = $$(TreeList);
+      let datatable = $$(TreeDatatable);
       datatable.updateItem(result.id, result)
     },
     err => {

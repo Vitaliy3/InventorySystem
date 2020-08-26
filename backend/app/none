@@ -1,0 +1,2 @@
+INFO  2020/08/26 16:39:24  revel  revel.go:124: Paths                                   views=C:\\work\\site\\backend\\app\\app\\views   revel=C:\\work\\InventorySystem\\pkg\\mod\\github.com\\revel\\revel@v1.0.0 base=C:\\work\\site\\backend\\app app=C:\\work\\site\\backend\\app\\app
+INFO  2020/08/26 16:45:23  revel  revel.go:124: Paths                                   views=C:\\work\\site\\backend\\app\\app\\views   revel=C:\\work\\InventorySystem\\pkg\\mod\\github.com\\revel\\revel@v1.0.0 base=C:\\work\\site\\backend\\app app=C:\\work\\site\\backend\\app\\app

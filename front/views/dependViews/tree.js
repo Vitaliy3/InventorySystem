@@ -1,5 +1,5 @@
 
-import { Tree, TreeList } from './../const.js';
+import { RegproductsTree as RegProductsTree, TreeDatatable } from './../const.js';
 export const hide = false;
 
 export function getNeedProducts(item, id) { //возр оборудование в классе/подклассе
@@ -25,7 +25,7 @@ export const tree = {
             rows: [
                 {
                     view: "tree",
-                    id: Tree,
+                    id: RegProductsTree,
                     width: 250,
                     columns: [
                         { id: "name", class: "class", fillspace: true, },
@@ -33,9 +33,9 @@ export const tree = {
                     select: "true",
                     on: {
                         onSelectChange: function () {
-                            let item = $$(Tree).getSelectedItem();
-                            $$(TreeList).parse(getNeedProducts(item, Tree));
-                            $$(TreeList).filterByAll();//refresh data after change tree column
+                            let item = $$(RegProductsTree).getSelectedItem();
+                            $$(TreeDatatable).parse(getNeedProducts(item, RegProductsTree));
+                            $$(TreeDatatable).filterByAll();//refresh data after change tree column
                         }
                     }
                 },
@@ -47,7 +47,7 @@ export const tree = {
             rows: [
                 {
                     view: "datatable",
-                    id: TreeList,
+                    id: TreeDatatable,
                     editable: true,
                     editaction: "custom",
                     select: true,

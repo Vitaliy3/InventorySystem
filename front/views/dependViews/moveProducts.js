@@ -1,5 +1,5 @@
 
-import { MoveTree, MoveProdTree, MoveProduct } from './../const.js';
+import { MoveProductTree, MoveProdDatatable, DragProdDatatable } from './../const.js';
 import { getNeedProducts } from './tree.js';
 import { User } from '../../models/UserModel.js';
 import { Product } from '../../models/ProductModel.js';
@@ -32,10 +32,8 @@ export const moveToolbar = {
                 body: {
                     template: "#name#"
                 },
-                data: []
             }
         },
-        // { view: "select", id: "selectU", value: 2, label: "Поиск товара сотрудника", labelwidth: 200, options: userData },
         { view: "button", value: "Найти", click: filterUsers, width: 100 },
     ],
 }
@@ -44,7 +42,7 @@ export const dragProductTable = {
     header: "TEST",
     view: "datatable",
     drag: true,
-    id: MoveProduct,
+    id: DragProdDatatable,
     width: 500,
     select: true,
     columns: [
@@ -58,9 +56,9 @@ function filterUsers() {
     let split = selected.split(".");
     console.log(split[0]);
     let product = new Product({ id: split[0], user: "User1" });
-    let promise = product.getProductsUser();
+    let promise = product.getUserProducts();
     promise.then(result => {
-        $$(MoveProduct).parse(result);
+        $$(DragProdDatatable).parse(result);
     })
 }
 
@@ -71,7 +69,7 @@ export const movingTree = {
             rows: [
                 {
                     view: "tree",
-                    id: MoveTree,
+                    id: MoveProductTree,
                     width: 250,
                     columns: [
                         { id: "name", class: "class", fillspace: true, },
@@ -79,9 +77,9 @@ export const movingTree = {
                     select: "true",
                     on: {
                         onSelectChange: function () {
-                            let item = $$(MoveTree).getSelectedItem();
-                            $$(MoveProdTree).parse(getNeedProducts(item, MoveTree));
-                            $$(MoveProdTree).filterByAll();//refresh data after change tree column
+                            let item = $$(MoveProductTree).getSelectedItem();
+                            $$(MoveProdDatatable).parse(getNeedProducts(item, MoveProductTree));
+                            $$(MoveProdDatatable).filterByAll();//refresh data after change tree column
                         }
                     }
                 },
@@ -92,7 +90,7 @@ export const movingTree = {
             rows: [
                 {
                     view: "datatable",
-                    id: MoveProdTree,
+                    id: MoveProdDatatable,
                     editable: true,
                     drag: true,
                     editaction: "custom",

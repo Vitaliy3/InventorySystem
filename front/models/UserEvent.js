@@ -1,5 +1,5 @@
 
-import { UserEvent } from '../views/const.js';
+import { UserEventsDatatable } from '../views/const.js';
 export class InventoryEvent {
     constructor(event) {
         this.description = event.description;
@@ -22,7 +22,7 @@ export class InventoryEvent {
         });
     }
     getAllEvents() {
-        $$(UserEvent).showProgress({
+        $$(UserEventsDatatable).showProgress({
             hide: true
         });
         return new Promise((resolve, object) => {

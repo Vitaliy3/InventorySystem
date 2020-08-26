@@ -1,7 +1,7 @@
-import { UsersList } from '../const.js';
+import { UsersDatatable } from '../const.js';
 export const usersList = {
     view: "datatable",
-    id: UsersList,
+    id: UsersDatatable,
     editable: true,
     editaction: "custom",
     select: true,

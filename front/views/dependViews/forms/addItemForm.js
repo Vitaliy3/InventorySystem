@@ -1,5 +1,5 @@
 import { Product } from '../../../models/ProductModel.js';
-import { Tree, TreeList } from './../../const.js';
+import { RegproductsTree, TreeDatatable } from './../../const.js';
 
 export const addItemForm = webix.ui({
     view: "window",
@@ -39,7 +39,7 @@ function addProduct() {
     if ($$("addItemForm").validate()) {
         let formValues = $$("addItemForm").getValues();
 
-        let myTree = $$(Tree);
+        let myTree = $$(RegproductsTree);
         let item = myTree.getSelectedItem();//get class and subclass
         let product = new Product(formValues);
         product.class = myTree.getItem(item.$parent).class;
@@ -48,8 +48,8 @@ function addProduct() {
         promise.then(
             response => {
                 console.log(response);
-                $$(TreeList).add(response);
-                $$(TreeList).refreshColumns();
+                $$(TreeDatatable).add(response);
+                $$(TreeDatatable).refreshColumns();
                 webix.message("success add");
                 $$('addItemForm').clear();
                 $$('addItemForm').clearValidation();

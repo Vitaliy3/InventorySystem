@@ -1,4 +1,4 @@
-import { TreeList } from '../views/const.js';
+import { TreeDatatable } from '../views/const.js';
 export class Product {
     constructor(product) {
         this.id = product.id;
@@ -6,8 +6,8 @@ export class Product {
         this.user = product.user;
         this.status = product.status;
         this.inventoryNumber = product.inventoryNumber;
-        this.class = this.class;
-        this.subclass = this.subclass;
+        this.class = product.class;
+        this.subclass = product.subclass;
     }
     addProduct() {
         return new Promise((resolve, reject) => {
@@ -35,7 +35,7 @@ export class Product {
         });
     }
     getAllProducts() {
-        $$(TreeList).showProgress({});
+        $$(TreeDatatable).showProgress({});
         return new Promise((resolve, object) => {
             let arr = [
                 { id: "1", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
@@ -52,7 +52,7 @@ export class Product {
         });
     }
     getProdutsInStore() {
-        $$(TreeList).showProgress({});
+        $$(TreeDatatable).showProgress({});
         return new Promise((resolve, object) => {
             let arr = [
                 { id: "1", class: "1", subclass: "1", name: "name1", user: "user1", status: "на складе", inventoryNumber: "11" },
@@ -68,7 +68,7 @@ export class Product {
             }, 10);
         });
     }
-    getProductsUser() {
+    getUserProducts() {
         return new Promise((resolve, object) => {
             let arr = [
                 { id: "11", class: "1", subclass: "1", name: "name5", user: "User", status: "на складе", inventoryNumber: "11" },

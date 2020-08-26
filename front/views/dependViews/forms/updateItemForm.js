@@ -11,7 +11,9 @@ export const updateItemForm = webix.ui({
         scroll: false,
         width: 600,
         elements: [
-            { id: "b1", view: "text", name: "name", label: "Название" },
+            { id: "name", view: "text", name: "name", label: "Название" },
+            { id: "number", view: "text", name: "inventoryNumber", label: "Инвентарный номер" },
+
             {
                 margin: 5, cols: [
                     { view: "button", label: "Подтвердить", type: "form", click: updateItem },
@@ -24,12 +26,13 @@ function updateItem() {
     let formValues = $$("updateItemForm").getValues();
     let row = $$("myList").getSelectedItem();
     row.name = formValues.name;
+    row.inventoryNumber = formValues.inventoryNumber;
     let product = new Product(row);
     let promise = product.updateProduct();
     promise.then(
         result => {
             let datatable = $$("myList");
-            datatable.updateItem(result.id, result.name)
+            datatable.updateItem(result.id, result)
             updateItemForm.hide();
         },
         err => {

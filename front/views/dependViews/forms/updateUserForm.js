@@ -1,5 +1,5 @@
 import { User } from './../../../models/UserModel.js';
-import { UsersList } from './../../const.js';
+import { UsersDatatable } from './../../const.js';
 export const updateUserForm = webix.ui({
     view: "window",
     width: 400,
@@ -49,7 +49,7 @@ export const updateUserForm = webix.ui({
 function updateUser() {
     if ($$("updateUserForm").validate()) {
         let formValues = $$("updateUserForm").getValues();
-        let row = $$(UsersList).getSelectedItem();
+        let row = $$(UsersDatatable).getSelectedItem();
         row.name = formValues.name;
         row.surname = formValues.surname;
         row.patronymic = formValues.patronymic;
@@ -58,7 +58,7 @@ function updateUser() {
         let promise = user.updateUser();
         promise.then(
             result => {
-                let datatable = $$(UsersList);
+                let datatable = $$(UsersDatatable);
                 datatable.updateItem(result.id, result)
                 updateUserForm.hide();
                 webix.message("success update");

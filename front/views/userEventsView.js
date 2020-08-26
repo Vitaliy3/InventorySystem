@@ -1,13 +1,13 @@
-import { UserEvent, EventToolbar } from './const.js';
+import { UserEventsDatatable, EventsToolbar } from './const.js';
 import { InventoryEvent } from '../models/UserEvent.js';
 
 export const UserEventToobar = {
     view: "toolbar",
-    id: EventToolbar,
+    id: EventsToolbar,
     cols: [
-        { view: "text", id: "dateFrom", label: "Начальная дата", labelwidth: 200, },
-        { view: "text", id: "dateTo", label: "Конечная дата", labelwidth: 200, },
-        { view: "button", value: "Найти", click: filterDate, width: 100 },
+        { view: "text", id: "dateFrom", label: "Начальная дата", labelWidth: 120, },
+        { view: "text", id: "dateTo", label: "Конечная дата", labelWidth: 120, },
+        { view: "button", value: "Найти", click: filterDate, width: 150 },
     ],
 }
 function filterDate() {
@@ -17,15 +17,15 @@ function filterDate() {
     let promise = events.getEventsDate();
     promise.then(
         result => {
-            $$(UserEvent).clearAll();
-            $$(UserEvent).parse(result);
+            $$(UserEventsDatatable).clearAll();
+            $$(UserEventsDatatable).parse(result);
         }, err => { webix.message(err); }
     )
 }
 
 export const userEvents = {
     view: "datatable",
-    id: UserEvent,
+    id: UserEventsDatatable,
     editable: true,
     editaction: "custom",
     select: true,

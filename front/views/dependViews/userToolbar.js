@@ -1,6 +1,6 @@
 import { registerUserForm } from './forms/registerUserForm.js';
 import { User } from '../../models/UserModel.js';
-import { UsersList } from '../const.js';
+import { UsersDatatable } from '../const.js';
 import { updateUserForm } from './forms/updateUserForm.js';
 export const UsersToolbar = {
     view: "toolbar",
@@ -20,7 +20,7 @@ function addUser() {
 
 //обновление данных пользователя
 function updateUser() {
-    let row = $$(UsersList).getSelectedItem();
+    let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
         $$('updateUserForm').setValues({
             name: row.name,
@@ -36,13 +36,13 @@ function updateUser() {
 
 //удаление пользователя
 function deleteUser() {
-    let row = $$(UsersList).getSelectedItem();
+    let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
         let user = new User(row);
         let promise = user.deleteUser();
         promise.then(
             result => {
-                $$(UsersList).remove(result.id);
+                $$(UsersDatatable).remove(result.id);
             },
             err => {
                 alert("err" + err);
@@ -54,7 +54,7 @@ function deleteUser() {
 
 //сброс пароля
 function resetPassword() {
-    let row = $$(UsersList).getSelectedItem();
+    let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
         let user = new User(row);
         console.log(user);
