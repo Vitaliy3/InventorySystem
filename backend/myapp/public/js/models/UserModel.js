@@ -1,33 +1,27 @@
 import { UsersDatatable } from '../views/const.js';
 export class User {
-    constructor(user) {
-        this.id = user.id;
-        this.name = user.name;
-        this.surname = user.surname;
-        this.patronymic = user.patronymic;
-        this.login = user.login;
-        this.password = user.password;
-    }
-    updateUser() {
+
+    updateUser(user) {
         return new Promise((resolve, object) => {
             if (true) {
-                resolve(this);
+                resolve(user);
             }
         });
     }
-    deleteUser() {
+    deleteUser(user) {
         return new Promise((resolve, object) => {
-            resolve(this);
+            console.log(("userId",user.id));
+            resolve(user.id);
         });
     }
-    resetPassword() {
+    resetPassword(user) {
         return new Promise((resolve, reject) => {
             if (true) {
-                resolve(this);
+                resolve(user);
             }
         });
     }
-    authorize() {
+    authorize(user) {
         return new Promise((resolve, reject) => {
             console.log(this);
             if (this.login == "1" && this.password == "1") {
@@ -37,7 +31,7 @@ export class User {
             }
         });
     }
-    registerUser() {
+    registerUser(user) {
 
         this.id = +($$("usersList").getLastId()) + 1;
         console.log(this.id);
@@ -47,7 +41,7 @@ export class User {
             }
         });
     }
-    getAllUsers(id) {
+    getAllUsers(user,id) {
         if (id != "") {
             $$(UsersDatatable).showProgress({});
         }

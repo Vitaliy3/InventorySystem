@@ -1,17 +1,22 @@
-
-import { toolbar } from './dependViews/toolBar.js';
-import { tree } from './dependViews/tree.js';
-import { usersList } from './dependViews/UsersView.js';
-import { UsersToolbar } from "./dependViews/userToolbar.js";
-import { TreeDatatable, UsersDatatable, UserEventsDatatable, MoveProdDatatable, MoveProductTree, DragProdDatatable } from './const.js';
-import { Product } from '../models/ProductModel.js';
-import { User } from '../models/UserModel.js';
-import { userEvents, UserEventToobar } from './userEventsView.js';
-import { InventoryEvent } from '../models/UserEvent.js';
-import { hide } from './dependViews/tree.js';
-import { RegproductsTree } from './const.js';
-import { movingTree, moveToolbar } from './dependViews/moveProducts.js';
-import { authorizeForm } from './dependViews/forms/authorization.js';
+import {toolbar} from './dependViews/toolBar.js';
+import {hide, tree} from './dependViews/tree.js';
+import {usersList} from './dependViews/UsersView.js';
+import {UsersToolbar} from "./dependViews/userToolbar.js";
+import {
+    DragProdDatatable,
+    MoveProdDatatable,
+    MoveProductTree,
+    RegproductsTree,
+    TreeDatatable,
+    UserEventsDatatable,
+    UsersDatatable
+} from './const.js';
+import {Equipment} from '../models/EquipmentModel.js';
+import {User} from '../models/UserModel.js';
+import {userEvents, UserEventToobar} from './userEventsView.js';
+import {InventoryEvent} from '../models/UserEvent.js';
+import {moveToolbar, movingTree} from './dependViews/moveProducts.js';
+import {authorizeForm} from './dependViews/forms/authorization.js';
 
 const mainPage = {
     width: 200,
@@ -70,7 +75,7 @@ const mainPage = {
 function pushToTree(id) {
     $$(id).clearAll();
     if (hide) {
-        let product = new Product();
+        let product = new Equipment();
         let promise = product.getUserClasses();
         promise.then(
             result => {
@@ -78,7 +83,7 @@ function pushToTree(id) {
             }
         )
     } else {
-        let product = new Product({});
+        let product = new Equipment({});
         let promise = product.getAllClasses();
         promise.then(
             result => {
@@ -97,21 +102,24 @@ function loadData(id) {
 
         //if (hide) - сотрудник
         if (!hide) {
-            let product = new Product({});
+            let product = new Equipment({});
             promise = product.getAllEquipment();
         } else {
-            let product = new Product({ id: 1, user: "User" });
+            let product = new Equipment({id: 1, user: "User"});
             promise = product.getUserProducts();
         }
 
-    promise.then((response) => {
-        return response.json();
-        }).then(data => {
-
-        $$(TreeDatatable).parse(data);
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+            if (result.Reject == null) {
+                    $$(TreeDatatable).parse(result.DataArray);
                 $$(TreeDatatable).filterByAll();
-            });
-         }
+            } else {
+                webix.message("err", result.Reject);
+            }
+        });
+    }
 
     if (id == "regUsers") {
         $$(UsersDatatable).clearAll();
@@ -146,7 +154,7 @@ function loadData(id) {
         $$(MoveProductTree).clearAll();
         let promise = "";
         if (!hide) {
-            let product = new Product({});
+            let product = new Equipment({});
             promise = product.getProdutsInStore();
         }
         promise.then(
@@ -160,15 +168,16 @@ function loadData(id) {
 
 webix.ui({
     rows: [
-        { view: "button", id: "authorize", value: "Войти", width: 200, height: 50, align: "", click: authorize },//временно расположена здесь 
+        {view: "button", id: "authorize", value: "Войти", width: 200, height: 50, align: "", click: authorize},//временно расположена здесь
         mainPage,
     ]
 });
 
 //окно авторизации
 function authorize() {
-    authorizeForm.show({ x: 400, y: 100 });
+    authorizeForm.show({x: 400, y: 100});
 }
+
 //спиннеры для загрузки
 webix.extend($$(TreeDatatable), webix.ProgressBar);
 webix.extend($$(UsersDatatable), webix.ProgressBar);
@@ -176,7 +185,7 @@ webix.extend($$(UserEventsDatatable), webix.ProgressBar);
 
 //фильтр для для выборки элементов всех подклассов класса в древовидном списке
 $$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
-    { columnId: "class" },
+    {columnId: "class"},
     {
         getValue: function (node) {
             return node.value;
@@ -188,7 +197,7 @@ $$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
 
 //фильтр для для выборки элементов подкласса в древовидном списке
 $$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
-    { columnId: "subclass" },
+    {columnId: "subclass"},
     {
         getValue: function (node) {
             return node.value;
@@ -200,7 +209,7 @@ $$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
 
 //фильтр для для выборки элементов всех подклассов класса в древовидном списке
 $$(MoveProdDatatable).registerFilter(document.getElementById("myfilterClass"),
-    { columnId: "class" },
+    {columnId: "class"},
     {
         getValue: function (node) {
             return node.value;
@@ -212,7 +221,7 @@ $$(MoveProdDatatable).registerFilter(document.getElementById("myfilterClass"),
 
 //фильтр для для выборки элементов подкласса в древовидном списке
 $$(MoveProdDatatable).registerFilter(document.getElementById("myfilterSubclass"),
-    { columnId: "subclass" },
+    {columnId: "subclass"},
     {
         getValue: function (node) {
             return node.value;
@@ -226,7 +235,7 @@ $$(MoveProdDatatable).registerFilter(document.getElementById("myfilterSubclass")
 $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
     let dnd = webix.DragControl.getContext();
     let value = dnd.from.getItem(dnd.source[0]);
-    let product = new Product({ id: value.id, name: value.name, user: value.user });
+    let product = new Equipment({id: value.id, name: value.name, user: value.user});
     console.log(product);
     let result = product.dragToUser();
     return result;
@@ -235,7 +244,7 @@ $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
 $$(MoveProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
     let dnd = webix.DragControl.getContext();
     let value = dnd.from.getItem(dnd.source[0]);
-    let product = new Product({ id: value.id, name: value.name, user: value.user });
+    let product = new Equipment({id: value.id, name: value.name, user: value.user});
     console.log(product);
     let result = product.dragToStore();
     return result;

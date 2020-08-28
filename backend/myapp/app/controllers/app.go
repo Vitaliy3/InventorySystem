@@ -1,10 +1,8 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/revel/revel"
-	"myapp/app/Models"
-	"strconv"
+	"myapp/app/models"
 )
 
 type App struct {
@@ -16,27 +14,25 @@ func (c App) Index() revel.Result {
 }
 
 func (c App) GetAllEquipments() revel.Result {
-	newModel := Models.EquipmentModel{}
-	result := newModel.GetAllEquipments()
-	fmt.Println(result)
+	equipment := models.EquipmentModel{}
+	result := equipment.GetAllEquipments()
 	return c.RenderJSON(result)
 }
 
+//списать оборудование +
 func (c App) WriteEquipment() revel.Result {
-	newModel := Models.EquipmentModel{}
-	id := c.Params.Query.Get("id")
-	convId, _ := strconv.Atoi(id)
-	status := newModel.WriteEquipmentModel(convId)
-	return c.RenderJSON(status)
+	equipment := models.EquipmentModel{}
+	result := equipment.WriteEquipment(c.Params)
+	return c.RenderJSON(result)
 }
-type data struct{
-	id string `json:"id"`
-	name string `json:"name"`
-}
+
 func (c App) AddEquipment() revel.Result {
-	data := data{}
-	fmt.Println(*c.Params)
-	_ = c.Params.BindJSON(&data)
-	fmt.Println("POST:",data)
-	return c.RenderJSON(data)
+	equipment := models.EquipmentModel{}
+	result := equipment.AddEquipment(c.Params)
+	return c.RenderJSON(result)
+}
+func (c App) DeleteEquipment() revel.Result {
+	equipment := models.EquipmentModel{}
+	result := equipment.DeleteEquipment(c.Params)
+	return c.RenderJSON(result)
 }

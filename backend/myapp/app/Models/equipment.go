@@ -1,9 +1,19 @@
-package Models
+package models
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/revel/revel"
 	"log"
 	"myapp/app/mappers"
+	"strconv"
 )
+
+type RenderData struct {
+	DataArray []EquipmentModel
+	Data      EquipmentModel
+	Error     error
+}
 
 type EquipmentModel struct {
 	Id              int    ` json:"id" `
@@ -12,43 +22,93 @@ type EquipmentModel struct {
 	UserFIO         string ` json:"user" `
 	InventoryNumber string ` json:"inventoryNumber" `
 	EquipmentName   string ` json:"name" `
-	Status          int    ` json:"status" `
+	Status          string ` json:"status" `
 }
 
-func (e *EquipmentModel) WriteEquipmentModel(id int) (status string) {
+//списать оборудование +
+func (e *EquipmentModel) WriteEquipment(params *revel.Params) (render RenderData) {
+	id := params.Query.Get("id")
+	convId, _ := strconv.Atoi(id)
 	eqMapper := mappers.EquipmentTable{}
-	result, err := eqMapper.WriteEquipment(id)
+	result, err := eqMapper.WriteEquipment(convId)
 	if err != nil {
-		log.Println(err)
+		render.Error = err
+		return
 	}
 	if result > 0 {
-		row, err := eqMapper.GetEquipmentById(id)
-		if err != nil {
-			log.Println(err)
-		}
+		row, _ := eqMapper.GetEquipmentById(convId)
 		if row.Status == 2 {
-			status = "Списан"
+			status := "Списано"
+			render.Data.Status = status
+			fmt.Println("STATUS", status)
+			return
 		}
-		return
 	}
 	return
 }
 
-func (e *EquipmentModel) GetAllEquipments() []EquipmentModel {
+//получение всего оборудования +
+func (e *EquipmentModel) GetAllEquipments() RenderData {
 	eqMapper := mappers.EquipmentTable{}
+	render := RenderData{}
 	dbEqupments, err := eqMapper.GetAllEquipments()
 	if err != nil {
-		log.Println(err)
+		render.Error = err
+		return render
 	}
-	equipments := make([]EquipmentModel, 0)
 	var temp EquipmentModel
 	for _, v := range dbEqupments {
 		temp.Id = v.Id
 		temp.Fk_class = v.Id
 		temp.InventoryNumber = v.InventoryNumber
 		temp.EquipmentName = v.EquipmentName
-		temp.Status = v.Status
-		equipments = append(equipments, temp)
+		switch v.Status {
+		case 0:
+			temp.Status = "На складе"
+		case 1:
+			temp.Status = "У сотрудника"
+		case 2:
+			temp.Status = "Списано"
+		}
+		render.DataArray = append(render.DataArray, temp)
 	}
-	return equipments
+	return render
+}
+
+func (e *EquipmentModel) AddEquipment(c *revel.Params) (render RenderData) {
+	eqMapper := mappers.EquipmentTable{}
+	eqModel := EquipmentModel{}
+	paramJson := c.JSON
+	fmt.Println("JSON", paramJson)
+	err := json.Unmarshal(paramJson, &eqModel)
+	if err != nil {
+		fmt.Println("Err:",err)
+	}
+	fmt.Println("AddEq", eqModel)
+	newEq, err := eqMapper.AddEquipment()
+	_, err = eqMapper.GetEquipmentById(int(newEq))
+	if err != nil {
+		render.Error = err
+		return
+	}
+	return render
+}
+
+func (e *EquipmentModel) DeleteEquipment(params *revel.Params) (render RenderData) {
+	eqModel := EquipmentModel{}
+	rawJson := params.JSON
+	err := json.Unmarshal(rawJson, &eqModel)
+	if err != nil {
+		fmt.Println("ERR:",err)
+	}
+	eqMapper := mappers.EquipmentTable{}
+	fmt.Println("ID:",eqModel.Id)
+	result, err := eqMapper.DeleteEquipment(eqModel.Id)
+	if err != nil {
+		log.Println(err)
+	}
+	if result > 0 {
+		return render
+	}
+	return
 }

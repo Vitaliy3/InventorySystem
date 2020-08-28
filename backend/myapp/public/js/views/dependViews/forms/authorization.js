@@ -37,9 +37,8 @@ export const authorizeForm = webix.ui({
 function autohrize() {
     if ($$("authorizeUserForm").validate()) {
         let formValues = $$("authorizeUserForm").getValues();
-        let user = new User(formValues);
-        console.log(user);
-        let promise = user.authorize();
+        let user = new User();
+        let promise = user.authorize(formValues);
         promise.then(
             result => {
                 webix.message("welcome " + result);

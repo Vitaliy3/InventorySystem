@@ -1,16 +1,6 @@
 
 import { UserEventsDatatable } from '../views/const.js';
 export class InventoryEvent {
-    constructor(event) {
-        this.description = event.description;
-        this.dateFrom = event.dateFrom;
-        this.dateTo = event.dateTo;
-        this.product = event.product;
-
-    }
-    addEvent() {
-
-    }
     getEventsDate() {
         return new Promise((resolve, object) => {
             let events = [
@@ -46,7 +36,6 @@ export class InventoryEvent {
 
     }
     getUserEvents() {
-
     }
 
 }

@@ -1,4 +1,4 @@
-import { Product } from '../../../models/ProductModel.js';
+import { Equipment } from '../../../models/EquipmentModel.js';
 export const updateItemForm = webix.ui({
     view: "window",
     width: 600,
@@ -27,7 +27,7 @@ function updateItem() {
     let row = $$("myList").getSelectedItem();
     row.name = formValues.name;
     row.inventoryNumber = formValues.inventoryNumber;
-    let product = new Product();
+    let product = new Equipment();
     let promise = product.updateProduct(row);
     promise.then(
         result => {

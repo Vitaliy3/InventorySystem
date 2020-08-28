@@ -11,12 +11,12 @@ const (
 	host     = "127.0.0.1"
 	port     = 5433
 	user     = "postgres"
-	password = ""
-	dbname   = "mydb"
+	dbname   = "dbtest"
 )
 
 type EquipmentTable struct {
 	Id              int
+	Fk_parent       int
 	Fk_class        int
 	Fk_user         sql.NullString
 	InventoryNumber string
@@ -27,11 +27,11 @@ type EquipmentTable struct {
 var db *sql.DB
 
 func OpenConnection() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
 	var err error
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("ERR:",err)
 	}
 }
 
@@ -39,12 +39,11 @@ func OpenConnection() {
 func (e *EquipmentTable) GetEquipmentById(id int) (eq EquipmentTable, err error) {
 	OpenConnection()
 	defer db.Close()
-	row := db.QueryRow("select * from equipments where id=$1", id)
-	if err != nil {
-		return
-	}
+	fmt.Println("id:",id)
+	row := db.QueryRow("select id,fk_class,fk_user,inventoryNumber,equipmentName,status from equipments where id=$1", id)
 	err = row.Scan(&eq.Id, &eq.Fk_class, &eq.Fk_user, &eq.InventoryNumber, &eq.EquipmentName, &eq.Status)
 	if err != nil {
+		fmt.Println("ERR:",err)
 		return
 	}
 	return
@@ -54,7 +53,7 @@ func (e *EquipmentTable) GetEquipmentById(id int) (eq EquipmentTable, err error)
 func (e *EquipmentTable) GetAllEquipments() (equipments []EquipmentTable, err error) {
 	OpenConnection()
 	defer db.Close()
-	rows, err := db.Query("select * from equipments")
+	rows, err := db.Query("select id,fk_class,fk_user,inventoryNumber,equipmentName,status from equipments")
 	if err != nil {
 		return
 	}
@@ -67,6 +66,8 @@ func (e *EquipmentTable) GetAllEquipments() (equipments []EquipmentTable, err er
 		}
 		equipments = append(equipments, *e)
 	}
+	fmt.Println("DATA",equipments)
+
 	return
 }
 
@@ -109,13 +110,13 @@ func (e *EquipmentTable) GetStoreEquipments() (equipments []EquipmentTable, err 
 }
 
 //добавление оборудования
-func (e *EquipmentTable) AddEquipment() (rowsAffected int64, err error) {
-	rows, err := db.Exec("insert into equipments (fk_class,inventoryNumber,equipmentName,status)values("+
+func (e *EquipmentTable) AddEquipment() (lastInsertedId int64, err error) {
+	result, err := db.Exec("insert into equipments (fk_class,inventoryNumber,equipmentName,status)values("+
 		"'$1','$2','$3',$4)", e.Fk_class, e.InventoryNumber, e.EquipmentName, e.Status)
 	if err != nil {
 		return
 	}
-	rowsAffected, err = rows.RowsAffected()
+	lastInsertedId, err = result.LastInsertId()
 	return
 }
 
@@ -131,8 +132,8 @@ func (e *EquipmentTable) UpdateEquipment(id int, equipmentname string, inventory
 }
 
 //удаление оборудования
-func (e *EquipmentTable) DeleteEquipment() (rowsAffected int64, err error) {
-	result, err := db.Exec("delete from equipments where id=$1", e.Id)
+func (e *EquipmentTable) DeleteEquipment(id int) (rowsAffected int64, err error) {
+	result, err := db.Exec("delete from equipments where id=$1", id)
 	if err != nil {
 		return
 	}

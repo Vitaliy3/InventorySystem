@@ -38,11 +38,11 @@ function updateUser() {
 function deleteUser() {
     let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
-        let user = new User(row);
-        let promise = user.deleteUser();
+        let user = new User();
+        let promise = user.deleteUser(row);
         promise.then(
             result => {
-                $$(UsersDatatable).remove(result.id);
+                $$(UsersDatatable).remove(result);
             },
             err => {
                 alert("err" + err);
@@ -56,9 +56,9 @@ function deleteUser() {
 function resetPassword() {
     let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
-        let user = new User(row);
+        let user = new User();
         console.log(user);
-        let promise = user.resetPassword();
+        let promise = user.resetPassword(row);
         promise.then(
             result => {
                 webix.message("success reset");

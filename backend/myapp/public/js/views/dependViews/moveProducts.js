@@ -2,11 +2,11 @@
 import { MoveProductTree, MoveProdDatatable, DragProdDatatable } from './../const.js';
 import { getNeedProducts } from './tree.js';
 import { User } from '../../models/UserModel.js';
-import { Product } from '../../models/ProductModel.js';
+import { Equipment } from '../../models/EquipmentModel.js';
 export var new_options = [];
 
-let user = new User({});
-let users = user.getAllUsers("");
+let user = new User();
+let users = user.getAllUsers("","");
 users.then(result => {
     let joinUsers = [];
     let temp = "";
@@ -55,7 +55,7 @@ function filterUsers() {
     let selected = $$("combo").getText();
     let split = selected.split(".");
     console.log(split[0]);
-    let product = new Product({ id: split[0], user: "User1" });
+    let product = new Equipment({ id: split[0], user: "User1" });
     let promise = product.getUserProducts();
     promise.then(result => {
         $$(DragProdDatatable).parse(result);
