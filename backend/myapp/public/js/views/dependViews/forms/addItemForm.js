@@ -46,18 +46,20 @@ function confirmAddEuipment() {
         formValues.class = myTree.getItem(item.$parent).class;
         formValues.subclass = item.subclass;
         let promise = product.addEquipment(formValues);
-        promise.then((response) => {
+        promise.then(response => {
             return response.json();
-        }).then(data => {
-                $$(TreeDatatable).add(response);
+        }).then(result => {
+            if (result.Reject == null) {
+                console.log("data",result.Data);
+                $$(TreeDatatable).add(result.Data);
                 $$(TreeDatatable).refreshColumns();
                 webix.message("success add");
                 $$('addItemForm').clear();
                 $$('addItemForm').clearValidation();
-            },
-            err => {
-                alert("err" + err);
-            });
+            } else {
+                webix.message(result.Reject)
+            }
+        })
     }
 }
 

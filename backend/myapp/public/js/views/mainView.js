@@ -12,7 +12,7 @@ import {
     UsersDatatable
 } from './const.js';
 import {Equipment} from '../models/EquipmentModel.js';
-import {User} from '../models/UserModel.js';
+import {Employee} from '../models/UserModel.js';
 import {userEvents, UserEventToobar} from './userEventsView.js';
 import {InventoryEvent} from '../models/UserEvent.js';
 import {moveToolbar, movingTree} from './dependViews/moveProducts.js';
@@ -84,10 +84,16 @@ function pushToTree(id) {
         )
     } else {
         let product = new Equipment({});
-        let promise = product.getAllClasses();
-        promise.then(
-            result => {
-                $$(id).parse(result);
+        let promise = product.getAllTree();
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+                if (result.Reject == null) {
+                    console.log("tree", result.Tree);
+                    $$(id).parse(result.Tree);
+                } else {
+                    webix.message(result.Reject);
+                }
             }
         )
     }
@@ -105,7 +111,7 @@ function loadData(id) {
             let product = new Equipment({});
             promise = product.getAllEquipment();
         } else {
-            let product = new Equipment({id: 1, user: "User"});
+            let product = new Equipment({id: 1, user: "Employee"});
             promise = product.getUserProducts();
         }
 
@@ -113,7 +119,7 @@ function loadData(id) {
             return response.json();
         }).then(result => {
             if (result.Reject == null) {
-                    $$(TreeDatatable).parse(result.DataArray);
+                $$(TreeDatatable).parse(result.DataArray);
                 $$(TreeDatatable).filterByAll();
             } else {
                 webix.message("err", result.Reject);
@@ -123,16 +129,18 @@ function loadData(id) {
 
     if (id == "regUsers") {
         $$(UsersDatatable).clearAll();
-        let user = new User({});
-        let promise = user.getAllUsers(UsersDatatable);
-        promise.then(
-            result => {
-                $$(UsersDatatable).parse(result);
+        let user = new Employee({});
+        let promise = user.getAllEmployees();
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+            if (result.Reject == null) {
+                $$(UsersDatatable).parse(result.DataArray);
                 $$(UsersDatatable).filterByAll();
-            },
-            err => {
-                webix.message("err " + err);
-            });
+            } else {
+                webix.message(result.Reject);
+            }
+        })
     }
 
     if (id == "regUserEvents") {
@@ -155,7 +163,7 @@ function loadData(id) {
         let promise = "";
         if (!hide) {
             let product = new Equipment({});
-            promise = product.getProdutsInStore();
+            promise = product.getEquipmentsInStore();
         }
         promise.then(
             result => {

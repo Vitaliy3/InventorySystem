@@ -8,11 +8,24 @@ module:testrunner
 
 
 GET     /                                       App.Index
-GET /getAllEquipments                           App.GetAllEquipments
-GET /writeEquipment                             App.WriteEquipment
 
+//                           equipment
+GET /getAllEquipments                           App.GetAllEquipments
+GET /getFullTree                                App.GetFullTree
+
+POST /writeEquipment                            App.WriteEquipment
 POST /addEquipment                              App.AddEquipment
+POST /updateEquipment                           App.UpdateEquipment
+
 DELETE /deleteEquipment                         App.DeleteEquipment
+
+                              employee
+
+POST /addEmployee                               App.AddEmployee
+GET /getAllEmployees                            App.GetAllEmployees
+POST /updateEmployee                            App.UpdateEmployee
+POST /resetPassEmployee                         App.ResetPassEmployee
+DELETE /deleteEmployee                          App.DeleteEmployee
 
 # Map static resources from the /app/public folder to the /public path
 GET     /public/*filepath                       Static.Serve("public")

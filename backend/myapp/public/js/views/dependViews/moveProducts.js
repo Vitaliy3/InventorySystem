@@ -1,12 +1,12 @@
 
 import { MoveProductTree, MoveProdDatatable, DragProdDatatable } from './../const.js';
 import { getNeedProducts } from './tree.js';
-import { User } from '../../models/UserModel.js';
+import { Employee } from '../../models/UserModel.js';
 import { Equipment } from '../../models/EquipmentModel.js';
 export var new_options = [];
 
-let user = new User();
-let users = user.getAllUsers("","");
+let user = new Employee();
+let users = user.getAllEmployees();
 users.then(result => {
     let joinUsers = [];
     let temp = "";
@@ -14,7 +14,6 @@ users.then(result => {
         temp = { name: result[i].id + ". " + result[i].name + " " + result[i].surname + " " + result[i].patronymic };
         joinUsers.push(temp);
     }
-    console.log(joinUsers);
     let list = $$("combo").getPopup().getList();
     list.clearAll();
     list.parse(joinUsers);

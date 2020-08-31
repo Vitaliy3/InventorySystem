@@ -1,5 +1,6 @@
-import { User } from './../../../models/UserModel.js';
-import { UsersDatatable } from './../../const.js';
+import {Employee} from './../../../models/UserModel.js';
+import {UsersDatatable} from './../../const.js';
+
 export const updateUserForm = webix.ui({
     view: "window",
     width: 400,
@@ -12,14 +13,14 @@ export const updateUserForm = webix.ui({
         scroll: false,
         width: 400,
         elements: [
-            { view: "text", name: "name", label: "Имя", labelWidth: 90 },
-            { view: "text", name: "surname", label: "Фамилия", labelWidth: 90 },
-            { view: "text", name: "patronymic", label: "Отчество", labelWidth: 90 },
-            { view: "text", name: "login", label: "Логин", labelWidth: 90 },
+            {view: "text", name: "name", label: "Имя", labelWidth: 90},
+            {view: "text", name: "surname", label: "Фамилия", labelWidth: 90},
+            {view: "text", name: "patronymic", label: "Отчество", labelWidth: 90},
+            {view: "text", name: "login", label: "Логин", labelWidth: 90},
             {
                 margin: 5, cols: [
-                    { view: "button", label: "Зарегистрировать", type: "form", click: updateUser },
-                    { view: "button", label: "Отмена", click: closeForm }
+                    {view: "button", label: "Зарегистрировать", type: "form", click: updateUser},
+                    {view: "button", label: "Отмена", click: closeForm}
                 ]
             }],
         rules: {
@@ -46,6 +47,7 @@ export const updateUserForm = webix.ui({
         }
     }
 });
+
 function updateUser() {
     if ($$("updateUserForm").validate()) {
         let formValues = $$("updateUserForm").getValues();
@@ -54,17 +56,20 @@ function updateUser() {
         row.surname = formValues.surname;
         row.patronymic = formValues.patronymic;
         row.login = formValues.login;
-        let user = new User(row);
-        let promise = user.updateUser();
-        promise.then(
-            result => {
+        let user = new Employee();
+        let promise = user.updateUser(row);
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+            if (result.Reject == null) {
                 let datatable = $$(UsersDatatable);
-                datatable.updateItem(result.id, result)
+                datatable.updateItem(row.id, result.Data);
                 updateUserForm.hide();
                 webix.message("success update");
-            }, err => {
-                webix.message("not success update:" + err);
-            })
+            } else {
+                webix.message(result.Reject);
+            }
+        })
     }
 }
 

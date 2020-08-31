@@ -4,43 +4,74 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/revel/revel"
-	"log"
 	"myapp/app/mappers"
-	"strconv"
 )
 
 type RenderData struct {
 	DataArray []EquipmentModel
 	Data      EquipmentModel
 	Error     error
+	Tree      []FullTree
 }
 
 type EquipmentModel struct {
-	Id              int    ` json:"id" `
-	Fk_class        int    ` json:"class" `
-	Fk_subclass     int    ` json:"sublcass" `
-	UserFIO         string ` json:"user" `
-	InventoryNumber string ` json:"inventoryNumber" `
-	EquipmentName   string ` json:"name" `
-	Status          string ` json:"status" `
+	Id              int        ` json:"id" `
+	Fk_class        int        ` json:"class" `
+	Fk_subclass     int        ` json:"subclass" `
+	UserFIO         string     ` json:"user" `
+	InventoryNumber string     ` json:"inventoryNumber" `
+	EquipmentName   string     ` json:"name" `
+	Status          string     ` json:"status" `
+	ClassName       string     ` json:"value" `
+	Data            []Subclass ` json:"data" `
+}
+type Subclass struct {
+	Id           int    ` json:"subclass" `
+	SubclassName string ` json:"value" `
+}
+type FullTree struct {
+	Class string           `json:"class"`
+	Value string           ` json:"value" `
+	Tree  []EquipmentModel ` json:"data" `
 }
 
-//списать оборудование +
-func (e *EquipmentModel) WriteEquipment(params *revel.Params) (render RenderData) {
-	id := params.Query.Get("id")
-	convId, _ := strconv.Atoi(id)
+func (e *EquipmentModel) UpdateEquipment(params *revel.Params) (render RenderData) {
 	eqMapper := mappers.EquipmentTable{}
-	result, err := eqMapper.WriteEquipment(convId)
+	err := json.Unmarshal(params.JSON, &eqMapper)
+	fmt.Println("afterMarshall",eqMapper)
+	result, err := eqMapper.UpdateEquipment()
 	if err != nil {
 		render.Error = err
 		return
 	}
 	if result > 0 {
-		row, _ := eqMapper.GetEquipmentById(convId)
+		row, _ := eqMapper.GetEquipmentById(eqMapper.Id)
+		render.Data.Id = row.Id
+		render.Data.Fk_class = row.Fk_parent
+		render.Data.Fk_subclass = row.Fk_class
+		render.Data.EquipmentName = row.EquipmentName
+		render.Data.InventoryNumber = row.InventoryNumber
+		render.Data.Status = getStatus(row.Status)
+		return
+	}
+	return
+}
+
+//списать оборудование +
+func (e *EquipmentModel) WriteEquipment(params *revel.Params) (render RenderData) {
+	eqMapper := mappers.EquipmentTable{}
+	var id int
+	err := json.Unmarshal(params.JSON, &id)
+	result, err := eqMapper.WriteEquipment(id)
+	if err != nil {
+		render.Error = err
+		return
+	}
+	if result > 0 {
+		row, _ := eqMapper.GetEquipmentById(id)
 		if row.Status == 2 {
 			status := "Списано"
 			render.Data.Status = status
-			fmt.Println("STATUS", status)
 			return
 		}
 	}
@@ -59,53 +90,109 @@ func (e *EquipmentModel) GetAllEquipments() RenderData {
 	var temp EquipmentModel
 	for _, v := range dbEqupments {
 		temp.Id = v.Id
-		temp.Fk_class = v.Id
+		temp.Fk_class = v.Fk_parent
+
+		temp.Fk_subclass = v.Fk_class
 		temp.InventoryNumber = v.InventoryNumber
 		temp.EquipmentName = v.EquipmentName
-		switch v.Status {
-		case 0:
-			temp.Status = "На складе"
-		case 1:
-			temp.Status = "У сотрудника"
-		case 2:
-			temp.Status = "Списано"
-		}
+		temp.Status = getStatus(v.Status)
 		render.DataArray = append(render.DataArray, temp)
 	}
 	return render
 }
-
-func (e *EquipmentModel) AddEquipment(c *revel.Params) (render RenderData) {
-	eqMapper := mappers.EquipmentTable{}
-	eqModel := EquipmentModel{}
-	paramJson := c.JSON
-	fmt.Println("JSON", paramJson)
-	err := json.Unmarshal(paramJson, &eqModel)
-	if err != nil {
-		fmt.Println("Err:",err)
+func getStatus(status int) (newStatus string) {
+	switch status {
+	case 0:
+		newStatus = "На складе"
+	case 1:
+		newStatus = "У сотрудника"
+	case 2:
+		newStatus = "Списано"
 	}
-	fmt.Println("AddEq", eqModel)
-	newEq, err := eqMapper.AddEquipment()
-	_, err = eqMapper.GetEquipmentById(int(newEq))
+	return
+}
+func (e *EquipmentModel) GetFullTree() (render RenderData) {
+	eqMapper := mappers.EquipmentTable{}
+	dbEqupments, err := eqMapper.GetFullTree()
 	if err != nil {
 		render.Error = err
 		return
 	}
+	fullTree := render.DataArray
+	for _, v := range dbEqupments {
+		var temp EquipmentModel
+
+		temp.ClassName = v.Class
+		temp.Fk_class = v.Fk_parent
+		subclass := Subclass{v.Fk_class, v.Subclass}
+		temp.Data = append(temp.Data, subclass)
+		find := false
+		fmt.Println(fullTree)
+		for i, q := range fullTree {
+			if q.Fk_class == v.Fk_parent {
+				find = true
+				fullTree[i].Data = append(fullTree[i].Data, subclass)
+
+				break
+			}
+		}
+		if !find {
+			fullTree = append(fullTree, temp)
+		}
+	}
+	tree := FullTree{}
+	tree.Value = "Все"
+	tree.Class = "0"
+	tree.Tree = fullTree
+	render.Tree = append(render.Tree, tree)
+	return
+}
+
+func (e *EquipmentModel) AddEquipment(c *revel.Params) (render RenderData) {
+	eqMapper := mappers.EquipmentTable{}
+	paramJson := c.JSON
+	err := json.Unmarshal(paramJson, &eqMapper)
+	if err != nil {
+		fmt.Println("ErrAddEq:", err)
+	}
+	eqMapper.Status = 0
+	fmt.Println("newEq", eqMapper)
+	newEq, err := eqMapper.AddEquipment()
+	if err != nil {
+		fmt.Println("errAdd", err)
+		render.Error = err
+		return
+	}
+	if newEq > 0 {
+		result, err := eqMapper.GetEquipmentById(newEq)
+		render.Data.Id = result.Id
+		render.Data.Fk_class = result.Fk_parent
+		render.Data.Fk_subclass = result.Fk_class
+		render.Data.EquipmentName = result.EquipmentName
+		render.Data.InventoryNumber = result.InventoryNumber
+		render.Data.Status = getStatus(result.Status)
+		if err != nil {
+			render.Error = err
+			return
+		}
+	}
+	fmt.Println("renderDataAdd", render.Data)
 	return render
 }
 
 func (e *EquipmentModel) DeleteEquipment(params *revel.Params) (render RenderData) {
-	eqModel := EquipmentModel{}
-	rawJson := params.JSON
-	err := json.Unmarshal(rawJson, &eqModel)
-	if err != nil {
-		fmt.Println("ERR:",err)
-	}
 	eqMapper := mappers.EquipmentTable{}
-	fmt.Println("ID:",eqModel.Id)
-	result, err := eqMapper.DeleteEquipment(eqModel.Id)
+	var id int
+	err := json.Unmarshal(params.JSON, &id)
 	if err != nil {
-		log.Println(err)
+		fmt.Println("errUnmarshallDeleteEq", err)
+		render.Error = err
+		return
+	}
+	result, err := eqMapper.DeleteEquipment(id)
+	if err != nil {
+		render.Error = err
+		return
 	}
 	if result > 0 {
 		return render

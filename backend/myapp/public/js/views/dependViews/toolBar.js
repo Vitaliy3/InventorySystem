@@ -12,7 +12,7 @@ export const toolbar = {
         {view: "button", id: "addEquipment", value: "Добавить оборудование", width: 200, height: 50, click: addProduct},
         {
             view: "button",
-            id: "updateProduct",
+            id: "updateEquipment",
             value: "Изменить название оборудования",
             width: 300,
             height: 50,
@@ -21,7 +21,7 @@ export const toolbar = {
         },
         {
             view: "button",
-            id: "deleteProduct",
+            id: "deleteEquipment",
             value: "Удалить оборудование",
             width: 200,
             height: 50,
@@ -73,7 +73,7 @@ function deleteProduct() {
     let row = $$(TreeDatatable).getSelectedItem();
     if (row) {
         let product = new Equipment({});
-        let promise = product.deleteProduct(row);
+        let promise = product.deleteEquipment(row);
         promise.then(response => {
             return response.json();
         }).then(result => {

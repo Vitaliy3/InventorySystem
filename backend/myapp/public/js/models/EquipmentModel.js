@@ -1,7 +1,7 @@
 import {TreeDatatable} from '../views/const.js';
 
-function sendQuery(url, method, data) {
-    let response = fetch(url, {
+ export function sendQuery(url, method, data) {
+    let response = fetch(url,{
         method: method,
         headers: {
             'Content-Type': 'application/json'
@@ -15,27 +15,18 @@ export class Equipment {
     addEquipment(equipment) {
         equipment.class = parseInt(equipment.class);
         equipment.subclass = parseInt(equipment.subclass);
+        let json = JSON.stringify(equipment);
+        return sendQuery('/addEquipment', 'POST', json)
+    }
+
+    deleteEquipment(equipment) {
+        return sendQuery('/deleteEquipment', 'DELETE', equipment.id)
+    }
+
+    updateEquipment(equipment) {
+        let json = JSON.stringify(equipment);
         console.log(equipment);
-
-        let jsonStruct = JSON.stringify(equipment);
-        console.log(jsonStruct);
-        sendQuery('/addEquipment', 'POST', jsonStruct)
-
-    }
-
-    deleteProduct(product) {
-        console.log(product);
-        return sendQuery('/deleteEquipment', 'DELETE', product.id)
-    }
-
-    updateProduct() {
-        //console.log(this);
-
-        return new Promise((resolve, object) => {
-            if (true) {
-                resolve(this);
-            }
-        });
+        return sendQuery('/updateEquipment', 'POST',json)
     }
 
     getAllEquipment() {
@@ -43,7 +34,7 @@ export class Equipment {
     }
 
 
-    getProdutsInStore(product) {
+    getEquipmentsInStore(product) {
         $$(TreeDatatable).showProgress({});
         return new Promise((resolve, object) => {
             let arr = [
@@ -141,31 +132,34 @@ export class Equipment {
         });
     }
 
-    getAllClasses() {
-        return new Promise((resolve, object) => {
-            let str = [
-                {
-                    class: "0", value: "All", open: true, data: [
+    getAllTree() {
+        return fetch('/getFullTree')
+        /*
+                return new Promise((resolve, object) => {
+                    let str = [
                         {
-                            class: "1", value: "Столы", open: true, data: [
-                                {subclass: "1", value: "Компьютерный"},
-                            ]
-                        },
-                        {
-                            class: "2", value: "Стулья", open: true, data: [
-                                {subclass: "2", value: "Для офиса"},
-                                {subclass: "3", value: "Для дома"},
-                            ]
-                        },
+                            class: "0", value: "All", open: true, data: [
+                                {
+                                    class: "1", value: "Столы", open: true, data: [
+                                        {subclass: "1", value: "Компьютерный"},
+                                    ]
+                                },
+                                {
+                                    class: "2", value: "Стулья", open: true, data: [
+                                        {subclass: "2", value: "Для офиса"},
+                                        {subclass: "3", value: "Для дома"},
+                                    ]
+                                },
 
-                    ]
-                }];
-            resolve(str);
-        });
+                            ]
+                        }];
+                    resolve(str);
+                });
+                */
     }
 
     writeProduct(equipment) {
-        return fetch('/writeEquipment?id=' + equipment.id)
+        return sendQuery('/writeEquipment', 'POST', equipment.id);
     }
 
     moveProduct(product) {

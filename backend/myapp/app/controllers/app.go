@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/revel/revel"
 	"myapp/app/models"
 )
@@ -12,7 +13,12 @@ type App struct {
 func (c App) Index() revel.Result {
 	return c.Render()
 }
-
+func (c App) GetFullTree() revel.Result {
+	fmt.Println("GetFullTree")
+	equipment := models.EquipmentModel{}
+	result := equipment.GetFullTree()
+	return c.RenderJSON(result)
+}
 func (c App) GetAllEquipments() revel.Result {
 	equipment := models.EquipmentModel{}
 	result := equipment.GetAllEquipments()
@@ -25,7 +31,11 @@ func (c App) WriteEquipment() revel.Result {
 	result := equipment.WriteEquipment(c.Params)
 	return c.RenderJSON(result)
 }
-
+func (c App) UpdateEquipment() revel.Result {
+	equipment := models.EquipmentModel{}
+	result := equipment.UpdateEquipment(c.Params)
+	return c.RenderJSON(result)
+}
 func (c App) AddEquipment() revel.Result {
 	equipment := models.EquipmentModel{}
 	result := equipment.AddEquipment(c.Params)

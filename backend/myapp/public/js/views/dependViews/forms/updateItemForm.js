@@ -1,4 +1,5 @@
-import { Equipment } from '../../../models/EquipmentModel.js';
+import {Equipment} from '../../../models/EquipmentModel.js';
+
 export const updateItemForm = webix.ui({
     view: "window",
     width: 600,
@@ -11,34 +12,39 @@ export const updateItemForm = webix.ui({
         scroll: false,
         width: 600,
         elements: [
-            { id: "name", view: "text", name: "name", label: "Название" },
-            { id: "number", view: "text", name: "inventoryNumber", label: "Инвентарный номер" },
+            {id: "name", view: "text", name: "name", label: "Название"},
+            {id: "number", view: "text", name: "inventoryNumber", label: "Инвентарный номер"},
 
             {
                 margin: 5, cols: [
-                    { view: "button", label: "Подтвердить", type: "form", click: updateItem },
-                    { view: "button", label: "Отмена", click: closeForm }
+                    {view: "button", label: "Подтвердить", type: "form", click: updateItem},
+                    {view: "button", label: "Отмена", click: closeForm}
                 ]
             }]
     }
 });
+
 function updateItem() {
     let formValues = $$("updateItemForm").getValues();
     let row = $$("myList").getSelectedItem();
     row.name = formValues.name;
     row.inventoryNumber = formValues.inventoryNumber;
     let product = new Equipment();
-    let promise = product.updateProduct(row);
-    promise.then(
-        result => {
-            let datatable = $$("myList");
-            datatable.updateItem(result.id, result)
-            updateItemForm.hide();
-        },
-        err => {
-            alert("err" + err);
-        });
+    let promise = product.updateEquipment(row);
+    promise.then(response => {
+        return response.json();
+    }).then(result => {
+            if (result.Reject == null) {
+                let datatable = $$("myList");
+                datatable.updateItem(row.id, result.Data);
+                updateItemForm.hide();
+            } else {
+                webix.message(result.Reject);
+            }
+        }
+    );
 }
+
 function closeForm() {
     updateItemForm.hide();
 }

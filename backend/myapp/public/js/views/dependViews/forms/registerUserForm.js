@@ -1,4 +1,5 @@
-import { User } from './../../../models/UserModel.js';
+import {Employee} from './../../../models/UserModel.js';
+
 export const registerUserForm = webix.ui({
     view: "window",
     width: 400,
@@ -11,15 +12,15 @@ export const registerUserForm = webix.ui({
         scroll: false,
         width: 400,
         elements: [
-            { view: "text", name: "name", label: "Имя", labelWidth: 90 },
-            { view: "text", name: "surname", label: "Фамилия", labelWidth: 90 },
-            { view: "text", name: "patronymic", label: "Отчество", labelWidth: 90 },
-            { view: "text", name: "login", label: "Логин", labelWidth: 90 },
-            { view: "text", /*type: "password"*/ name: "password", label: "Пароль", labelWidth: 90 },
+            {view: "text", name: "name", label: "Имя", labelWidth: 90},
+            {view: "text", name: "surname", label: "Фамилия", labelWidth: 90},
+            {view: "text", name: "patronymic", label: "Отчество", labelWidth: 90},
+            {view: "text", name: "login", label: "Логин", labelWidth: 90},
+            {view: "text", /*type: "password"*/ name: "password", label: "Пароль", labelWidth: 90},
             {
                 margin: 5, cols: [
-                    { view: "button", label: "Зарегистрировать", type: "form", click: registerUser },
-                    { view: "button", label: "Отмена", click: closeForm }
+                    {view: "button", label: "Зарегистрировать", type: "form", click: registerUser},
+                    {view: "button", label: "Отмена", click: closeForm}
                 ]
             }],
         rules: {
@@ -51,21 +52,25 @@ export const registerUserForm = webix.ui({
         }
     }
 });
+
 function registerUser() {
     if ($$("registerUserForm").validate()) {
         let formValues = $$("registerUserForm").getValues();
-        let user = new User(formValues);
-        let promise = user.registerUser();
-        promise.then(
-            result => {
-                console.log(result);
-                $$("usersList").add(result);
+        let user = new Employee();
+        let promise = user.registerUser(formValues);
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+            if (result.Reject == null) {
+                $$("usersList").add(result.Data);
+                $$("usersList").refreshColumns();
                 webix.message("success register");
                 $$('registerUserForm').clear();
                 $$('registerUserForm').clearValidation();
-            }, err => {
-                webix.message("not register:" + err);
-            })
+            } else {
+                webix.message(result.Reject);
+            }
+        })
     }
 }
 

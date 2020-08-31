@@ -1,4 +1,4 @@
-import { User } from './../../../models/UserModel.js';
+import { Employee } from './../../../models/UserModel.js';
 export const authorizeForm = webix.ui({
     view: "window",
     width: 400,
@@ -37,7 +37,7 @@ export const authorizeForm = webix.ui({
 function autohrize() {
     if ($$("authorizeUserForm").validate()) {
         let formValues = $$("authorizeUserForm").getValues();
-        let user = new User();
+        let user = new Employee();
         let promise = user.authorize(formValues);
         promise.then(
             result => {
