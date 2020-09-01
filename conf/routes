@@ -1,0 +1,46 @@
+# Routes Config
+#
+# This file defines all application routes (Higher priority routes first)
+#
+
+module:testrunner
+# module:jobs
+
+
+GET     /                                       App.Index
+
+//                           equipment
+GET /getAllEquipments                           App.GetAllEquipments
+GET /getFullTree                                App.GetFullTree
+
+POST /writeEquipment                            App.WriteEquipment
+POST /addEquipment                              App.AddEquipment
+POST /updateEquipment                           App.UpdateEquipment
+
+DELETE /deleteEquipment                         App.DeleteEquipment
+
+                              employee
+
+POST /addEmployee                               Employee.AddEmployee
+GET /getAllEmployees                            Employee.GetAllEmployees
+POST /updateEmployee                            Employee.UpdateEmployee
+POST /resetPassEmployee                         Employee.ResetPassEmployee
+DELETE /deleteEmployee                          Employee.DeleteEmployee
+
+                               InventoryEvents
+GET /getAllEvents                               Events.GetAllEvents
+GET /getEventsForDate                           Events.GetEventsForDate
+
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/*filepath                       Static.Serve("public")
+
+# Catch all, this will route any request into the controller path
+#
+#                    **** WARNING ****
+# Enabling this exposes any controller and function to the web.
+# ** This is a serious security issue if used online **
+#
+# For rapid development uncomment the following to add new controller.action endpoints
+# without having to add them to the routes table.
+# *       /:controller/:action                    :controller.:action
