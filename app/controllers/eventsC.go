@@ -19,7 +19,6 @@ func (c Events) GetAllEvents() revel.Result {
 		DataEvent.DataArray = result
 
 	}
-	fmt.Println("DATA",DataEvent.DataArray)
 	return c.RenderJSON(DataEvent)
 }
 

@@ -12,7 +12,11 @@ GET     /                                       App.Index
 //                           equipment
 GET /getAllEquipments                           App.GetAllEquipments
 GET /getFullTree                                App.GetFullTree
+GET /getEquipmentsInStore                       App.GetEquipmentsInStore
+GET /getEquipmentOnUser                         App.GetEquipmentOnUser
 
+POST /dragToUser                                App.DragToUser
+POST /dragToStore                               App.DragToStore
 POST /writeEquipment                            App.WriteEquipment
 POST /addEquipment                              App.AddEquipment
 POST /updateEquipment                           App.UpdateEquipment

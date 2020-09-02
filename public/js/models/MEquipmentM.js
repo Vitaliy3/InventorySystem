@@ -32,86 +32,13 @@ export class Equipment {
         return fetch('/getAllEquipments')
     }
 
-
-    getEquipmentsInStore(product) {
+    getEquipmentsInStore() {
         $$(TreeDatatable).showProgress({});
-        return new Promise((resolve, object) => {
-            let arr = [
-                {
-                    id: "1",
-                    class: "1",
-                    subclass: "1",
-                    name: "name1",
-                    user: "user1",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "2",
-                    class: "1",
-                    subclass: "1",
-                    name: "name1",
-                    user: "user1",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "3",
-                    class: "1",
-                    subclass: "1",
-                    name: "name1",
-                    user: "user1",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "4",
-                    class: "1",
-                    subclass: "1",
-                    name: "name1",
-                    user: "user1",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "5",
-                    class: "1",
-                    subclass: "1",
-                    name: "name1",
-                    user: "user1",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "6",
-                    class: "2",
-                    subclass: "2",
-                    name: "name2",
-                    user: "user2",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-                {
-                    id: "7",
-                    class: "2",
-                    subclass: "2",
-                    name: "name2",
-                    user: "user2",
-                    status: "на складе",
-                    inventoryNumber: "11"
-                },
-            ];
-            setTimeout(() => {
-                resolve(arr);
-            }, 10);
-        });
+        return fetch('/getEquipmentsInStore')
     }
 
-    getUserProducts(product) {
-        fetch('http://192.168.77.142:9000/getEquipment?user="taps"').then(res => {
-            return res.json()
-        }).then(res => {
-        });
+    getUserEquipments(selectedEmployee) {
+        return fetch('/getEquipmentOnUser?user=' + selectedEmployee);
     }
 
     getUserClasses(user) {
@@ -142,12 +69,14 @@ export class Equipment {
     moveProduct(product) {
     }
 
-    dragToUser() {
-        return true;
+    dragToUser(equipment) {
+        let unParsed = JSON.stringify(equipment);
+        console.log(unParsed);
+        return sendQuery('/dragToUser', 'POST', unParsed);
     }
 
-    dragToStore() {
-        return true;
+    dragToStore(equipment) {
+        return sendQuery('/dragToStore', 'POST', equipment.id);
     }
 }
 

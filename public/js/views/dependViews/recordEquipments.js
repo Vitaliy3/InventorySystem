@@ -19,7 +19,6 @@ export function getNeedProducts(item, id) { //возр оборудование 
     return result;
 }
 export const recordEquipments = {
-    header: "TEST",
     cols: [
         {
             rows: [

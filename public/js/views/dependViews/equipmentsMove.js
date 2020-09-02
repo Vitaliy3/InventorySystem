@@ -1,103 +1,92 @@
-
-import { MoveProductTree, MoveProdDatatable, DragProdDatatable } from './../const.js';
-import { getNeedProducts } from './recordEquipments.js';
-import { Employee } from '../../models/MUserModel.js';
-import { Equipment } from '../../models/MEquipmentM.js';
-export var new_options = [];
-
-let user = new Employee();
-let users = user.getAllEmployees();
-users.then(result => {
-    let joinUsers = [];
-    let temp = "";
-    for (let i = 0; i < result.length; i++) {
-        temp = { name: result[i].id + ". " + result[i].name + " " + result[i].surname + " " + result[i].patronymic };
-        joinUsers.push(temp);
-    }
-    let list = $$("combo").getPopup().getList();
-    list.clearAll();
-    list.parse(joinUsers);
-});
+import {combo, DragProdDatatable, MoveEquipDatatable, MoveEquipmentTree} from './../const.js';
+import {getNeedProducts} from "./recordEquipments.js";
+import {Equipment} from "../../models/MEquipmentM.js";
 
 export const moveToolbar = {
     view: "toolbar",
     id: "moveToolbar",
     cols: [
         {
-            view: "combo",
+            view: combo,
             value: 2,
-            id: "combo",
+            id: combo,
+            width: 200,
+            align: "right",
             options: {
                 body: {
-                    template: "#name#"
+                    template: "<span style='display:none;'>#id#</span> <span>#name#</span>"
                 },
             }
         },
-        { view: "button", value: "Найти", click: filterUsers, width: 100 },
+        {view: "button", value: "Найти", click: filterUsers, width: 100, align: "right"},
     ],
-}
+};
 
-export const dragProductTable = {
-    header: "TEST",
+export const dragEquipmentTable = {
     view: "datatable",
     drag: true,
     id: DragProdDatatable,
     width: 500,
     select: true,
     columns: [
-        { id: "name", header: "Название", class: "class", fillspace: true, },
-        { id: "inventoryNumber", header: "Инвентарный номер", fillspace: true },
+        {id: "name", header: "Название", class: "class", fillspace: true,},
+        {id: "inventoryNumber", header: "Инвентарный номер", fillspace: true},
     ]
 };
 
 function filterUsers() {
-    let selected = $$("combo").getText();
-    let split = selected.split(".");
-    console.log(split[0]);
-    let product = new Equipment({ id: split[0], user: "User1" });
-    let promise = product.getUserProducts();
-    promise.then(result => {
-        $$(DragProdDatatable).parse(result);
-    })
+    let eqipment = new Equipment();
+    let selected = $$(combo).getValue();
+    let promise = eqipment.getUserEquipments(selected);
+    console.log(selected);
+    promise.then(response => {
+        return response.json();
+    }).then(result => {
+        if (result.Error == "") {
+            console.log("result", result.DataArray);
+            $$(DragProdDatatable).parse(result.DataArray);
+        } else {
+            webix.message(result.Error);
+        }
+    });
 }
 
 export const movingTree = {
-    header: "TEST",
     cols: [
         {
             rows: [
                 {
                     view: "tree",
-                    id: MoveProductTree,
+                    id: MoveEquipmentTree,
                     width: 250,
                     columns: [
-                        { id: "name", class: "class", fillspace: true, },
+                        {id: "name", class: "class", fillspace: true,},
                     ],
                     select: "true",
                     on: {
                         onSelectChange: function () {
-                            let item = $$(MoveProductTree).getSelectedItem();
-                            $$(MoveProdDatatable).parse(getNeedProducts(item, MoveProductTree));
-                            $$(MoveProdDatatable).filterByAll();//refresh data after change tree column
+                            let item = $$(MoveEquipmentTree).getSelectedItem();
+                            $$(MoveEquipDatatable).parse(getNeedProducts(item, MoveEquipmentTree));
+                            $$(MoveEquipDatatable).filterByAll();//refresh data after change tree column
                         }
                     }
                 },
             ]
         },
-        { view: "resizer" },
+        {view: "resizer"},
         {
             rows: [
                 {
                     view: "datatable",
-                    id: MoveProdDatatable,
+                    id: MoveEquipDatatable,
                     editable: true,
                     drag: true,
                     editaction: "custom",
                     select: true,
                     columns: [
-                        { id: "name", header: "Название", class: "class", fillspace: true, },
-                        { id: "status", header: "Статус", auttowidth: true, fillspace: true },
-                        { id: "inventoryNumber", header: "Инвентарный номер", fillspace: true },
+                        {id: "name", header: "Название", class: "class", fillspace: true,},
+                        {id: "status", header: "Статус", auttowidth: true, fillspace: true},
+                        {id: "inventoryNumber", header: "Инвентарный номер", fillspace: true},
                     ]
                 },
 
@@ -105,7 +94,7 @@ export const movingTree = {
 
         },
 
-        dragProductTable,
+        dragEquipmentTable,
 
     ]
 };

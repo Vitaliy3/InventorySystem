@@ -72,16 +72,16 @@ func (e *EquipmentTable) GetAllEquipments() (equipments []EquipmentTable, err er
 }
 
 //все товары у сотрудника
-func (e *EquipmentTable) GetAUserEquipments() (equipments []EquipmentTable, err error) {
+func (e *EquipmentTable) GetEquipmentsByUser(userId int) (equipments []EquipmentTable, err error) {
 	OpenConnection()
 	defer db.Close()
-	rows, err := db.Query("select * from equipments where fk_user=?", e.Id)
+	rows, err := db.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status)
+		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_parent, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -92,8 +92,10 @@ func (e *EquipmentTable) GetAUserEquipments() (equipments []EquipmentTable, err 
 }
 
 //все товары на складе
-func (e *EquipmentTable) GetStoreEquipments() (equipments []EquipmentTable, err error) {
-	rows, err := db.Query("select * from equipments where fk_class=NULL")
+func (e *EquipmentTable) GetEquipmentsInStore() (equipments []EquipmentTable, err error) {
+	OpenConnection()
+	defer db.Close()
+	rows, err := db.Query("select id,fk_class,fk_user,inventoryNumber,equipmentName,status from equipments where status=0")
 	if err != nil {
 		return
 	}
@@ -109,6 +111,7 @@ func (e *EquipmentTable) GetStoreEquipments() (equipments []EquipmentTable, err 
 	return
 }
 
+//получение всех классов и подклассов
 func (e *EquipmentTable) GetFullTree() (equipments []EquipmentTable, err error) {
 	OpenConnection()
 	defer db.Close()
@@ -140,11 +143,31 @@ func (e *EquipmentTable) AddEquipment() (lastInsertedId int, err error) {
 	return
 }
 
-//обновление данных об оборудовании
-func (e *EquipmentTable) UpdateEquipment() (lastInsertedId int, err error) {
+func (e *EquipmentTable) DragToUser(fk_user int,id int) (lastInsertedId int, err error) {
 	OpenConnection()
 	defer db.Close()
-	err = db.QueryRow("update equipments set equipmentname=$1, inventorynumber=$2 where id=$3 returning id", e.EquipmentName, e.InventoryNumber, e.Id).Scan(&lastInsertedId)
+	err = db.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id", fk_user, id).Scan(&lastInsertedId)
+	if err != nil {
+		return
+	}
+	return
+}
+
+func (e *EquipmentTable) DragToStore(id int) (lastInsertedId int, err error) {
+	OpenConnection()
+	defer db.Close()
+	err = db.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id",id).Scan(&lastInsertedId)
+	if err != nil {
+		return
+	}
+	return
+}
+
+//обновление данных об оборудовании
+func (e *EquipmentTable) UpdateEquipment() (lastUpdatedId int, err error) {
+	OpenConnection()
+	defer db.Close()
+	err = db.QueryRow("update equipments set equipmentname=$1, inventorynumber=$2 where id=$3 returning id", e.EquipmentName, e.InventoryNumber, e.Id).Scan(&lastUpdatedId)
 	if err != nil {
 		return
 	}

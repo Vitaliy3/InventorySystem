@@ -1,28 +1,25 @@
 package mappers
 
 type InventoryEvent struct {
-	Id          int    `json:"id"`
-	Username    string `json:"user"`
-	Surname     string `json:"surname"`
-	Patronymic  string `json:"patronymic"`
-	Equipment   string `json:"equipment"`
-	ActionEvent string `json:"event"`
-	Date        string `json:"date"`
+	Id           int
+	Fk_user      int
+	Fk_equipment int
+	ActionEvent  string
+	Date         string
 }
 
 func (e *InventoryEvent) GetAllEvents() (inventoryEvent []InventoryEvent, err error) {
 	OpenConnection()
 	defer db.Close()
-	rows, err := db.Query("select i.id,u.username,u.surname ,u.patronymic,e.equipmentName,i.actionEvent,to_char(i.date, 'DD-MM-YYYY') " +
-		"from inventoryEvents i join users u on i.fk_user =u.id join equipments e on i.fk_equipment =e.id")
+	rows, err := db.Query("select id, fk_user, fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') from inventoryEvents")
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Username, &e.Surname, &e.Patronymic, &e.Equipment, &e.ActionEvent, &e.Date)
+		err = rows.Scan(&e.Id, &e.Fk_user, &e.Fk_equipment, &e.ActionEvent, &e.Date)
 		if err != nil {
-
+			return
 		}
 		inventoryEvent = append(inventoryEvent, *e)
 
@@ -32,16 +29,16 @@ func (e *InventoryEvent) GetAllEvents() (inventoryEvent []InventoryEvent, err er
 func (e *InventoryEvent) GetEventsForDate(startDate string, endDate string) (inventoryEvent []InventoryEvent, err error) {
 	OpenConnection()
 	defer db.Close()
-	rows, err := db.Query("select i.id,u.username,u.surname ,u.patronymic,e.equipmentName,i.actionEvent,to_char(i.date, 'DD-MM-YYYY') "+
-		"from inventoryEvents i join users u on i.fk_user =u.id join equipments e on i.fk_equipment =e.id where date between $1 and $2 ", startDate, endDate)
+	rows, err := db.Query("select id,fk_user,fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') "+
+		"from inventoryEvents where date between $1 and $2 ", startDate, endDate)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Username, &e.Surname, &e.Patronymic, &e.Equipment, &e.ActionEvent, &e.Date)
+		err = rows.Scan(&e.Id, &e.Fk_user, &e.Fk_equipment, &e.ActionEvent, &e.Date)
 		if err != nil {
-			continue
+			return
 		}
 		inventoryEvent = append(inventoryEvent, *e)
 	}

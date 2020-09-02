@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/revel/revel"
-	"myapp/app/mappers"
 	"myapp/app/models"
 )
 
@@ -19,7 +18,7 @@ var (
 
 type RenderDataEvents struct {
 	Data models.InventoryEvent
-	DataArray  []mappers.InventoryEvent
+	DataArray  []models.InventoryEvent
 	Error string
 }
 type RenderDataEmployee struct {

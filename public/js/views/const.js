@@ -1,8 +1,9 @@
 export const RegproductsTree = "myTree";
 export const TreeDatatable = "myList";
 export const UsersDatatable = "usersList";
-export const MoveProductTree = "moveTree";
-export const MoveProdDatatable = "moveProdTree";
+export const MoveEquipmentTree = "moveTree";
+export const MoveEquipDatatable = "moveProdTree";
 export const DragProdDatatable = "moveProd";
 export const UserEventsDatatable = "recordEvents";
 export const EventsToolbar = "EventToolbar";
+export const  combo="richselect";

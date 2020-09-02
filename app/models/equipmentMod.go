@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/revel/revel"
 	"myapp/app/mappers"
+	"strconv"
 )
 
 type EquipmentModel struct {
@@ -16,6 +17,7 @@ type EquipmentModel struct {
 	EquipmentName   string     ` json:"name" `
 	Status          string     ` json:"status" `
 	ClassName       string     ` json:"value" `
+	Fk_user         int        `json:"fk_user"`
 	Data            []Subclass ` json:"data" `
 }
 type Subclass struct {
@@ -28,6 +30,57 @@ type FullTree struct {
 	EquipModel []EquipmentModel ` json:"data" `
 }
 
+//перемещение оборудования со склада пользователю
+func (e *EquipmentModel) DragToUser(params *revel.Params) (equip EquipmentModel, err error) {
+	eqMapper := mappers.EquipmentTable{}
+	eqMod := EquipmentModel{}
+	err = json.Unmarshal(params.JSON, &eqMod)
+	if err != nil {
+		return
+	}
+	updatedRowId, err := eqMapper.DragToUser(eqMod.Id,eqMod.Fk_user )
+	if err != nil {
+		return
+	}
+	row, err := eqMapper.GetEquipmentById(updatedRowId)
+	if err != nil {
+		return
+	}
+	equip.Id = row.Id
+	equip.Fk_class = row.Fk_parent
+	equip.Fk_subclass = row.Fk_class
+	equip.EquipmentName = row.EquipmentName
+	equip.InventoryNumber = row.InventoryNumber
+	equip.Status = getStatus(row.Status)
+	return
+}
+
+//перемещение оборудования от сотрудника на склад
+func (e *EquipmentModel) DragToStore(params *revel.Params) (equip EquipmentModel, err error) {
+	eqMapper := mappers.EquipmentTable{}
+	var id int
+	err = json.Unmarshal(params.JSON, &id)
+	if err != nil {
+		return
+	}
+
+	updatedRowId, err := eqMapper.DragToStore(id)
+	if err != nil {
+		return
+	}
+	row, err := eqMapper.GetEquipmentById(updatedRowId)
+	if err != nil {
+		return
+	}
+	equip.Id = row.Id
+	equip.Fk_class = row.Fk_parent
+	equip.Fk_subclass = row.Fk_class
+	equip.EquipmentName = row.EquipmentName
+	equip.InventoryNumber = row.InventoryNumber
+	equip.Status = getStatus(row.Status)
+	return
+}
+
 //изменение оборудования
 func (e *EquipmentModel) UpdateEquipment(params *revel.Params) (equip EquipmentModel, err error) {
 	eqMapper := mappers.EquipmentTable{}
@@ -36,9 +89,9 @@ func (e *EquipmentModel) UpdateEquipment(params *revel.Params) (equip EquipmentM
 	if err != nil {
 		return
 	}
-	eqMapper.Id=eqModel.Id
-	eqMapper.EquipmentName=eqModel.EquipmentName
-	eqMapper.InventoryNumber=eqModel.InventoryNumber
+	eqMapper.Id = eqModel.Id
+	eqMapper.EquipmentName = eqModel.EquipmentName
+	eqMapper.InventoryNumber = eqModel.InventoryNumber
 	lastInsertedId, err := eqMapper.UpdateEquipment()
 	if err != nil {
 		return
@@ -47,14 +100,12 @@ func (e *EquipmentModel) UpdateEquipment(params *revel.Params) (equip EquipmentM
 	if err != nil {
 		return
 	}
-	fmt.Println("do", row)
 	equip.Id = row.Id
 	equip.Fk_class = row.Fk_parent
 	equip.Fk_subclass = row.Fk_class
 	equip.EquipmentName = row.EquipmentName
 	equip.InventoryNumber = row.InventoryNumber
 	equip.Status = getStatus(row.Status)
-	fmt.Println("after", equip)
 
 	return
 }
@@ -89,6 +140,26 @@ type RenderData struct {
 	Data      EquipmentModel
 	Error     error
 	Tree      []FullTree
+}
+
+//получение продуктов, которые находятся на складе
+func (e *EquipmentModel) GetEquipmentsInStore() (equipArray []EquipmentModel, err error) {
+	eqMapper := mappers.EquipmentTable{}
+	dbEquip, err := eqMapper.GetEquipmentsInStore()
+	if err != nil {
+		return
+	}
+	var temp EquipmentModel
+	for _, v := range dbEquip {
+		temp.Id = v.Id
+		temp.Fk_class = v.Fk_parent
+		temp.Fk_subclass = v.Fk_class
+		temp.InventoryNumber = v.InventoryNumber
+		temp.EquipmentName = v.EquipmentName
+		temp.Status = getStatus(v.Status)
+		equipArray = append(equipArray, temp)
+	}
+	return
 }
 
 //получение всего оборудования
@@ -168,7 +239,6 @@ func (e *EquipmentModel) AddEquipment(c *revel.Params) (eqData EquipmentModel, e
 		return
 	}
 	eqMapper.Status = 0
-	fmt.Println("newEq", eqMapper)
 	lastInsertedId, err := eqMapper.AddEquipment()
 	if err != nil {
 		return
@@ -183,6 +253,27 @@ func (e *EquipmentModel) AddEquipment(c *revel.Params) (eqData EquipmentModel, e
 	eqData.EquipmentName = result.EquipmentName
 	eqData.InventoryNumber = result.InventoryNumber
 	eqData.Status = getStatus(result.Status)
+	return
+}
+
+func (e *EquipmentModel) GetEquipmentOnUser(params *revel.Params) (equipArray []EquipmentModel, err error) {
+	eqMapper := mappers.EquipmentTable{}
+	userId := params.Get("user")
+	convUserId, err := strconv.Atoi(userId)
+	dbEquip, err := eqMapper.GetEquipmentsByUser(convUserId)
+	if err != nil {
+		return
+	}
+	var temp EquipmentModel
+	for _, v := range dbEquip {
+		temp.Id = v.Id
+		temp.Fk_user = convUserId
+		temp.Fk_class = v.Fk_parent
+		temp.Fk_subclass = v.Fk_class
+		temp.InventoryNumber = v.InventoryNumber
+		temp.EquipmentName = v.EquipmentName
+		equipArray = append(equipArray, temp)
+	}
 	return
 }
 
