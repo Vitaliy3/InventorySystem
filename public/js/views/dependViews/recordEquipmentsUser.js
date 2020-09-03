@@ -56,7 +56,6 @@ export const treeArrayFull_user = {
 
             ]
         },
-        { view: "resizer" },//temp
         {
             rows: [
                 {

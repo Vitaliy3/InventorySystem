@@ -66,9 +66,6 @@ export class Equipment {
         return sendQuery('/writeEquipment', 'POST', equipment.id);
     }
 
-    moveProduct(product) {
-    }
-
     dragToUser(equipment) {
         let unParsed = JSON.stringify(equipment);
         console.log(unParsed);

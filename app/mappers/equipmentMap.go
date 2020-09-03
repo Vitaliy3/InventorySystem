@@ -7,18 +7,13 @@ import (
 	"log"
 )
 
-const (
-	host   = "127.0.0.1"
-	port   = 5433
-	user   = "postgres"
-	dbname = "dbtest"
-)
+
 
 type EquipmentTable struct {
 	Id              int            ` json:"id" `
 	Fk_parent       int            ` json:"class" `
 	Fk_class        int            ` json:"subclass" `
-	Fk_user         sql.NullString ` json:"user" `
+	Fk_user         sql.NullInt64 ` json:"user" `
 	InventoryNumber string         ` json:"inventoryNumber" `
 	EquipmentName   string         ` json:"name" `
 	Status          int            ` json:"status" `
@@ -26,23 +21,10 @@ type EquipmentTable struct {
 	Class           string
 }
 
-var db *sql.DB
-
-func OpenConnection() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
-	var err error
-	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
-		fmt.Println("errOpen:", err)
-	}
-}
-
 //получение одной еденицы оборудования
-func (e *EquipmentTable) GetEquipmentById(id int) (eq EquipmentTable, err error) {
-	OpenConnection()
-	defer db.Close()
+func (e *EquipmentTable) GetEquipmentById(DB *sql.DB,id int) (eq EquipmentTable, err error) {
 	fmt.Println("getId", id)
-	row := db.QueryRow("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.id =$1", id)
+	row := DB.QueryRow("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.id =$1", id)
 	err = row.Scan(&eq.Id, &eq.Fk_class, &eq.Fk_user, &eq.InventoryNumber, &eq.EquipmentName, &eq.Status, &eq.Fk_parent)
 	if err != nil {
 		fmt.Println("errGetById:", err)
@@ -52,10 +34,8 @@ func (e *EquipmentTable) GetEquipmentById(id int) (eq EquipmentTable, err error)
 }
 
 //получение всего оборудования
-func (e *EquipmentTable) GetAllEquipments() (equipments []EquipmentTable, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id")
+func (e *EquipmentTable) GetAllEquipments(DB *sql.DB) (equipments []EquipmentTable, err error) {
+	rows, err := DB.Query("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id")
 	if err != nil {
 		return
 	}
@@ -72,10 +52,9 @@ func (e *EquipmentTable) GetAllEquipments() (equipments []EquipmentTable, err er
 }
 
 //все товары у сотрудника
-func (e *EquipmentTable) GetEquipmentsByUser(userId int) (equipments []EquipmentTable, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
+func (e *EquipmentTable) GetEquipmentsByUser(DB *sql.DB,userId int) (equipments []EquipmentTable, err error) {
+
+	rows, err := DB.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
 	if err != nil {
 		return
 	}
@@ -92,16 +71,14 @@ func (e *EquipmentTable) GetEquipmentsByUser(userId int) (equipments []Equipment
 }
 
 //все товары на складе
-func (e *EquipmentTable) GetEquipmentsInStore() (equipments []EquipmentTable, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select id,fk_class,fk_user,inventoryNumber,equipmentName,status from equipments where status=0")
+func (e *EquipmentTable) GetEquipmentsInStore(DB *sql.DB) (equipments []EquipmentTable, err error) {
+	rows, err := DB.Query("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.status =0")
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status)
+		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status, &e.Fk_parent)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -112,10 +89,8 @@ func (e *EquipmentTable) GetEquipmentsInStore() (equipments []EquipmentTable, er
 }
 
 //получение всех классов и подклассов
-func (e *EquipmentTable) GetFullTree() (equipments []EquipmentTable, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select c1.fk_parent ,c1 .id, classes.name,c1.name from classes join classes c1 on classes.id =c1.fk_parent")
+func (e *EquipmentTable) GetFullTree(DB *sql.DB) (equipments []EquipmentTable, err error) {
+	rows, err := DB.Query("select c1.fk_parent ,c1 .id, classes.name,c1.name from classes join classes c1 on classes.id =c1.fk_parent")
 	if err != nil {
 		return
 	}
@@ -132,10 +107,8 @@ func (e *EquipmentTable) GetFullTree() (equipments []EquipmentTable, err error) 
 }
 
 //добавление оборудования
-func (e *EquipmentTable) AddEquipment() (lastInsertedId int, err error) {
-	OpenConnection()
-	defer db.Close()
-	err = db.QueryRow("insert into equipments (fk_class,inventoryNumber,equipmentName,status)values($1,$2,$3,$4) returning id",
+func (e *EquipmentTable) AddEquipment(DB *sql.DB) (lastInsertedId int, err error) {
+	err = DB.QueryRow("insert into equipments (fk_class,inventoryNumber,equipmentName,status)values($1,$2,$3,$4) returning id",
 		e.Fk_class, e.InventoryNumber, e.EquipmentName, e.Status).Scan(&lastInsertedId)
 	if err != nil {
 		return
@@ -143,20 +116,16 @@ func (e *EquipmentTable) AddEquipment() (lastInsertedId int, err error) {
 	return
 }
 
-func (e *EquipmentTable) DragToUser(fk_user int,id int) (lastInsertedId int, err error) {
-	OpenConnection()
-	defer db.Close()
-	err = db.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id", fk_user, id).Scan(&lastInsertedId)
+func (e *EquipmentTable) DragToUser(DB *sql.DB,fk_user int, id int) (lastInsertedId int, err error) {
+	err = DB.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id",id,fk_user).Scan(&lastInsertedId)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (e *EquipmentTable) DragToStore(id int) (lastInsertedId int, err error) {
-	OpenConnection()
-	defer db.Close()
-	err = db.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id",id).Scan(&lastInsertedId)
+func (e *EquipmentTable) DragToStore(DB *sql.DB,id int) (lastInsertedId int, err error) {
+	err = DB.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id", id).Scan(&lastInsertedId)
 	if err != nil {
 		return
 	}
@@ -164,10 +133,8 @@ func (e *EquipmentTable) DragToStore(id int) (lastInsertedId int, err error) {
 }
 
 //обновление данных об оборудовании
-func (e *EquipmentTable) UpdateEquipment() (lastUpdatedId int, err error) {
-	OpenConnection()
-	defer db.Close()
-	err = db.QueryRow("update equipments set equipmentname=$1, inventorynumber=$2 where id=$3 returning id", e.EquipmentName, e.InventoryNumber, e.Id).Scan(&lastUpdatedId)
+func (e *EquipmentTable) UpdateEquipment(DB *sql.DB) (lastUpdatedId int, err error) {
+	err = DB.QueryRow("update equipments set equipmentname=$1, inventorynumber=$2 where id=$3 returning id", e.EquipmentName, e.InventoryNumber, e.Id).Scan(&lastUpdatedId)
 	if err != nil {
 		return
 	}
@@ -175,10 +142,8 @@ func (e *EquipmentTable) UpdateEquipment() (lastUpdatedId int, err error) {
 }
 
 //удаление оборудования
-func (e *EquipmentTable) DeleteEquipment(id int) (rowsAffected int64, err error) {
-	OpenConnection()
-	defer db.Close()
-	result, err := db.Exec("delete from equipments where id=$1", id)
+func (e *EquipmentTable) DeleteEquipment(DB *sql.DB,id int) (rowsAffected int64, err error) {
+	result, err := DB.Exec("delete from equipments where id=$1", id)
 	if err != nil {
 		fmt.Println("DeleteEquipmentMapper", err)
 		return
@@ -188,10 +153,8 @@ func (e *EquipmentTable) DeleteEquipment(id int) (rowsAffected int64, err error)
 }
 
 //списывание оборудования
-func (e *EquipmentTable) WriteEquipment(id int) (updatedElementId int, err error) {
-	OpenConnection()
-	defer db.Close()
-	err = db.QueryRow("update equipments set status=2 where id=$1 returning id", id).Scan(&updatedElementId)
+func (e *EquipmentTable) WriteEquipment(DB *sql.DB,id int) (updatedElementId int, err error) {
+	err = DB.QueryRow("update equipments set status=2 where id=$1 returning id", id).Scan(&updatedElementId)
 	if err != nil {
 		return
 	}

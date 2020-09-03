@@ -16,128 +16,136 @@ func (c App) Index() revel.Result {
 }
 
 func (c App) DragToUser() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
+	renderInterface := app.RenderInterface{}
 	equipModel := models.EquipmentModel{}
-	result, err := equipModel.DragToUser(c.Params)
+	result, err := equipModel.DragToUser(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 
 }
+
 func (c App) DragToStore() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
-	equipModel := models.EquipmentModel{}
-	result, err := equipModel.DragToStore(c.Params)
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEquipments.DragToStore(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 
 }
 
 //получение оборудования,которое находится у определенного пользователя
 func (c App) GetEquipmentOnUser() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
-	result, err := DataEquipments.Data.GetEquipmentOnUser(c.Params)
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEquipments.GetEquipmentOnUser(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.DataArray = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //получение оборудования,которое находится на складе
 func (c App) GetEquipmentsInStore() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
-	result, err := DataEquipments.Data.GetEquipmentsInStore()
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEquipments.GetEquipmentsInStore(app.DB)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.DataArray = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //получение полного дерева учета оборудования
 func (c App) GetFullTree() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
-	result, err := DataEquipments.Data.GetFullTree()
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEquipments.GetFullTree(app.DB)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Tree = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //получение всего оборудования
 func (c App) GetAllEquipments() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
-
-	result, err := DataEquipments.Data.GetAllEquipments()
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEquipments.GetAllEquipments(app.DB)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.DataArray = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //списать оборудование
 func (c App) WriteEquipment() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
 
-	result, err := DataEquipments.Data.WriteEquipment(c.Params)
+	result, err := DataEquipments.WriteEquipment(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //изменение оборудования
 func (c App) UpdateEquipment() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
 
-	result, err := DataEquipments.Data.UpdateEquipment(c.Params)
+	result, err := DataEquipments.UpdateEquipment(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //добавление оборудования
 func (c App) AddEquipment() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
 
-	result, err := DataEquipments.Data.AddEquipment(c.Params)
+	result, err := DataEquipments.AddEquipment(app.DB, c.Params)
 	fmt.Println("RESULT", result)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }
 
 //удаление оборудования
 func (c App) DeleteEquipment() revel.Result {
-	DataEquipments := app.RenderDataEquipments{}
+	DataEquipments := models.EquipmentModel{}
+	renderInterface := app.RenderInterface{}
 
-	result, err := DataEquipments.Data.DeleteEquipment(c.Params)
+	result, err := DataEquipments.DeleteEquipment(app.DB, c.Params)
 	if err != nil {
-		DataEquipments.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEquipments.Data = result
+		renderInterface.Data = result
 	}
-	return c.RenderJSON(DataEquipments)
+	return c.RenderJSON(renderInterface)
 }

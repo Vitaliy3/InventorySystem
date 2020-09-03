@@ -14,7 +14,7 @@ export const recordEventsDatapicker = {
 
 };
 
-
+//выборка событий по дате
 function filterDate() {
     let dateFromTo = JSON.stringify(this.getParentView().getValues());
     let eventModel = new EmployeeEvent();
@@ -24,7 +24,7 @@ function filterDate() {
     }).then(result => {
         if (result.Error == "") {
             $$(UserEventsDatatable).clearAll();
-            $$(UserEventsDatatable).parse(result.DataArray);
+            $$(UserEventsDatatable).parse(result.Data);
         } else {
             webix.message(result.Error);
         }

@@ -16,7 +16,6 @@ export const UsersToolbar = {
             height: 50,
             click: updateUser
         },
-        {view: "button", id: "deleteEmployee", value: "Удалить сотрудника", width: 200, height: 50, click: deleteUser},
         {view: "button", id: "resetPassword", value: "Сбросить пароль", width: 200, height: 50, click: resetPassword},
     ],
 }

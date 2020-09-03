@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/revel/revel"
 	"myapp/app"
+	"myapp/app/models"
 )
 
 type Events struct {
@@ -11,27 +11,28 @@ type Events struct {
 }
 
 func (c Events) GetAllEvents() revel.Result {
-	DataEvent :=app.RenderDataEvents{}
-	result, err := DataEvent.Data.GetAllEvents(c.Params)
+	DataEvent := models.InventoryEvent{}
+	renderInterface := app.RenderInterface{}
+	result, err := DataEvent.GetAllEvents(app.DB,c.Params)
 	if err != nil {
-		DataEvent.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		DataEvent.DataArray = result
+		renderInterface.Data = result
 
 	}
-	return c.RenderJSON(DataEvent)
+	return c.RenderJSON(renderInterface)
 }
 
 func (c Events) GetEventsForDate() revel.Result {
-	DataEvent :=app.RenderDataEvents{}
+	DataEvent := models.InventoryEvent{}
+	renderInterface := app.RenderInterface{}
 
-	result, err := DataEvent.Data.GetEventsForDate(c.Params)
+	result, err := DataEvent.GetEventsForDate(app.DB,c.Params)
 	if err != nil {
-		DataEvent.Error = err.Error()
+		renderInterface.Error = err.Error()
 	} else {
-		fmt.Println(DataEvent.DataArray)
-		DataEvent.DataArray = result
+		renderInterface.Data = result
 
 	}
-	return c.RenderJSON(DataEvent)
+	return c.RenderJSON(renderInterface)
 }

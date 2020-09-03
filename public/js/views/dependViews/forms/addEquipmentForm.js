@@ -5,7 +5,7 @@ export const addEquipmentForm = webix.ui({
     view: "window",
     width: 600,
     height: 500,
-    head: "Добавление элемента",
+    head: "Добавление оборудования",
     autofit: false,
     body: {
         view: "form",

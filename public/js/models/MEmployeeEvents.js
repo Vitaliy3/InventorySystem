@@ -6,11 +6,10 @@ export class EmployeeEvent {
         return fetch('/getAllEvents')
     }
 
-    getUserEvents() {
-    }
 
     getEventsForDate(dateFromTo) {
         let date = JSON.parse(dateFromTo);
+        console.log(date);
         date.start = date.start.split(' ')[0];
         date.end = date.end.split(' ')[0];
         return fetch('/getEventsForDate/?dateStart=' + date.start + '&dateEnd=' + date.end);

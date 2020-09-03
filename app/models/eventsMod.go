@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"github.com/revel/revel"
 	"myapp/app/mappers"
 )
@@ -13,21 +14,21 @@ type InventoryEvent struct {
 	Equipment string `json:"equipment"`
 }
 
-func (e *InventoryEvent) GetAllEvents(params *revel.Params) (allEvents []InventoryEvent, err error) {
+func (e *InventoryEvent) GetAllEvents(DB *sql.DB,params *revel.Params) (allEvents []InventoryEvent, err error) {
 	eventMapper := mappers.InventoryEvent{}
 	equipmentMapper := mappers.EquipmentTable{}
 	employeeMapper := mappers.Employee{}
 
 	invEvent := InventoryEvent{}
-	allEquip, err := equipmentMapper.GetAllEquipments()
+	allEquip, err := equipmentMapper.GetAllEquipments(DB)
 	if err != nil {
 		return
 	}
-	allEmployees, err := employeeMapper.GetAllEmployees()
+	allEmployees, err := employeeMapper.GetAllEmployees(DB)
 	if err != nil {
 		return
 	}
-	allEventsMap, err := eventMapper.GetAllEvents()
+	allEventsMap, err := eventMapper.GetAllEvents(DB)
 	if err != nil {
 		return
 	}
@@ -52,7 +53,7 @@ func (e *InventoryEvent) GetAllEvents(params *revel.Params) (allEvents []Invento
 	}
 	return
 }
-func (e *InventoryEvent) GetEventsForDate(params *revel.Params) (allEvents []InventoryEvent, err error) {
+func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,params *revel.Params) (allEvents []InventoryEvent, err error) {
 	var dateStart = params.Get("dateStart")
 	var dateEnd = params.Get("dateEnd")
 	eventMapper := mappers.InventoryEvent{}
@@ -60,15 +61,15 @@ func (e *InventoryEvent) GetEventsForDate(params *revel.Params) (allEvents []Inv
 	employeeMapper := mappers.Employee{}
 
 	invEvent := InventoryEvent{}
-	allEquip, err := equipmentMapper.GetAllEquipments()
+	allEquip, err := equipmentMapper.GetAllEquipments(DB)
 	if err != nil {
 		return
 	}
-	allEmployees, err := employeeMapper.GetAllEmployees()
+	allEmployees, err := employeeMapper.GetAllEmployees(DB)
 	if err != nil {
 		return
 	}
-	allEventsMap, err := eventMapper.GetEventsForDate(dateStart, dateEnd)
+	allEventsMap, err := eventMapper.GetEventsForDate(DB,dateStart, dateEnd)
 	if err != nil {
 		return
 	}

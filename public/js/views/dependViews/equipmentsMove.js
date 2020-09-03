@@ -14,11 +14,12 @@ export const moveToolbar = {
             align: "right",
             options: {
                 body: {
-                    template: "<span style='display:none;'>#id#</span> <span>#name#</span>"
+
+                    template: "<span style='display:none;>#id#</span> <span>#name#</span>"
                 },
             }
         },
-        {view: "button", value: "Найти", click: filterUsers, width: 100, align: "right"},
+        {view: "button",value: "Найти", click: filterUsers, width: 100,},
     ],
 };
 
@@ -37,14 +38,13 @@ export const dragEquipmentTable = {
 function filterUsers() {
     let eqipment = new Equipment();
     let selected = $$(combo).getValue();
+    $$(DragProdDatatable).clearAll();
     let promise = eqipment.getUserEquipments(selected);
-    console.log(selected);
     promise.then(response => {
         return response.json();
     }).then(result => {
         if (result.Error == "") {
-            console.log("result", result.DataArray);
-            $$(DragProdDatatable).parse(result.DataArray);
+            $$(DragProdDatatable).parse(result.Data);
         } else {
             webix.message(result.Error);
         }
@@ -73,7 +73,6 @@ export const movingTree = {
                 },
             ]
         },
-        {view: "resizer"},
         {
             rows: [
                 {
@@ -98,5 +97,4 @@ export const movingTree = {
 
     ]
 };
-
 

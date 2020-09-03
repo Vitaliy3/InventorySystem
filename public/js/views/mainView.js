@@ -88,8 +88,7 @@ function pushToTree(id) {
             return response.json();
         }).then(result => {
                 if (result.Error == "") {
-                    console.log("tree", result.Tree);
-                    $$(id).parse(result.Tree);
+                    $$(id).parse(result.Data);
                 } else {
                     webix.message(result.Error);
                 }
@@ -117,7 +116,7 @@ function loadData(id) {
             return response.json();
         }).then(result => {
             if (result.Error == "") {
-                $$(TreeDatatable).parse(result.DataArray);
+                $$(TreeDatatable).parse(result.Data);
                 $$(TreeDatatable).filterByAll();
             } else {
                 webix.message("err", result.Error);
@@ -133,7 +132,7 @@ function loadData(id) {
             return response.json();
         }).then(result => {
             if (result.Reject == null) {
-                $$(UsersDatatable).parse(result.DataArray);
+                $$(UsersDatatable).parse(result.Data);
                 $$(UsersDatatable).filterByAll();
             } else {
                 webix.message(result.Reject);
@@ -150,7 +149,7 @@ function loadData(id) {
         }).then(result => {
             if (result.Error == "") {
                 $$(UserEventsDatatable).clearAll();
-                $$(UserEventsDatatable).parse(result.DataArray);
+                $$(UserEventsDatatable).parse(result.Data);
 
                 $$(UserEventsDatatable).filterByAll();
             } else {
@@ -171,7 +170,8 @@ function loadData(id) {
             return response.json();
         }).then(result => {
             if (result.Error == "") {
-                $$(MoveEquipDatatable).parse(result.DataArray);
+                console.log(result.Data);
+                $$(MoveEquipDatatable).parse(result.Data);
                 $$(MoveEquipDatatable).filterByAll();
             } else {
                 webix.message(result.Error);
@@ -187,17 +187,16 @@ function loadData(id) {
             if (result.Error == "") {
                 let joinUsers = [];
                 let temp = "";
-                for (let i = 0; i < result.DataArray.length; i++) {
+                for (let i = 0; i < result.Data.length; i++) {
                     temp = {
-                        id: result.DataArray[i].id,
-                        name: result.DataArray[i].name + " " + result.DataArray[i].surname + " " + result.DataArray[i].patronymic
+                        id: result.Data[i].id,
+                        name: result.Data[i].name + " " + result.Data[i].surname + " " + result.Data[i].patronymic
                     };
                     joinUsers.push(temp);
                 }
                 let list = $$(combo).getPopup().getList();
                 list.clearAll();
-                list.parse(result.DataArray);
-                console.log(joinUsers);
+                list.parse(result.Data);
             } else {
                 webix.message(result.Error);
             }
@@ -281,7 +280,7 @@ $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
         return false;
     }
     let sendValue = {fk_user: selected, id: value.id};
-    sendValue.fk_user=parseInt(sendValue.fk_user);
+    sendValue.fk_user = parseInt(sendValue.fk_user);
     let promise = product.dragToUser(sendValue);
     promise.then(response => {
         return response.json();
@@ -290,10 +289,11 @@ $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
             return result.Data;
         } else {
             webix.message(result.Error);
+            webix.message("Reload page");
             return false;
         }
-    })
-    return false;
+    });
+    return true;
 });
 
 //событие на drap-grop от сотрудника на склад
@@ -306,11 +306,25 @@ $$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
         return response.json();
     }).then(result => {
         if (result.Error == "") {
-            return result.Data;
         } else {
             webix.message(result.Error);
         }
     });
-    ;
-    return false;
+    return true;
 });
+$$(MoveEquipDatatable).attachEvent("onAfterAdd", function (id, index) {
+    $$(MoveEquipDatatable).filterByAll();
+});
+
+
+// function clearForm() {
+//     webix.confirm({
+//         title: "All data will be lost!",
+//         text: "Are you sure?"
+//     }).then(() => {
+//             $$("shop").clear();
+//             $$("shop").clearValidation();
+//         }
+//     )
+// };
+// { view: "button", id: "btn_clear", value: "Clear", click: clearForm }

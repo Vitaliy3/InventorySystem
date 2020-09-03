@@ -9,12 +9,22 @@ export const equipmentsToolbar = {
     hidden: hide,
     id: "myToolbar",
     cols: [
-        {view: "button", id: "addEquipment", value: "Добавить оборудование", width: 200, height: 50, click: addProduct},
+        {
+            view: "button",
+            width: 240,
+            css:{"opacity":"0"},
+        },
+        {
+            view: "button",
+            id: "addEquipment",
+            value: "Добавить оборудование",
+            height: 50,
+            click: addProduct
+        },
         {
             view: "button",
             id: "updateEquipment",
-            value: "Изменить название оборудования",
-            width: 300,
+            value: "Редактировать оборудование",
             height: 50,
             align: "",
             click: updateProduct
@@ -23,7 +33,6 @@ export const equipmentsToolbar = {
             view: "button",
             id: "deleteEquipment",
             value: "Удалить оборудование",
-            width: 200,
             height: 50,
             align: "",
             click: deleteProduct
@@ -32,7 +41,6 @@ export const equipmentsToolbar = {
             view: "button",
             id: "writeProduct",
             value: "Списать оборудование",
-            width: 200,
             height: 50,
             align: "",
             click: writeProduct
@@ -98,6 +106,7 @@ function writeProduct() {
         return response.json();
     }).then(result => {
         if (result.Reject == null) {
+            console.log(result.Data);
             datatable.updateItem(result.Data.id, {status: result.Data.status});
         } else {
             console.log("reject null");

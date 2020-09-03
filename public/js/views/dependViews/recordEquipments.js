@@ -41,7 +41,6 @@ export const recordEquipments = {
 
             ]
         },
-        { view: "resizer" },
         {
             rows: [
                 {

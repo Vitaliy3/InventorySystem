@@ -1,5 +1,7 @@
 package mappers
 
+import "database/sql"
+
 type InventoryEvent struct {
 	Id           int
 	Fk_user      int
@@ -8,10 +10,8 @@ type InventoryEvent struct {
 	Date         string
 }
 
-func (e *InventoryEvent) GetAllEvents() (inventoryEvent []InventoryEvent, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select id, fk_user, fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') from inventoryEvents")
+func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (inventoryEvent []InventoryEvent, err error) {
+	rows, err := DB.Query("select id, fk_user, fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') from inventoryEvents")
 	if err != nil {
 		return
 	}
@@ -26,10 +26,8 @@ func (e *InventoryEvent) GetAllEvents() (inventoryEvent []InventoryEvent, err er
 	}
 	return
 }
-func (e *InventoryEvent) GetEventsForDate(startDate string, endDate string) (inventoryEvent []InventoryEvent, err error) {
-	OpenConnection()
-	defer db.Close()
-	rows, err := db.Query("select id,fk_user,fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') "+
+func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,startDate string, endDate string) (inventoryEvent []InventoryEvent, err error) {
+	rows, err := DB.Query("select id,fk_user,fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') "+
 		"from inventoryEvents where date between $1 and $2 ", startDate, endDate)
 	if err != nil {
 		return

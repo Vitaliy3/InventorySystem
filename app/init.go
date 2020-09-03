@@ -1,8 +1,9 @@
 package app
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/revel/revel"
-	"myapp/app/models"
 )
 
 var (
@@ -16,27 +17,25 @@ var (
 //var DataEquipments renderDataEquipments
 //var DataEmployee renderDataEmployee
 
-type RenderDataEvents struct {
-	Data models.InventoryEvent
-	DataArray  []models.InventoryEvent
+type RenderInterface struct {
+	Data  interface{}
 	Error string
 }
-type RenderDataEmployee struct {
-	Data      models.Employee
-	DataArray []models.Employee
-	Error     string
-}
-type RenderDataEquipments struct {
-	Data      models.EquipmentModel
-	DataArray []models.EquipmentModel
-	Error     string
-	Tree      []models.FullTree
-}
+const (
+	host   = "127.0.0.1"
+	port   = 5433
+	user   = "postgres"
+	dbname = "dbtest"
+)
+var DB *sql.DB
 
-func initializeStructs() {
-	//DataEvent = renderDataEvents{}
-	//DataEmployee = renderDataEmployee{}
-	//DataEquipments = renderDataEquipments{}
+func OpenConnection() {
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
+	var err error
+	DB, err = sql.Open("postgres", psqlInfo)
+	if err != nil {
+		fmt.Println("errOpen:", err)
+	}
 }
 func init() {
 	// Filters is the default set of global filters.
@@ -56,7 +55,6 @@ func init() {
 		revel.BeforeAfterFilter,       // Call the before and after filter functions
 		revel.ActionInvoker,           // Invoke the action.
 	}
-	revel.OnAppStart(initializeStructs)
 
 	// Register startup functions with OnAppStart
 	// revel.DevMode and revel.RunMode only work inside of OnAppStart. See Example Startup Script
@@ -64,6 +62,7 @@ func init() {
 	// revel.OnAppStart(ExampleStartupScript)
 	// revel.OnAppStart(InitDB)
 	// revel.OnAppStart(FillCache)
+	revel.OnAppStart(OpenConnection)
 }
 
 // HeaderFilter adds common security headers

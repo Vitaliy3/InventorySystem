@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"github.com/revel/revel"
@@ -18,9 +19,9 @@ type Employee struct {
 }
 
 //получение всех сотрудников
-func (e *Employee) GetAllEmployees() (employeeArray []Employee, err error) {
+func (e *Employee) GetAllEmployees(DB *sql.DB) (employeeArray []Employee, err error) {
 	emMapper := mappers.Employee{}
-	dbEmployees, err := emMapper.GetAllEmployees()
+	dbEmployees, err := emMapper.GetAllEmployees(DB)
 	if err != nil {
 		return
 	}
@@ -37,17 +38,17 @@ func (e *Employee) GetAllEmployees() (employeeArray []Employee, err error) {
 }
 
 //изменение данных о сотруднике
-func (e *Employee) UpdateEmployee(params *revel.Params) (employee Employee, err error) {
+func (e *Employee) UpdateEmployee(DB *sql.DB,params *revel.Params) (employee Employee, err error) {
 	employeeMapper := mappers.Employee{}
 	err = json.Unmarshal(params.JSON, &employeeMapper)
 	if err != nil {
 		return
 	}
-	lastUpdateId, err := employeeMapper.UpdateEmployee()
+	lastUpdateId, err := employeeMapper.UpdateEmployee(DB)
 	if err != nil {
 		return
 	}
-	employeeMapper, err = employeeMapper.GetEmployeeById(lastUpdateId)
+	employeeMapper, err = employeeMapper.GetEmployeeById(DB,lastUpdateId)
 	employee.Id = employeeMapper.Id
 	employee.Name = employeeMapper.Name
 	employee.Surname = employeeMapper.Surname
@@ -60,14 +61,14 @@ func (e *Employee) UpdateEmployee(params *revel.Params) (employee Employee, err 
 }
 
 //удаление сотрудника
-func (e *Employee) DeleteEmployee(params *revel.Params) (employee Employee, err error) {
+func (e *Employee) DeleteEmployee(DB *sql.DB,params *revel.Params) (employee Employee, err error) {
 	emMapper := mappers.Employee{}
 	var id int
 	err = json.Unmarshal(params.JSON, &id)
 	if err != nil {
 		return
 	}
-	lastDeleteId, err := emMapper.DeleteEmployee(id)
+	lastDeleteId, err := emMapper.DeleteEmployee(DB,id)
 	if err != nil {
 		return
 	}
@@ -75,17 +76,17 @@ func (e *Employee) DeleteEmployee(params *revel.Params) (employee Employee, err 
 	return
 }
 
-func (e *Employee) AddEmployee(params *revel.Params) (employee Employee, err error) {
+func (e *Employee) AddEmployee(DB *sql.DB,params *revel.Params) (employee Employee, err error) {
 	employeeMapper := mappers.Employee{}
 	err = json.Unmarshal(params.JSON, &employeeMapper)
 	if err != nil {
 		return
 	}
-	lastInsertedId, err := employeeMapper.AddEmployee()
+	lastInsertedId, err := employeeMapper.AddEmployee(DB)
 	if err != nil {
 		return
 	}
-	employeeMapper, err = employeeMapper.GetEmployeeById(lastInsertedId)
+	employeeMapper, err = employeeMapper.GetEmployeeById(DB,lastInsertedId)
 	if err != nil {
 		return
 	}
@@ -97,11 +98,11 @@ func (e *Employee) AddEmployee(params *revel.Params) (employee Employee, err err
 	return
 }
 
-func (e *Employee) ResetPassEmployee(params *revel.Params) (employee Employee, err error) {
+func (e *Employee) ResetPassEmployee(DB *sql.DB,params *revel.Params) (employee Employee, err error) {
 	emMapper := mappers.Employee{}
 	var id int
 	err = json.Unmarshal(params.JSON, &id)
-	updatedRowId, err := emMapper.ResetPassEmployee(id)
+	updatedRowId, err := emMapper.ResetPassEmployee(DB,id)
 	if err != nil {
 		return
 	}

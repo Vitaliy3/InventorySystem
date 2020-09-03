@@ -3,21 +3,29 @@
   <component name="ChangeListManager">
     <list default="true" id="47cec5cc-743f-4444-8811-465dc71f3eb0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/appC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/eqipmentC.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/employeeC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/employeeC.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/eqipmentC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/eqipmentC.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/eventsC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/eventsC.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/init.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/mappers/EventMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/EventMap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/mappers/employeeMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/employeeMap.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/mappers/equipmentMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/equipmentMap.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/employeeMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/employeeMod.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/equipmentMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/equipmentMod.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/eventsMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/eventsMod.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/conf/routes" beforeDir="false" afterPath="$PROJECT_DIR$/conf/routes" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/none" beforeDir="false" afterPath="$PROJECT_DIR$/none" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/models/MEquipmentM.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/models/MEquipmentM.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/const.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/const.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipmentsUser.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipmentsUser.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/views/mainView.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/mainView.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/views/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/styles.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/app/myapp/myapp.exe" beforeDir="false" afterPath="$PROJECT_DIR$/target/app/myapp/myapp.exe" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -43,10 +51,76 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/mappers/employeeMap.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-425">
+              <caret line="14" column="86" selection-start-line="14" selection-start-column="86" selection-end-line="14" selection-end-column="86" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/employeeC.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="16" column="57" selection-start-line="16" selection-start-column="57" selection-end-line="16" selection-end-column="57" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/eqipmentC.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="158">
+              <caret line="86" column="46" selection-start-line="86" selection-start-column="46" selection-end-line="86" selection-end-column="46" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/eventsC.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="13" column="40" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/mappers/equipmentMap.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="116">
+              <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
+              <folding>
+                <element signature="e#17#80#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/employeeMod.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="21" column="45" selection-start-line="21" selection-start-column="45" selection-end-line="21" selection-end-column="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/equipmentMod.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="333">
+              <caret line="180" column="13" lean-forward="true" selection-start-line="180" selection-start-column="13" selection-end-line="180" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/public/js/views/mainView.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="283" column="50" selection-start-line="283" selection-start-column="50" selection-end-line="283" selection-end-column="50" />
+            <state relative-caret-position="381">
+              <caret line="328" column="2" selection-start-line="328" selection-start-column="2" selection-end-line="328" selection-end-column="2" />
               <folding>
                 <element signature="e#0#75#0" expanded="true" />
               </folding>
@@ -55,86 +129,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/eventsC.go">
+        <entry file="file://$PROJECT_DIR$/app/models/eventsMod.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
+            <state relative-caret-position="1139">
+              <caret line="71" column="57" selection-start-line="71" selection-start-column="57" selection-end-line="71" selection-end-column="57" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/js/views/const.js">
+        <entry file="file://$PROJECT_DIR$/app/mappers/EventMap.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="31" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="39" selection-start-line="39" selection-end-line="39" />
-              <folding>
-                <element signature="e#0#94#0" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/js/models/MEquipmentM.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="77" column="28" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/eqipmentC.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="93">
-              <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-              <folding>
-                <element signature="e#21#77#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/conf/routes">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="212">
-              <caret line="17" column="53" selection-start-line="17" selection-start-column="53" selection-end-line="17" selection-end-column="53" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/equipmentMod.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="40" column="41" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
-              <folding>
-                <element signature="e#16#97#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/mappers/equipmentMap.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="149" column="19" lean-forward="true" selection-start-line="149" selection-start-column="19" selection-end-line="149" selection-end-column="19" />
-              <folding>
-                <element signature="e#17#80#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="137">
+              <caret line="12" column="48" selection-start-line="12" selection-start-column="48" selection-end-line="12" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -150,36 +157,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>UserEventsDatatable</find>
-      <find>fmt</find>
-      <find>geta</find>
-      <find>getaa</find>
-      <find>getal</find>
-      <find>getallq</find>
-      <find>getall</find>
-      <find>add</find>
-      <find>a</find>
-      <find>addeq</find>
-      <find>write</find>
-      <find>getEquipment</find>
+      <find>clear</find>
+      <find>dragto</find>
       <find>get</find>
-      <find>byuse</find>
-      <find>post</find>
-      <find>update</find>
-      <find>Store</find>
-      <find>move</find>
-      <find>userid</find>
-      <find>join cl</find>
-      <find>by</find>
-      <find>join</find>
-      <find>byid</find>
-      <find>byuser</find>
-      <find>user</find>
-      <find>dragtost</find>
-      <find>store</find>
-      <find>dragtou</find>
-      <find>combo</find>
+      <find>filter</find>
       <find>drag</find>
+      <find>ilter</find>
+      <find>add</find>
+      <find>geta</find>
+      <find>getal</find>
+      <find>write</find>
+      <find>console</find>
+      <find>dataA</find>
+      <find>data</find>
+      <find>Tre</find>
+      <find>tree</find>
+      <find>Tree</find>
+      <find>subclass</find>
+      <find>subcla</find>
+      <find>fullt</find>
+      <find>fullT</find>
+      <find>open</find>
+      <find>названия</find>
+      <find>измен</find>
+      <find>resize</find>
+      <find>resi</find>
+      <find>найти</find>
+      <find>resiz</find>
+      <find>css</find>
+      <find>getall</find>
+      <find>emp</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="C:\Go" />
@@ -192,10 +199,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/28d7da54-aa6b-42c0-b78b-6673861b4ec6/console.sql" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/28d7da54-aa6b-42c0-b78b-6673861b4ec6/console_1.sql" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/28d7da54-aa6b-42c0-b78b-6673861b4ec6/console_2.sql" />
-        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/28d7da54-aa6b-42c0-b78b-6673861b4ec6/console_3.sql" />
         <option value="$PROJECT_DIR$/conf/app.conf" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/addItemForm.js" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/updateItemForm.js" />
@@ -212,37 +215,41 @@
         <option value="$PROJECT_DIR$/public/js/views/dependViews/EquipmentsToolBar.js" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/equipmentsToolBar.js" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/moveProducts.js" />
-        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js" />
         <option value="$PROJECT_DIR$/app/controllers/app.go" />
         <option value="$PROJECT_DIR$/app/models/equipment.go" />
-        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEquipmentForm.js" />
         <option value="$PROJECT_DIR$/app/mappers/equipment.go" />
-        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/equipmentsToolbar.js" />
         <option value="$PROJECT_DIR$/app/controllers/employee.go" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/employeeToolbar.js" />
-        <option value="$PROJECT_DIR$/app/mappers/employeeMap.go" />
-        <option value="$PROJECT_DIR$/app/models/employeeMod.go" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/registerEmployeeForm.js" />
         <option value="$PROJECT_DIR$/app/controllers/EventsC.go" />
         <option value="$PROJECT_DIR$/public/js/models/MUserModel.js" />
         <option value="$PROJECT_DIR$/app/controllers/appC.go" />
-        <option value="$PROJECT_DIR$/app/controllers/employeeC.go" />
-        <option value="$PROJECT_DIR$/app/init.go" />
-        <option value="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" />
-        <option value="$PROJECT_DIR$/app/models/eventsMod.go" />
-        <option value="$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js" />
-        <option value="$PROJECT_DIR$/app/mappers/EventMap.go" />
-        <option value="$PROJECT_DIR$/app/controllers/eventsC.go" />
         <option value="$PROJECT_DIR$/conf/routes" />
-        <option value="$PROJECT_DIR$/app/controllers/eqipmentC.go" />
-        <option value="$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js" />
-        <option value="$PROJECT_DIR$/public/js/models/MEquipmentM.js" />
         <option value="$PROJECT_DIR$/public/js/views/const.js" />
+        <option value="$PROJECT_DIR$/public/js/models/MEquipmentM.js" />
+        <option value="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/recordEquipmentsUser.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEquipmentForm.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js" />
+        <option value="$PROJECT_DIR$/public/js/views/styles.css" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js" />
+        <option value="$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js" />
         <option value="$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js" />
-        <option value="$PROJECT_DIR$/public/js/views/mainView.js" />
-        <option value="$PROJECT_DIR$/app/models/equipmentMod.go" />
+        <option value="$PROJECT_DIR$/app/init.go" />
+        <option value="$PROJECT_DIR$/app/mappers/employeeMap.go" />
+        <option value="$PROJECT_DIR$/app/models/employeeMod.go" />
+        <option value="$PROJECT_DIR$/app/mappers/EventMap.go" />
+        <option value="$PROJECT_DIR$/app/models/eventsMod.go" />
+        <option value="$PROJECT_DIR$/app/controllers/employeeC.go" />
+        <option value="$PROJECT_DIR$/app/controllers/eventsC.go" />
+        <option value="$PROJECT_DIR$/app/controllers/eqipmentC.go" />
         <option value="$PROJECT_DIR$/app/mappers/equipmentMap.go" />
+        <option value="$PROJECT_DIR$/app/models/equipmentMod.go" />
+        <option value="$PROJECT_DIR$/public/js/views/mainView.js" />
       </list>
     </option>
   </component>
@@ -328,6 +335,15 @@
               <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="dependViews" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="myapp" type="b2602c69:ProjectViewProjectNode" />
+              <item name="myapp" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="dependViews" type="462c0819:PsiDirectoryNode" />
+              <item name="forms" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -388,7 +404,7 @@
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18683812" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20726173" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -401,7 +417,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.5650529" visible="true" weight="0.38074714" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.5650529" visible="true" weight="0.33045977" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.43494704" side_tool="true" weight="0.3821839" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.3275862" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -410,7 +426,7 @@
       <window_info anchor="right" id="Database" order="3" weight="0.2065053" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18683812" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19213313" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -423,8 +439,8 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.56580937" weight="0.3433908" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.43419063" side_tool="true" weight="0.34770116" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.5650529" visible="true" weight="0.34313726" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.43494704" side_tool="true" weight="0.3821839" />
       <window_info anchor="bottom" id="Database Console" order="12" weight="0.3275862" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -446,6 +462,12 @@
           <line>38</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js</url>
+          <line>22</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -509,16 +531,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="7" selection-start-line="8" selection-start-column="7" selection-end-line="8" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#56#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/routes/routes.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1551">
@@ -526,45 +538,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="59" column="32" selection-start-line="59" selection-start-column="32" selection-end-line="59" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conf/app.conf">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="106">
           <caret line="154" column="16" selection-start-line="154" selection-start-column="13" selection-end-line="154" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="867">
-          <caret line="54" column="53" selection-start-line="54" selection-start-column="53" selection-end-line="54" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/registerEmployeeForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
-          <caret line="65" column="34" selection-start-line="65" selection-start-column="34" selection-end-line="65" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordUsers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="18" lean-forward="true" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/updateEquipmentForm.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="146">
-          <caret line="33" column="30" lean-forward="true" selection-start-line="33" selection-start-column="30" selection-end-line="33" selection-end-column="30" />
         </state>
       </provider>
     </entry>
@@ -578,82 +555,6 @@
     <entry file="file://$PROJECT_DIR$/app/controllers/moveEquipment.go">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/employeeMod.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="104" column="19" selection-start-line="104" selection-start-column="19" selection-end-line="104" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/mappers/employeeMap.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="23" column="25" selection-start-line="23" selection-start-column="25" selection-end-line="23" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/employeeC.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/init.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-          <folding>
-            <element signature="e#13#69#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/models/MEmployeeEvents.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="16" selection-start-line="11" selection-start-column="16" selection-end-line="11" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="68" selection-start-line="11" selection-start-column="68" selection-end-line="11" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#48#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/models/MUserModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="37" column="14" selection-start-line="37" selection-start-column="14" selection-end-line="37" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/mappers/EventMap.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="35" column="5" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/eventsMod.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="901">
-          <caret line="74" column="34" selection-start-line="74" selection-start-column="34" selection-end-line="74" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="95" column="28" selection-start-line="95" selection-start-column="28" selection-end-line="95" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/conf/routes">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="212">
@@ -661,31 +562,127 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js">
+    <entry file="file://$PROJECT_DIR$/public/js/views/const.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="4" column="26" selection-start-line="4" selection-start-column="26" selection-end-line="4" selection-end-column="26" />
+          <caret line="4" column="47" selection-start-line="4" selection-start-column="35" selection-end-line="4" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/models/MEmployeeEvents.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="15" selection-start-line="9" selection-start-column="15" selection-end-line="9" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/registerEmployeeForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="64" column="47" selection-start-line="64" selection-start-column="43" selection-end-line="64" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/models/MUserModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="35" selection-start-column="35" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/models/MEquipmentM.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="77" column="28" selection-start-line="77" selection-start-column="28" selection-end-line="77" selection-end-column="28" />
+        <state relative-caret-position="142">
+          <caret line="47" column="50" selection-start-line="47" selection-start-column="50" selection-end-line="47" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/const.js">
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="34" selection-end-line="7" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/updateEquipmentForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="19" lean-forward="true" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="257">
+          <caret line="21" selection-start-line="15" selection-start-column="67" selection-end-line="21" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/styles.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="258">
+          <caret line="61" column="5" lean-forward="true" selection-start-line="61" selection-start-column="5" selection-end-line="61" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" column="31" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="31" />
+          <caret line="14" selection-start-line="14" selection-end-line="15" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordUsers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="109">
+          <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordEquipmentsUser.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="23" column="9" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="11" selection-start-line="5" selection-start-column="11" selection-end-line="5" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+          <folding>
+            <element signature="e#0#63#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="39" selection-start-line="39" selection-end-line="39" />
+        <state relative-caret-position="17">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
           <folding>
             <element signature="e#0#94#0" expanded="true" />
             <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
@@ -693,49 +690,88 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/views/mainView.js">
+    <entry file="file://$PROJECT_DIR$/app/init.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="283" column="50" selection-start-line="283" selection-start-column="50" selection-end-line="283" selection-end-column="50" />
+        <state relative-caret-position="782">
+          <caret line="64" column="35" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
           <folding>
-            <element signature="e#0#75#0" expanded="true" />
+            <element signature="e#13#49#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/mappers/employeeMap.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-425">
+          <caret line="14" column="86" selection-start-line="14" selection-start-column="86" selection-end-line="14" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/mappers/EventMap.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="12" column="48" selection-start-line="12" selection-start-column="48" selection-end-line="12" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/eventsMod.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="71" column="57" selection-start-line="71" selection-start-column="57" selection-end-line="71" selection-end-column="57" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/eventsC.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        <state relative-caret-position="153">
+          <caret line="13" column="40" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/eqipmentC.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="93">
-          <caret line="20" column="38" selection-start-line="20" selection-start-column="38" selection-end-line="20" selection-end-column="38" />
-          <folding>
-            <element signature="e#21#77#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="158">
+          <caret line="86" column="46" selection-start-line="86" selection-start-column="46" selection-end-line="86" selection-end-column="46" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/equipmentMod.go">
+    <entry file="file://$PROJECT_DIR$/app/controllers/employeeC.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="40" column="41" selection-start-line="40" selection-start-column="41" selection-end-line="40" selection-end-column="41" />
-          <folding>
-            <element signature="e#16#97#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="204">
+          <caret line="16" column="57" selection-start-line="16" selection-start-column="57" selection-end-line="16" selection-end-column="57" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/mappers/equipmentMap.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="149" column="19" lean-forward="true" selection-start-line="149" selection-start-column="19" selection-end-line="149" selection-end-column="19" />
+        <state relative-caret-position="116">
+          <caret line="15" column="33" selection-start-line="15" selection-start-column="33" selection-end-line="15" selection-end-column="33" />
           <folding>
             <element signature="e#17#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/employeeMod.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="21" column="45" selection-start-line="21" selection-start-column="45" selection-end-line="21" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/equipmentMod.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="333">
+          <caret line="180" column="13" lean-forward="true" selection-start-line="180" selection-start-column="13" selection-end-line="180" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/views/mainView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="328" column="2" selection-start-line="328" selection-start-column="2" selection-end-line="328" selection-end-column="2" />
+          <folding>
+            <element signature="e#0#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
