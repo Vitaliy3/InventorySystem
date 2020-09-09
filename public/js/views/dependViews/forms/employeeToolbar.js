@@ -1,7 +1,7 @@
-import {registerEmployeeForm} from './registerEmployeeForm.js';
+import {registerUserForm} from './registerUserForm.js';
 import {Employee} from '../../../models/MUserModel.js';
-import {UsersDatatable} from '../../const.js';
-import {updateEmployeeForm} from './updateEmployeeForm.js';
+import {UpdateUserForm, UsersDatatable} from '../../const.js';
+import {updateUserForm} from './updateUserForm.js';
 
 export const UsersToolbar = {
     view: "toolbar",
@@ -22,20 +22,20 @@ export const UsersToolbar = {
 
 //добавления пользователя
 function addUser() {
-    registerEmployeeForm.show({x: 400, y: 150});
+    registerUserForm.show({x: 400, y: 150});
 }
 
 //обновление данных пользователя
 function updateUser() {
     let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
-        $$('updateEmployeeForm').setValues({
+        $$(UpdateUserForm).setValues({
             name: row.name,
             surname: row.surname,
             patronymic: row.patronymic,
             login: row.login
         });
-        updateEmployeeForm.show({x: 400, y: 200});
+        updateUserForm.show({x: 400, y: 200});
     } else {
         webix.message("not selected item");
     }
@@ -63,21 +63,27 @@ function deleteUser() {
 
 //сброс пароля
 function resetPassword() {
-    let row = $$(UsersDatatable).getSelectedItem();
-    if (row) {
-        let user = new Employee();
-        console.log(user);
-        let promise = user.resetPassword(row);
-        promise.then(response => {
-            return response.json();
-        }).then(result => {
-            if (result.Reject == null) {
-                webix.message("success reset");
-            } else {
-                webix.message(result.Reject);
-            }
-        })
-    } else {
-        webix.message("not selected item");
-    }
+    webix.confirm({
+        title: "Сброс пароля",
+        text: "Вы уверены?"
+    }).then(() => {
+
+        let row = $$(UsersDatatable).getSelectedItem();
+        if (row) {
+            let user = new Employee();
+            console.log(user);
+            let promise = user.resetPassword(row);
+            promise.then(response => {
+                return response.json();
+            }).then(result => {
+                if (result.Reject == null) {
+                    webix.message("success reset");
+                } else {
+                    webix.message(result.Reject);
+                }
+            })
+        } else {
+            webix.message("not selected item");
+        }
+    });
 }

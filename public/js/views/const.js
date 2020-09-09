@@ -7,3 +7,5 @@ export const DragProdDatatable = "moveProd";
 export const UserEventsDatatable = "recordEvents";
 export const EventsToolbar = "EventToolbar";
 export const  combo="richselect";
+export const RegisterUserForm ="registerUserForm";
+export  const UpdateUserForm="updateUserForm";

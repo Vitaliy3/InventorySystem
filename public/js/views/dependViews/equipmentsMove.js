@@ -5,21 +5,29 @@ import {Equipment} from "../../models/MEquipmentM.js";
 export const moveToolbar = {
     view: "toolbar",
     id: "moveToolbar",
+    width: 200,
     cols: [
+        {
+            view: "template",
+            css: {"opacity": "0"},
+            template: "<div></div>"
+
+
+        },
         {
             view: combo,
             value: 2,
             id: combo,
-            width: 200,
+            width: 390,
             align: "right",
             options: {
                 body: {
 
-                    template: "<span style='display:none;>#id#</span> <span>#name#</span>"
+                    template: "<span style='display:none'>#id#</span> <span>#name#</span>"
                 },
             }
         },
-        {view: "button",value: "Найти", click: filterUsers, width: 100,},
+        {view: "button", id: "button1", value: "Найти", click: findEquipmentsByUser, width: 100,},
     ],
 };
 
@@ -35,16 +43,20 @@ export const dragEquipmentTable = {
     ]
 };
 
-function filterUsers() {
+function findEquipmentsByUser() {
     let eqipment = new Equipment();
     let selected = $$(combo).getValue();
     $$(DragProdDatatable).clearAll();
+    console.log(selected);
     let promise = eqipment.getUserEquipments(selected);
     promise.then(response => {
         return response.json();
     }).then(result => {
         if (result.Error == "") {
-            $$(DragProdDatatable).parse(result.Data);
+            if (result.Data == null) {
+            } else {
+                $$(DragProdDatatable).parse(result.Data);
+            }
         } else {
             webix.message(result.Error);
         }

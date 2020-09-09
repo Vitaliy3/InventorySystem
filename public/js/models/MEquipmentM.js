@@ -12,6 +12,10 @@ export function sendQuery(url, method, data) {
 }
 
 export class Equipment {
+    auth(base){
+        return sendQuery('/TryAuth', 'POST', base)
+
+    }
     addEquipment(equipment) {
         equipment.class = parseInt(equipment.class);
         equipment.subclass = parseInt(equipment.subclass);
@@ -30,6 +34,9 @@ export class Equipment {
 
     getAllEquipment() {
         return fetch('/getAllEquipments')
+    }
+    logout(){
+        return fetch('/logout')
     }
 
     getEquipmentsInStore() {

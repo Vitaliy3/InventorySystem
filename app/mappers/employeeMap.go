@@ -15,7 +15,7 @@ type Employee struct {
 func (e *Employee) GetEmployeeById(DB *sql.DB,id int) (employee Employee, err error) {
 	row := DB.QueryRow("select id,username,surname,patronymic,login,fk_role from users where id=$1", id)
 	err = row.Scan(&e.Id, &employee.Name, &employee.Surname, &employee.Patronymic, &employee.Login, &employee.Fk_role)
-	if err != nil {
+	if err != nil{
 		return
 	}
 	return
@@ -28,9 +28,12 @@ func (e *Employee) GetAllEmployees(DB *sql.DB) (employee []Employee, err error) 
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Name, &e.Surname, &e.Patronymic, &e.Login, &e.Fk_role)
+		err = rows.Scan(&e.Id, &e.Name, &e.Surname, &e.Patronymic, &e.Login, &e.Fk_role)
 		if err != nil {
-			continue
+			if err == sql.ErrNoRows {
+				err = nil
+			}
+			return
 		}
 		employee = append(employee, *e)
 	}

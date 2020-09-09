@@ -1,6 +1,6 @@
 import {UserEventsDatatable} from '../views/const.js';
 
-export class EmployeeEvent {
+export class UserEvent {
     getAllEvents() {
         $$(UserEventsDatatable).showProgress({});
         return fetch('/getAllEvents')

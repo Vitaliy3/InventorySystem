@@ -7,15 +7,15 @@ import (
 	"myapp/app/models"
 )
 
-type App struct {
+type Equipment struct {
 	*revel.Controller
 }
 
-func (c App) Index() revel.Result {
+func (c Equipment) Index() revel.Result {
 	return c.Render()
 }
 
-func (c App) DragToUser() revel.Result {
+func (c Equipment) DragToUser() revel.Result {
 	renderInterface := app.RenderInterface{}
 	equipModel := models.EquipmentModel{}
 	result, err := equipModel.DragToUser(app.DB, c.Params)
@@ -28,7 +28,7 @@ func (c App) DragToUser() revel.Result {
 
 }
 
-func (c App) DragToStore() revel.Result {
+func (c Equipment) DragToStore() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.DragToStore(app.DB, c.Params)
@@ -42,10 +42,10 @@ func (c App) DragToStore() revel.Result {
 }
 
 //получение оборудования,которое находится у определенного пользователя
-func (c App) GetEquipmentOnUser() revel.Result {
+func (c Equipment) GetEquipmentByUser() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEquipments.GetEquipmentOnUser(app.DB, c.Params)
+	result, err := DataEquipments.GetEquipmentByUser(app.DB, c.Params)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -55,7 +55,7 @@ func (c App) GetEquipmentOnUser() revel.Result {
 }
 
 //получение оборудования,которое находится на складе
-func (c App) GetEquipmentsInStore() revel.Result {
+func (c Equipment) GetEquipmentsInStore() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.GetEquipmentsInStore(app.DB)
@@ -68,7 +68,7 @@ func (c App) GetEquipmentsInStore() revel.Result {
 }
 
 //получение полного дерева учета оборудования
-func (c App) GetFullTree() revel.Result {
+func (c Equipment) GetFullTree() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.GetFullTree(app.DB)
@@ -81,7 +81,7 @@ func (c App) GetFullTree() revel.Result {
 }
 
 //получение всего оборудования
-func (c App) GetAllEquipments() revel.Result {
+func (c Equipment) GetAllEquipments() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.GetAllEquipments(app.DB)
@@ -90,11 +90,13 @@ func (c App) GetAllEquipments() revel.Result {
 	} else {
 		renderInterface.Data = result
 	}
+	fmt.Println("RENDERDATA",renderInterface.Data)
+
 	return c.RenderJSON(renderInterface)
 }
 
 //списать оборудование
-func (c App) WriteEquipment() revel.Result {
+func (c Equipment) WriteEquipment() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 
@@ -108,7 +110,7 @@ func (c App) WriteEquipment() revel.Result {
 }
 
 //изменение оборудования
-func (c App) UpdateEquipment() revel.Result {
+func (c Equipment) UpdateEquipment() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 
@@ -122,7 +124,7 @@ func (c App) UpdateEquipment() revel.Result {
 }
 
 //добавление оборудования
-func (c App) AddEquipment() revel.Result {
+func (c Equipment) AddEquipment() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 
@@ -137,7 +139,7 @@ func (c App) AddEquipment() revel.Result {
 }
 
 //удаление оборудования
-func (c App) DeleteEquipment() revel.Result {
+func (c Equipment) DeleteEquipment() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 

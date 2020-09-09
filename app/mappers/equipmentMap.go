@@ -4,25 +4,22 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"log"
 )
 
-
-
 type EquipmentTable struct {
-	Id              int            ` json:"id" `
-	Fk_parent       int            ` json:"class" `
-	Fk_class        int            ` json:"subclass" `
+	Id              int           ` json:"id" `
+	Fk_parent       int           ` json:"class" `
+	Fk_class        int           ` json:"subclass" `
 	Fk_user         sql.NullInt64 ` json:"user" `
-	InventoryNumber string         ` json:"inventoryNumber" `
-	EquipmentName   string         ` json:"name" `
-	Status          int            ` json:"status" `
+	InventoryNumber string        ` json:"inventoryNumber" `
+	EquipmentName   string        ` json:"name" `
+	Status          int           ` json:"status" `
 	Subclass        string
 	Class           string
 }
 
 //получение одной еденицы оборудования
-func (e *EquipmentTable) GetEquipmentById(DB *sql.DB,id int) (eq EquipmentTable, err error) {
+func (e *EquipmentTable) GetEquipmentById(DB *sql.DB, id int) (eq EquipmentTable, err error) {
 	fmt.Println("getId", id)
 	row := DB.QueryRow("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.id =$1", id)
 	err = row.Scan(&eq.Id, &eq.Fk_class, &eq.Fk_user, &eq.InventoryNumber, &eq.EquipmentName, &eq.Status, &eq.Fk_parent)
@@ -41,10 +38,12 @@ func (e *EquipmentTable) GetAllEquipments(DB *sql.DB) (equipments []EquipmentTab
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status, &e.Fk_parent)
+		err = rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status, &e.Fk_parent)
 		if err != nil {
-			log.Println(err)
-			continue
+			if err == sql.ErrNoRows {
+				err = nil
+			}
+			return
 		}
 		equipments = append(equipments, *e)
 	}
@@ -52,17 +51,20 @@ func (e *EquipmentTable) GetAllEquipments(DB *sql.DB) (equipments []EquipmentTab
 }
 
 //все товары у сотрудника
-func (e *EquipmentTable) GetEquipmentsByUser(DB *sql.DB,userId int) (equipments []EquipmentTable, err error) {
+func (e *EquipmentTable) GetEquipmentsByUser(DB *sql.DB, userId int) (equipments []EquipmentTable, err error) {
 
 	rows, err := DB.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_parent, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status)
+		err = rows.Scan(&e.Id, &e.Fk_class, &e.Fk_parent, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status)
 		if err != nil {
-			log.Println(err)
+			return
 			continue
 		}
 		equipments = append(equipments, *e)
@@ -78,10 +80,12 @@ func (e *EquipmentTable) GetEquipmentsInStore(DB *sql.DB) (equipments []Equipmen
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status, &e.Fk_parent)
+		err = rows.Scan(&e.Id, &e.Fk_class, &e.Fk_user, &e.InventoryNumber, &e.EquipmentName, &e.Status, &e.Fk_parent)
 		if err != nil {
-			log.Println(err)
-			continue
+			if err == sql.ErrNoRows {
+				err = nil
+			}
+			return
 		}
 		equipments = append(equipments, *e)
 	}
@@ -96,10 +100,11 @@ func (e *EquipmentTable) GetFullTree(DB *sql.DB) (equipments []EquipmentTable, e
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&e.Fk_parent, &e.Fk_class, &e.Class, &e.Subclass)
+		err = rows.Scan(&e.Fk_parent, &e.Fk_class, &e.Class, &e.Subclass)
 		if err != nil {
-			log.Println(err)
-			continue
+			if err == sql.ErrNoRows {
+				err = nil
+			}
 		}
 		equipments = append(equipments, *e)
 	}
@@ -116,15 +121,22 @@ func (e *EquipmentTable) AddEquipment(DB *sql.DB) (lastInsertedId int, err error
 	return
 }
 
-func (e *EquipmentTable) DragToUser(DB *sql.DB,fk_user int, id int) (lastInsertedId int, err error) {
-	err = DB.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id",id,fk_user).Scan(&lastInsertedId)
+func (e *EquipmentTable) DragToUser(DB *sql.DB, fk_user int, id int) (lastInsertedId int, err error) {
+	err = DB.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id", id, fk_user).Scan(&lastInsertedId)
+	if err != nil {
+		return
+	}
+	return
+}
+func (e *EquipmentTable) NewEvent(DB *sql.DB, fk_user sql.NullInt64, fk_equipment int, action string) (lastInsertedId int, err error) {
+	err = DB.QueryRow("insert into inventoryEvents (fk_equipment,fk_user,actionevent,date) values($1,$2,$3,'now')", fk_equipment, fk_user, action).Scan(&lastInsertedId)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (e *EquipmentTable) DragToStore(DB *sql.DB,id int) (lastInsertedId int, err error) {
+func (e *EquipmentTable) DragToStore(DB *sql.DB, id int) (lastInsertedId int, err error) {
 	err = DB.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id", id).Scan(&lastInsertedId)
 	if err != nil {
 		return
@@ -142,7 +154,7 @@ func (e *EquipmentTable) UpdateEquipment(DB *sql.DB) (lastUpdatedId int, err err
 }
 
 //удаление оборудования
-func (e *EquipmentTable) DeleteEquipment(DB *sql.DB,id int) (rowsAffected int64, err error) {
+func (e *EquipmentTable) DeleteEquipment(DB *sql.DB, id int) (rowsAffected int64, err error) {
 	result, err := DB.Exec("delete from equipments where id=$1", id)
 	if err != nil {
 		fmt.Println("DeleteEquipmentMapper", err)
@@ -153,7 +165,7 @@ func (e *EquipmentTable) DeleteEquipment(DB *sql.DB,id int) (rowsAffected int64,
 }
 
 //списывание оборудования
-func (e *EquipmentTable) WriteEquipment(DB *sql.DB,id int) (updatedElementId int, err error) {
+func (e *EquipmentTable) WriteEquipment(DB *sql.DB, id int) (updatedElementId int, err error) {
 	err = DB.QueryRow("update equipments set status=2 where id=$1 returning id", id).Scan(&updatedElementId)
 	if err != nil {
 		return

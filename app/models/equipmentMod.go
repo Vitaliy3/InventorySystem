@@ -48,6 +48,10 @@ func (e *EquipmentModel) DragToUser(DB *sql.DB, params *revel.Params) (equip Equ
 	if err != nil {
 		return
 	}
+	_, err = eqMapper.NewEvent(DB, row.Fk_user, row.Id, "drag to user")
+	if err != nil {
+		return
+	}
 	equip.Id = row.Id
 	equip.Fk_class = row.Fk_parent
 	equip.Fk_subclass = row.Fk_class
@@ -71,6 +75,10 @@ func (e *EquipmentModel) DragToStore(DB *sql.DB, params *revel.Params) (equip Eq
 		return
 	}
 	row, err := eqMapper.GetEquipmentById(DB, updatedRowId)
+	if err != nil {
+		return
+	}
+	_, err = eqMapper.NewEvent(DB, sql.NullInt64{Valid: false}, row.Id, "drag to store")
 	if err != nil {
 		return
 	}
@@ -177,9 +185,11 @@ func (e *EquipmentModel) GetAllEquipments(DB *sql.DB) (equipArray []EquipmentMod
 		temp.Status = getStatus(v.Status)
 		for _, m := range employees {
 			if int(v.Fk_user.Int64) == m.Id {
-				temp.UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
+					temp.UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
+			}else{
+				temp.UserFIO = "Отсутствует"
 			}
-			}
+		}
 		equipArray = append(equipArray, temp)
 	}
 	return
@@ -260,7 +270,7 @@ func (e *EquipmentModel) AddEquipment(DB *sql.DB, c *revel.Params) (eqData Equip
 	return
 }
 
-func (e *EquipmentModel) GetEquipmentOnUser(DB *sql.DB, params *revel.Params) (equipArray []EquipmentModel, err error) {
+func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, params *revel.Params) (equipArray []EquipmentModel, err error) {
 	eqMapper := mappers.EquipmentTable{}
 	userId := params.Get("user")
 	convUserId, err := strconv.Atoi(userId)

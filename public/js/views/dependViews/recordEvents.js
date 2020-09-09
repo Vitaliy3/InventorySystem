@@ -1,5 +1,5 @@
 import {UserEventsDatatable} from '../const.js';
-import {EmployeeEvent} from "../../models/MEmployeeEvents.js";
+import {UserEvent} from "../../models/MEmployeeEvents.js";
 
 export const recordEventsDatapicker = {
     view: "toolbar",
@@ -9,15 +9,15 @@ export const recordEventsDatapicker = {
     elements: [
         {view: "datepicker", label: "Начальная дата:", name: "start", stringResult: true, format: "%d  %M %Y",labelWidth:125,width:250},
         {view: "datepicker", label: "Конечная дата:", name: "end", stringResult: true, format: "%d  %M %Y",labelWidth:125,width:250},
-        {view: "button", value: "Поиск", click: filterDate,width:150}
+        {view: "button", value: "Поиск", click: filterByDate,width:150}
     ]
 
 };
 
 //выборка событий по дате
-function filterDate() {
+function filterByDate() {
     let dateFromTo = JSON.stringify(this.getParentView().getValues());
-    let eventModel = new EmployeeEvent();
+    let eventModel = new UserEvent();
     let promise = eventModel.getEventsForDate(dateFromTo);
     promise.then(response => {
         return response.json();

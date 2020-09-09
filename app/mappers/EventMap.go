@@ -4,7 +4,7 @@ import "database/sql"
 
 type InventoryEvent struct {
 	Id           int
-	Fk_user      int
+	Fk_user      sql.NullInt64
 	Fk_equipment int
 	ActionEvent  string
 	Date         string
@@ -13,6 +13,9 @@ type InventoryEvent struct {
 func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (inventoryEvent []InventoryEvent, err error) {
 	rows, err := DB.Query("select id, fk_user, fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') from inventoryEvents")
 	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
 		return
 	}
 	defer rows.Close()
@@ -36,6 +39,9 @@ func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,startDate string, endDate s
 	for rows.Next() {
 		err = rows.Scan(&e.Id, &e.Fk_user, &e.Fk_equipment, &e.ActionEvent, &e.Date)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				err = nil
+			}
 			return
 		}
 		inventoryEvent = append(inventoryEvent, *e)

@@ -8,28 +8,34 @@ module:testrunner
 
 
 GET     /                                       App.Index
+GET /invSys                                     App.InvSys
+* /login                                        App.Login
+* /logout                                       App.Logout
+* /tryAuth                                   App.TryAuth
 
 //                           equipment
-GET /getAllEquipments                           App.GetAllEquipments
-GET /getFullTree                                App.GetFullTree
-GET /getEquipmentsInStore                       App.GetEquipmentsInStore
-GET /getEquipmentOnUser                         App.GetEquipmentOnUser
+GET /getAllEquipments                           Equipment.GetAllEquipments
+GET /getFullTree                                Equipment.GetFullTree
+GET /getEquipmentsInStore                       Equipment.GetEquipmentsInStore
+GET /getEquipmentOnUser                         Equipment.GetEquipmentByUser
 
-POST /dragToUser                                App.DragToUser
-POST /dragToStore                               App.DragToStore
-POST /writeEquipment                            App.WriteEquipment
-POST /addEquipment                              App.AddEquipment
-POST /updateEquipment                           App.UpdateEquipment
+POST /dragToUser                                Equipment.DragToUser
+POST /dragToStore                               Equipment.DragToStore
 
-DELETE /deleteEquipment                         App.DeleteEquipment
+
+POST /writeEquipment                            Equipment.WriteEquipment
+POST /addEquipment                              Equipment.AddEquipment
+POST /updateEquipment                           Equipment.UpdateEquipment
+
+DELETE /deleteEquipment                         Equipment.DeleteEquipment
 
                               employee
 
-POST /addEmployee                               Employee.AddEmployee
-GET /getAllEmployees                            Employee.GetAllEmployees
-POST /updateEmployee                            Employee.UpdateEmployee
-POST /resetPassEmployee                         Employee.ResetPassEmployee
-DELETE /deleteEmployee                          Employee.DeleteEmployee
+GET /getAllEmployees                            User.GetAllEmployees
+POST /addEmployee                               User.AddEmployee
+POST /updateEmployee                            User.UpdateEmployee
+POST /resetPassEmployee                         User.ResetPassEmployee
+DELETE /deleteEmployee                          User.DeleteEmployee
 
                                InventoryEvents
 GET /getAllEvents                               Events.GetAllEvents

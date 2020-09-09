@@ -1,0 +1,50 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+<link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
+<script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
+<body>
+
+<script>
+
+    webix.ui({
+        view: "form",
+        id: "log_form",
+        width: 300,
+        elements: [
+            {view: "text", label: "Login", name: "login"},
+            {view: "text", type: "password", label: "Password", name: "password"},
+            {
+                margin: 5, cols: [
+                    {view: "button", value: "Login", css: "webix_primary", click: tryAuth},
+                    {view: "button", value: "Cancel"}
+                ]
+            }
+        ]
+    });
+
+    function tryAuth() {
+        let data = $$("log_form").getValues();
+        let login = data.login;
+        let password = data.password;
+        let str = login + ":" + password;
+        let base = window.btoa(str);
+        let parse = JSON.stringify(base)
+        let promise = sendQuery('/tryAuth', 'POST', parse);
+    }
+        function sendQuery(url, method, data) {
+            let response = fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: data
+            });
+            return response;
+        }
+</script>
+</body>
+</html>
+

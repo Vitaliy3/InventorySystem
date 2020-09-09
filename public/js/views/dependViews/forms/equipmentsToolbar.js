@@ -10,9 +10,10 @@ export const equipmentsToolbar = {
     id: "myToolbar",
     cols: [
         {
-            view: "button",
+            view: "template",
             width: 240,
-            css:{"opacity":"0"},
+            css: {"opacity": "0"},
+            template: "<div></div>"
         },
         {
             view: "button",
@@ -78,38 +79,50 @@ function updateProduct() {
 }
 
 function deleteProduct() {
-    let row = $$(TreeDatatable).getSelectedItem();
-    if (row) {
-        let product = new Equipment({});
-        let promise = product.deleteEquipment(row);
-        promise.then(response => {
-            return response.json();
-        }).then(result => {
-            if (result.Error == "") {
-                console.log(result.Data);
-                $$(TreeDatatable).remove(result.Data.id);
-            } else {
-                webix.message(result.Error);
-            }
-        });
-    } else {
-        webix.message("not selected item");
-    }
+    webix.confirm({
+        title: "Удаление оборудования",
+        text: "Вы уверены?"
+    }).then(() => {
+
+        let row = $$(TreeDatatable).getSelectedItem();
+        if (row) {
+            let product = new Equipment({});
+            let promise = product.deleteEquipment(row);
+            promise.then(response => {
+                return response.json();
+            }).then(result => {
+                if (result.Error == "") {
+                    console.log(result.Data);
+                    $$(TreeDatatable).remove(result.Data.id);
+                } else {
+                    webix.message(result.Error);
+                }
+            });
+        } else {
+            webix.message("not selected item");
+        }
+    })
 }
 
 function writeProduct() {
-    let datatable = $$(TreeDatatable);
-    let row = datatable.getSelectedItem();
-    let equipment = new Equipment();
-    let promise = equipment.writeProduct(row);
-    promise.then(response => {
-        return response.json();
-    }).then(result => {
-        if (result.Reject == null) {
-            console.log(result.Data);
-            datatable.updateItem(result.Data.id, {status: result.Data.status});
-        } else {
-            console.log("reject null");
-        }
+    webix.confirm({
+        title: "Списание оборудования",
+        text: "Вы уверены?"
+    }).then(() => {
+
+        let datatable = $$(TreeDatatable);
+        let row = datatable.getSelectedItem();
+        let equipment = new Equipment();
+        let promise = equipment.writeProduct(row);
+        promise.then(response => {
+            return response.json();
+        }).then(result => {
+            if (result.Reject == null) {
+                console.log(result.Data);
+                datatable.updateItem(result.Data.id, {status: result.Data.status});
+            } else {
+                console.log("reject null");
+            }
+        });
     });
 }

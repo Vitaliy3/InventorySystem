@@ -26,11 +26,12 @@ const (
 	port   = 5433
 	user   = "postgres"
 	dbname = "dbtest"
+	password="postgres"
 )
 var DB *sql.DB
 
 func OpenConnection() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", host, port, user, dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable", host, port, user, dbname,password)
 	var err error
 	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {

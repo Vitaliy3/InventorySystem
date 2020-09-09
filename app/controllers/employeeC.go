@@ -6,12 +6,12 @@ import (
 	"myapp/app/models"
 )
 
-type Employee struct {
+type User struct {
 	*revel.Controller
 }
 
 //добавление сотрудников
-func (c Employee) AddEmployee() revel.Result {
+func (c User) AddEmployee() revel.Result {
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEmployee.AddEmployee(app.DB, c.Params)
@@ -24,7 +24,7 @@ func (c Employee) AddEmployee() revel.Result {
 }
 
 //получение всех сотрудников
-func (c Employee) GetAllEmployees() revel.Result {
+func (c User) GetAllEmployees() revel.Result {
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEmployee.GetAllEmployees(app.DB)
@@ -37,7 +37,7 @@ func (c Employee) GetAllEmployees() revel.Result {
 }
 
 //изменение данных о сотруднике
-func (c Employee) UpdateEmployee() revel.Result {
+func (c User) UpdateEmployee() revel.Result {
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEmployee.UpdateEmployee(app.DB,c.Params)
@@ -50,7 +50,7 @@ func (c Employee) UpdateEmployee() revel.Result {
 }
 
 //сброс пароля у сотрудника
-func (c Employee) ResetPassEmployee() revel.Result {
+func (c User) ResetPassEmployee() revel.Result {
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEmployee.ResetPassEmployee(app.DB,c.Params)
@@ -63,7 +63,7 @@ func (c Employee) ResetPassEmployee() revel.Result {
 }
 
 //удаление сотрудника
-func (c Employee) DeleteEmployee() revel.Result {
+func (c User) DeleteEmployee() revel.Result {
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEmployee.DeleteEmployee(app.DB,c.Params)

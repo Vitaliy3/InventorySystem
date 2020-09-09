@@ -39,7 +39,7 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB,params *revel.Params) (allEvent
 		invEvent.Date = v.Date
 
 		for _, m := range allEmployees {
-			if v.Fk_user == m.Id {
+			if int(v.Fk_user.Int64) == m.Id {
 				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
@@ -79,7 +79,7 @@ func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,params *revel.Params) (allE
 		invEvent.Date = v.Date
 
 		for _, m := range allEmployees {
-			if v.Fk_user == m.Id {
+			if int(v.Fk_user.Int64) == m.Id {
 				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}

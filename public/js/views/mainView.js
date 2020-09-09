@@ -15,7 +15,7 @@ import {
 import {Equipment} from '../models/MEquipmentM.js';
 import {Employee} from '../models/MUserModel.js';
 import {recordEvents, recordEventsDatapicker} from './dependViews/recordEvents.js';
-import {EmployeeEvent} from '../models/MEmployeeEvents.js';
+import {UserEvent} from '../models/MEmployeeEvents.js';
 import {moveToolbar, movingTree} from './dependViews/equipmentsMove.js';
 import {authorizeForm} from './dependViews/forms/authorization.js';
 
@@ -106,10 +106,10 @@ function loadData(id) {
 
         //if (hide) - сотрудник
         if (!hide) {
-            let product = new Equipment({});
+            let product = new Equipment();
             promise = product.getAllEquipment();
         } else {
-            let product = new Equipment({id: 1, user: "Employee"});
+            let product = new Equipment();
             promise = product.getUserEquipments();
         }
         promise.then(response => {
@@ -117,7 +117,7 @@ function loadData(id) {
         }).then(result => {
             if (result.Error == "") {
                 $$(TreeDatatable).parse(result.Data);
-                $$(TreeDatatable).filterByAll();
+                    $$(TreeDatatable).filterByAll();
             } else {
                 webix.message("err", result.Error);
             }
@@ -126,23 +126,23 @@ function loadData(id) {
 
     if (id == "regUsers") {
         $$(UsersDatatable).clearAll();
-        let user = new Employee({});
+        let user = new Employee();
         let promise = user.getAllEmployees();
         promise.then(response => {
             return response.json();
         }).then(result => {
-            if (result.Reject == null) {
+            if (result.Error == "") {
                 $$(UsersDatatable).parse(result.Data);
                 $$(UsersDatatable).filterByAll();
             } else {
-                webix.message(result.Reject);
+                webix.message(result.Error);
             }
         })
     }
 
     if (id == "regUserEvents") {
         $$(UserEventsDatatable).clearAll();
-        let event = new EmployeeEvent({});
+        let event = new UserEvent();
         let promise = event.getAllEvents();
         promise.then(response => {
             return response.json();
@@ -177,7 +177,6 @@ function loadData(id) {
                 webix.message(result.Error);
             }
         });
-
         //заполнение select
         let user = new Employee();
         let users = user.getAllEmployees();
@@ -196,7 +195,7 @@ function loadData(id) {
                 }
                 let list = $$(combo).getPopup().getList();
                 list.clearAll();
-                list.parse(result.Data);
+                list.parse(joinUsers);
             } else {
                 webix.message(result.Error);
             }
@@ -210,10 +209,18 @@ webix.ui({
         mainPage,
     ]
 });
-
 //окно авторизации
 function authorize() {
-    authorizeForm.show({x: 400, y: 100});
+    // authorizeForm.show({x: 400, y: 100});
+    let equipModel = new Equipment();
+    let promise = equipModel.logout();
+    promise.then(response => {
+        return response.json();
+    }).then(result => {
+        if (result.Error == "") {
+            webix.message(result.Error);
+        }
+    });
 }
 
 //спиннеры для загрузки
@@ -315,16 +322,3 @@ $$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
 $$(MoveEquipDatatable).attachEvent("onAfterAdd", function (id, index) {
     $$(MoveEquipDatatable).filterByAll();
 });
-
-
-// function clearForm() {
-//     webix.confirm({
-//         title: "All data will be lost!",
-//         text: "Are you sure?"
-//     }).then(() => {
-//             $$("shop").clear();
-//             $$("shop").clearValidation();
-//         }
-//     )
-// };
-// { view: "button", id: "btn_clear", value: "Clear", click: clearForm }
