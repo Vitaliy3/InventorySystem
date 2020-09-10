@@ -5,6 +5,7 @@ export const updateUserForm = webix.ui({
     view: "window",
     width: 400,
     height: 500,
+    position:"center",
     head: "Редактирование данных сотрудника",
     autofit: false,
     body: {

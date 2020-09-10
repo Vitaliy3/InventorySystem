@@ -3,8 +3,9 @@ import {Equipment} from '../../../models/MEquipmentM.js';
 export const updateEquipmentForm = webix.ui({
     view: "window",
     width: 600,
+    position:"center",
     height: 500,
-    head: "Изменение элемента",
+    head: "Редактирование оборудования",
     autofit: false,
     body: {
         view: "form",

@@ -55,7 +55,8 @@ function addProduct() {
     let row = $$(RegproductsTree).getSelectedItem();
     if (row) {
         if (row.$level == 3) {
-            addEquipmentForm.show({x: 400, y: 200});
+            addEquipmentForm.show();
+
         } else {
             webix.message("not selected tree item lvl-2");
         }
@@ -72,7 +73,7 @@ function updateProduct() {
             name: row.name,
             inventoryNumber: row.inventoryNumber
         });
-        updateEquipmentForm.show({x: 400, y: 200});
+        updateEquipmentForm.show();
     } else {
         webix.message("not selected item");
     }

@@ -12,10 +12,6 @@ export function sendQuery(url, method, data) {
 }
 
 export class Equipment {
-    auth(base){
-        return sendQuery('/TryAuth', 'POST', base)
-
-    }
     addEquipment(equipment) {
         equipment.class = parseInt(equipment.class);
         equipment.subclass = parseInt(equipment.subclass);
@@ -32,11 +28,8 @@ export class Equipment {
         return sendQuery('/updateEquipment', 'POST', json)
     }
 
-    getAllEquipment() {
-        return fetch('/getAllEquipments')
-    }
-    logout(){
-        return fetch('/logout')
+    getAllEquipment(token) {
+        return fetch('/getAllEquipments?token='+token)
     }
 
     getEquipmentsInStore() {
@@ -45,29 +38,13 @@ export class Equipment {
     }
 
     getUserEquipments(selectedEmployee) {
-        return fetch('/getEquipmentOnUser?user=' + selectedEmployee);
+        return fetch('/getEquipmentByUser?user=' + selectedEmployee);
     }
 
-    getUserClasses(user) {
-        return new Promise((resolve, object) => {
-            let str = [
-                {
-                    class: "0", value: "All", open: true, data: [
-                        {
-                            class: "1", value: "Столы", open: true, data: [
-                                {subclass: "1", value: "Компьютерный"},
-                            ]
-                        },
-                    ]
-                }];
-
-            resolve(str);
-        });
+    getFullTree(token) {
+        return fetch('/getFullTree?token=' + token);
     }
 
-    getAllTree() {
-        return fetch('/getFullTree')
-    }
 
     writeProduct(equipment) {
         return sendQuery('/writeEquipment', 'POST', equipment.id);

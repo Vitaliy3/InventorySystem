@@ -3,9 +3,11 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/revel/revel"
 	"myapp/app/mappers"
 	"strconv"
+	"strings"
 )
 
 type EquipmentModel struct {
@@ -166,15 +168,33 @@ func (e *EquipmentModel) GetEquipmentsInStore(DB *sql.DB) (equipArray []Equipmen
 }
 
 //получение всего оборудования
-func (e *EquipmentModel) GetAllEquipments(DB *sql.DB) (equipArray []EquipmentModel, err error) {
+func (e *EquipmentModel) GetAllEquipments(DB *sql.DB, params *revel.Params, Session map[string]string) (equipArray []EquipmentModel, err error) {
 	eqMapper := mappers.EquipmentTable{}
 	employeeMapper := mappers.Employee{}
-	dbEquip, err := eqMapper.GetAllEquipments(DB)
-	if err != nil {
-		return
+	token := params.Get("token")
+	var dbEquip []mappers.EquipmentTable
+	if token == "" {
+		dbEquip, err = eqMapper.GetAllEquipments(DB)
+		if err != nil {
+			return
+		}
+	} else {
+		session := Session[token]
+		if session != "" {
+			splitSession := strings.Split(session, ":")
+			if splitSession[1] == "employee" {
+				var userId int
+				userId, err = strconv.Atoi(splitSession[0])
+				if err != nil {
+					return
+				}
+				fmt.Println("user_ID", userId)
+
+				dbEquip, err = eqMapper.GetEquipmentsByUserId(DB, userId)
+			}
+		}
 	}
 	employees, err := employeeMapper.GetAllEmployees(DB)
-
 	var temp EquipmentModel
 	for _, v := range dbEquip {
 		temp.Id = v.Id
@@ -185,8 +205,8 @@ func (e *EquipmentModel) GetAllEquipments(DB *sql.DB) (equipArray []EquipmentMod
 		temp.Status = getStatus(v.Status)
 		for _, m := range employees {
 			if int(v.Fk_user.Int64) == m.Id {
-					temp.UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
-			}else{
+				temp.UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
+			} else {
 				temp.UserFIO = "Отсутствует"
 			}
 		}
@@ -209,14 +229,32 @@ func getStatus(status int) (newStatus string) {
 }
 
 //получение полного дерева учета оборудования
-func (e *EquipmentModel) GetFullTree(DB *sql.DB) (fullTree []FullTree, err error) {
+func (e *EquipmentModel) GetFullTree(DB *sql.DB, params *revel.Params, Session map[string]string) (fullTree []FullTree, err error) {
 	eqMapper := mappers.EquipmentTable{}
-	dbEqupments, err := eqMapper.GetFullTree(DB)
+	token := params.Get("token")
+	fmt.Println("token", token)
+	var dbEquipments []mappers.EquipmentTable
+	if token == "" {
+		dbEquipments, err = eqMapper.GetFullTree(DB)
+	} else {
+		session := Session[token]
+		if session != "" {
+			splitSession := strings.Split(session, ":")
+			if splitSession[1] == "employee" {
+				var userId int
+				userId, err = strconv.Atoi(splitSession[0])
+				if err != nil {
+					return
+				}
+				dbEquipments, err = eqMapper.GetEmployeeTree(DB, userId)
+			}
+		}
+	}
 	if err != nil {
 		return
 	}
 	var trees []EquipmentModel
-	for _, v := range dbEqupments {
+	for _, v := range dbEquipments {
 		var temp EquipmentModel
 		temp.ClassName = v.Class
 		temp.Fk_class = v.Fk_parent
@@ -274,7 +312,7 @@ func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, params *revel.Params) (e
 	eqMapper := mappers.EquipmentTable{}
 	userId := params.Get("user")
 	convUserId, err := strconv.Atoi(userId)
-	dbEquip, err := eqMapper.GetEquipmentsByUser(DB, convUserId)
+	dbEquip, err := eqMapper.GetEquipmentsByUserId(DB, convUserId)
 	if err != nil {
 		return
 	}

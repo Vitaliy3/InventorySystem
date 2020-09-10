@@ -8,16 +8,15 @@ module:testrunner
 
 
 GET     /                                       App.Index
-GET /invSys                                     App.InvSys
 * /login                                        App.Login
-* /logout                                       App.Logout
-* /tryAuth                                   App.TryAuth
+GET /auth                                       App.Auth
+GET /logout                                     App.Logout
 
 //                           equipment
 GET /getAllEquipments                           Equipment.GetAllEquipments
 GET /getFullTree                                Equipment.GetFullTree
 GET /getEquipmentsInStore                       Equipment.GetEquipmentsInStore
-GET /getEquipmentOnUser                         Equipment.GetEquipmentByUser
+GET /getEquipmentByUser                         Equipment.GetEquipmentByUser
 
 POST /dragToUser                                Equipment.DragToUser
 POST /dragToStore                               Equipment.DragToStore

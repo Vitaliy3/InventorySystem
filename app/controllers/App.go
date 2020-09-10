@@ -1,14 +1,12 @@
 package controllers
 
 import (
-	"crypto/md5"
-	"encoding/base64"
-	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"github.com/revel/revel"
-	"myapp/app/routes"
+	"myapp/app"
+	"myapp/app/models"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -16,12 +14,20 @@ type App struct {
 	*revel.Controller
 }
 
-var Session = make(map[string]string)
-
-func (c App) InvSys() revel.Result {
-	fmt.Println("in invSys")
-	return c.Render()
+func CheckPerm(c *revel.Controller, role string) bool {
+	cookies, _ := c.Request.Cookie("token")
+	splitCookie := strings.Split(cookies.GetValue(), ":")
+	session := Session[splitCookie[0]]
+	if session != "" {
+		splitSession := strings.Split(session, ":")
+		if splitSession[1] == role {
+			return true
+		}
+	}
+	return false
 }
+
+var Session = make(map[string]string)
 
 func (c App) Index() revel.Result {
 	fmt.Println("------------------------------------------------------------------------------------------")
@@ -31,53 +37,39 @@ func (c App) Index() revel.Result {
 	}
 	splitCookie := strings.Split(cookies.GetValue(), ":")
 	if Session[splitCookie[0]] != "" {
-		fmt.Println("success authorize")
-		return c.Redirect(routes.App.InvSys())
+		return c.Render()
 	} else {
-		fmt.Println("fail authorize")
 		return c.Redirect("/login")
 	}
-	return c.Render()
 }
 
 func (c App) Login() revel.Result {
 	return c.Render()
 }
 
-func (c App) TryAuth() revel.Result{
-	var login, password, base string
-	err := json.Unmarshal(c.Params.JSON, &base)
+func (c App) Auth() revel.Result {
+	renderInterface := app.RenderInterface{}
+	employeeMod := models.Employee{}
+	result, err := employeeMod.Auth(app.DB, c.Controller)
 	if err != nil {
-		fmt.Println("err in marshall", err)
-	}
-	decoded, err := base64.StdEncoding.DecodeString(base)
-	authData := strings.Split(string(decoded), ":")
-	login = authData[0]
-	password = authData[1]
-	if login == "1" && password == "1" {
-		newToken := GravatarMD5(login)
-		Session[newToken] = "admin"
+		renderInterface.Error = err.Error()
+	} else {
 		cookie := &http.Cookie{
 			Name:  "token",
-			Value: newToken + ":admin",
+			Value: result.Token + ":" + result.Role,
 		}
+		Session[result.Token] = strconv.Itoa(result.Id) + ":" + result.Role
 		c.SetCookie(cookie)
-		fmt.Println("Success login")
-		return c.Redirect("/")
-	}else{
-		return c.RenderJSON("")
+		renderInterface.Data = "/"
 	}
-	return c.Render()
+	return c.RenderJSON(renderInterface)
 }
 
-func (c App) Logout() revel.Result{
-	for k, _ := range Session {
-		delete(Session, k)
-	}
-	return c.RenderJSON("")
-}
-func GravatarMD5(login string) string {
-	h := md5.New()
-	h.Write([]byte(strings.ToLower(login)))
-	return hex.EncodeToString(h.Sum(nil))
+func (c App) Logout(token string) revel.Result {
+	cookies, _ := c.Request.Cookie("token")
+	splitCookie := strings.Split(cookies.GetValue(), ":")
+	delete(Session, splitCookie[0])
+	renderInterface := app.RenderInterface{}
+	renderInterface.Data = "/"
+	return c.RenderJSON(renderInterface)
 }

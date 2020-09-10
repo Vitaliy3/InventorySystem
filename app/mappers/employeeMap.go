@@ -12,10 +12,34 @@ type Employee struct {
 	Fk_role    int    `json:"fk_role"`
 }
 
-func (e *Employee) GetEmployeeById(DB *sql.DB,id int) (employee Employee, err error) {
+func (e *Employee) GetUserRoleById(DB *sql.DB, id int) (role string, err error) {
+	row := DB.QueryRow("select r.userRole from users u join roles r on u.fk_role =r.id where u.id =$1", id)
+	err = row.Scan(&role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
+		return
+	}
+	return
+}
+
+func (e *Employee) Auth(DB *sql.DB, login string) (employee Employee, err error) {
+	row := DB.QueryRow("select id,login,userpassword,fk_role from users  where login =$1;", login)
+	err = row.Scan(&employee.Id, &employee.Login, &employee.Password, &employee.Fk_role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = nil
+		}
+		return
+	}
+	return
+}
+
+func (e *Employee) GetEmployeeById(DB *sql.DB, id int) (employee Employee, err error) {
 	row := DB.QueryRow("select id,username,surname,patronymic,login,fk_role from users where id=$1", id)
 	err = row.Scan(&e.Id, &employee.Name, &employee.Surname, &employee.Patronymic, &employee.Login, &employee.Fk_role)
-	if err != nil{
+	if err != nil {
 		return
 	}
 	return

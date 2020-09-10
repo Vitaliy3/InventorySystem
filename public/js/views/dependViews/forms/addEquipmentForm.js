@@ -4,6 +4,7 @@ import {RegproductsTree, TreeDatatable} from './../../const.js';
 export const addEquipmentForm = webix.ui({
     view: "window",
     width: 600,
+    position:"center",
     height: 500,
     head: "Добавление оборудования",
     autofit: false,

@@ -22,7 +22,7 @@ export const UsersToolbar = {
 
 //добавления пользователя
 function addUser() {
-    registerUserForm.show({x: 400, y: 150});
+    registerUserForm.show();
 }
 
 //обновление данных пользователя
@@ -35,7 +35,7 @@ function updateUser() {
             patronymic: row.patronymic,
             login: row.login
         });
-        updateUserForm.show({x: 400, y: 200});
+        updateUserForm.show();
     } else {
         webix.message("not selected item");
     }

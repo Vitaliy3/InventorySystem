@@ -4,13 +4,13 @@ import {RegisterUserForm} from "../../const.js";
 export const registerUserForm = webix.ui({
     view: "window",
     width: 400,
+    position:"center",
     height: 500,
-    autofit: false,
+    head:"Регистрация сотрудника",
     body: {
         view: "form",
         id: RegisterUserForm,
         scroll: false,
-        width: 400,
         elements: [
             {view: "text", name: "name", label: "Имя", labelWidth: 90},
             {view: "text", name: "surname", label: "Фамилия", labelWidth: 90},
@@ -54,8 +54,8 @@ export const registerUserForm = webix.ui({
 });
 
 function registerUser() {
-    if ($$("registerEmployeeForm").validate()) {
-        let formValues = $$("registerEmployeeForm").getValues();
+    if ($$(RegisterUserForm).validate()) {
+        let formValues = $$(RegisterUserForm).getValues();
         let user = new Employee();
         let promise = user.registerUser(formValues);
         promise.then(response => {
@@ -65,8 +65,8 @@ function registerUser() {
                 $$("usersList").add(result.Data);
                 $$("usersList").refreshColumns();
                 webix.message("success register");
-                $$('registerEmployeeForm').clear();
-                $$('registerEmployeeForm').clearValidation();
+                $$(RegisterUserForm).clear();
+                $$(RegisterUserForm).clearValidation();
             } else {
                 webix.message(result.Error);
             }

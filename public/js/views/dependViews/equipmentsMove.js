@@ -18,7 +18,7 @@ export const moveToolbar = {
             view: combo,
             value: 2,
             id: combo,
-            width: 390,
+            width: 295  ,
             align: "right",
             options: {
                 body: {
@@ -35,7 +35,7 @@ export const dragEquipmentTable = {
     view: "datatable",
     drag: true,
     id: DragProdDatatable,
-    width: 500,
+    width: 400,
     select: true,
     columns: [
         {id: "name", header: "Название", class: "class", fillspace: true,},

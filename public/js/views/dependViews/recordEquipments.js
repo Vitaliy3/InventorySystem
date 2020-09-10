@@ -1,10 +1,6 @@
 
 import { RegproductsTree as RegProductsTree, TreeDatatable } from './../const.js';
-export var hide = false;
-window.onload=function () {
-
-}
-
+export const hide = false;
 
 export function getNeedProducts(item, id) { //возр оборудование в классе/подклассе
     let result = [];

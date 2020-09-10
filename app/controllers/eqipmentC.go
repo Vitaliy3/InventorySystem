@@ -45,6 +45,7 @@ func (c Equipment) DragToStore() revel.Result {
 func (c Equipment) GetEquipmentByUser() revel.Result {
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
+
 	result, err := DataEquipments.GetEquipmentByUser(app.DB, c.Params)
 	if err != nil {
 		renderInterface.Error = err.Error()
@@ -69,9 +70,10 @@ func (c Equipment) GetEquipmentsInStore() revel.Result {
 
 //получение полного дерева учета оборудования
 func (c Equipment) GetFullTree() revel.Result {
+
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEquipments.GetFullTree(app.DB)
+	result, err := DataEquipments.GetFullTree(app.DB, c.Params, Session)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -82,16 +84,21 @@ func (c Equipment) GetFullTree() revel.Result {
 
 //получение всего оборудования
 func (c Equipment) GetAllEquipments() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEquipments.GetAllEquipments(app.DB)
+
+	result, err := DataEquipments.GetAllEquipments(app.DB, c.Params, Session)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
 		renderInterface.Data = result
 	}
-	fmt.Println("RENDERDATA",renderInterface.Data)
-
+	fmt.Println("RENDERDATA", renderInterface.Data)
 	return c.RenderJSON(renderInterface)
 }
 

@@ -50,8 +50,9 @@ func (e *EquipmentTable) GetAllEquipments(DB *sql.DB) (equipments []EquipmentTab
 	return
 }
 
+
 //все товары у сотрудника
-func (e *EquipmentTable) GetEquipmentsByUser(DB *sql.DB, userId int) (equipments []EquipmentTable, err error) {
+func (e *EquipmentTable) GetEquipmentsByUserId(DB *sql.DB, userId int) (equipments []EquipmentTable, err error) {
 
 	rows, err := DB.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
 	if err != nil {
@@ -86,6 +87,24 @@ func (e *EquipmentTable) GetEquipmentsInStore(DB *sql.DB) (equipments []Equipmen
 				err = nil
 			}
 			return
+		}
+		equipments = append(equipments, *e)
+	}
+	return
+}
+
+func (e *EquipmentTable) GetEmployeeTree(DB *sql.DB, userId int) (equipments []EquipmentTable, err error) {
+	rows, err := DB.Query("select c1.fk_parent ,c2.id,c1.name ,c2.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
+	if err != nil {
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err = rows.Scan(&e.Fk_parent, &e.Fk_class, &e.Class, &e.Subclass)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				err = nil
+			}
 		}
 		equipments = append(equipments, *e)
 	}
