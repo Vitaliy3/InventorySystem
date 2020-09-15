@@ -1,4 +1,4 @@
-import {UserEventsDatatable} from '../const.js';
+import {EmployeeEventsDatatable} from '../const.js';
 import {UserEvent} from "../../models/MEmployeeEvents.js";
 
 export const recordEventsDatapicker = {
@@ -23,8 +23,8 @@ function filterByDate() {
         return response.json();
     }).then(result => {
         if (result.Error == "") {
-            $$(UserEventsDatatable).clearAll();
-            $$(UserEventsDatatable).parse(result.Data);
+            $$(EmployeeEventsDatatable).clearAll();
+            $$(EmployeeEventsDatatable).parse(result.Data);
         } else {
             webix.message(result.Error);
         }
@@ -33,7 +33,7 @@ function filterByDate() {
 
 export const recordEvents = {
     view: "datatable",
-    id: UserEventsDatatable,
+    id: EmployeeEventsDatatable,
     editable: true,
     editaction: "custom",
     select: true,

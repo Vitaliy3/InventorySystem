@@ -2,109 +2,72 @@ package models
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
-	"github.com/revel/revel"
+	"myapp/app/entity"
 	"myapp/app/mappers"
-	"strconv"
-	"strings"
 )
 
 type EquipmentModel struct {
-	Id              int        ` json:"id" `
-	Fk_class        int        ` json:"class" `
-	Fk_subclass     int        ` json:"subclass" `
-	UserFIO         string     ` json:"user" `
-	InventoryNumber string     ` json:"inventoryNumber" `
-	EquipmentName   string     ` json:"name" `
-	Status          string     ` json:"status" `
-	ClassName       string     ` json:"value" `
-	Fk_user         int        `json:"fk_user"`
-	Data            []Subclass ` json:"data" `
-	Open            bool       `json:"open"`
-}
-type Subclass struct {
-	Id           int    ` json:"subclass" `
-	SubclassName string ` json:"value" `
+	entity.Equipment
 }
 type FullTree struct {
-	Class      string           `json:"class"`
-	Value      string           ` json:"value" `
-	EquipModel []EquipmentModel ` json:"data" `
-	Open       bool             `json:"open"`
+	entity.FullTree
 }
 
 //перемещение оборудования со склада пользователю
-func (e *EquipmentModel) DragToUser(DB *sql.DB, params *revel.Params) (equip EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	eqMod := EquipmentModel{}
-	err = json.Unmarshal(params.JSON, &eqMod)
+func (e *EquipmentModel) DragToUser(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+	fmt.Println("DragToUser:",equipment.Fk_user)
+
+	equipmentMapper := mappers.Equipment{}
+	updatedRowId, err := equipmentMapper.DragEquipmentToUser(DB, equipment)
 	if err != nil {
 		return
 	}
-	updatedRowId, err := eqMapper.DragToUser(DB, eqMod.Id, eqMod.Fk_user)
+	row, err := equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	row, err := eqMapper.GetEquipmentById(DB, updatedRowId)
+	fmt.Println("fkuser:",row.Fk_user)
+
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_user: row.Fk_user, Fk_equipment: row.Id, ActionEvent: "Выдача сотруднику"})
 	if err != nil {
 		return
 	}
-	_, err = eqMapper.NewEvent(DB, row.Fk_user, row.Id, "drag to user")
-	if err != nil {
-		return
-	}
-	equip.Id = row.Id
-	equip.Fk_class = row.Fk_parent
-	equip.Fk_subclass = row.Fk_class
-	equip.EquipmentName = row.EquipmentName
-	equip.InventoryNumber = row.InventoryNumber
-	equip.Status = getStatus(row.Status)
+	equip.Status = getStatus(row.StatusI)
 	return
 }
 
 //перемещение оборудования от сотрудника на склад
-func (e *EquipmentModel) DragToStore(DB *sql.DB, params *revel.Params) (equip EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	var id int
-	err = json.Unmarshal(params.JSON, &id)
-	if err != nil {
-		return
-	}
+func (e *EquipmentModel) DragToStore(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+	equipmentMapper := mappers.Equipment{}
 
-	updatedRowId, err := eqMapper.DragToStore(DB, id)
+	updatedRowId, err := equipmentMapper.DragEquipmentToStore(DB, equipment)
 	if err != nil {
 		return
 	}
-	row, err := eqMapper.GetEquipmentById(DB, updatedRowId)
+	row, err := equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	_, err = eqMapper.NewEvent(DB, sql.NullInt64{Valid: false}, row.Id, "drag to store")
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_user: sql.NullInt64{Valid: false}, Fk_equipment: row.Id, ActionEvent: "Перемещение на склад"})
 	if err != nil {
 		return
 	}
 	equip.Id = row.Id
 	equip.Fk_class = row.Fk_parent
-	equip.Fk_subclass = row.Fk_class
+	equip.Fk_class = row.Fk_class
 	equip.EquipmentName = row.EquipmentName
 	equip.InventoryNumber = row.InventoryNumber
-	equip.Status = getStatus(row.Status)
+	equip.Status = getStatus(row.StatusI)
 	return
 }
 
 //изменение оборудования
-func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, params *revel.Params) (equip EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	eqModel := EquipmentModel{}
-	err = json.Unmarshal(params.JSON, &eqModel)
-	if err != nil {
-		return
-	}
-	eqMapper.Id = eqModel.Id
-	eqMapper.EquipmentName = eqModel.EquipmentName
-	eqMapper.InventoryNumber = eqModel.InventoryNumber
-	lastInsertedId, err := eqMapper.UpdateEquipment(DB)
+func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+	eqMapper := mappers.Equipment{}
+	employee := mappers.Employee{}
+
+	lastInsertedId, err := eqMapper.UpdateEquipment(DB, equipment)
 	if err != nil {
 		return
 	}
@@ -112,34 +75,40 @@ func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, params *revel.Params) (equi
 	if err != nil {
 		return
 	}
+	user, err := employee.GetEmployeeById(DB, int(row.Fk_user.Int64))
+	if err != nil {
+		return
+	}
+	if err != nil {
+		return
+	}
 	equip.Id = row.Id
 	equip.Fk_class = row.Fk_parent
-	equip.Fk_subclass = row.Fk_class
+	if user.Name != "" {
+		equip.UserFIO = user.Name + " " + user.Surname + " " + user.Patronymic
+	} else {
+		equip.UserFIO = "Отсутсвует"
+	}
+	equip.Fk_class = row.Fk_class
 	equip.EquipmentName = row.EquipmentName
 	equip.InventoryNumber = row.InventoryNumber
-	equip.Status = getStatus(row.Status)
-
+	equip.Status = getStatus(row.StatusI)
 	return
 }
 
 //списать оборудование
-func (e *EquipmentModel) WriteEquipment(DB *sql.DB, params *revel.Params) (equip EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	var id int
-	err = json.Unmarshal(params.JSON, &id)
-	if err != nil {
-		return
-	}
-	result, err := eqMapper.WriteEquipment(DB, id)
-	if err != nil {
-		return
-	}
-	row, err := eqMapper.GetEquipmentById(DB, result)
-	if err != nil {
-		return
-	}
+func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (equip EquipmentModel, err error) {
+	eqMapper := mappers.Equipment{}
 
-	if row.Status == 2 {
+	updatedId, err := eqMapper.WriteEquipment(DB, equipment)
+	if err != nil {
+		return
+	}
+	row, err := eqMapper.GetEquipmentById(DB, updatedId)
+	if err != nil {
+		return
+	}
+	if row.StatusI == 2 {
 		equip.Id = row.Id
 		equip.Status = "Списано"
 		return
@@ -148,69 +117,50 @@ func (e *EquipmentModel) WriteEquipment(DB *sql.DB, params *revel.Params) (equip
 }
 
 //получение продуктов, которые находятся на складе
-func (e *EquipmentModel) GetEquipmentsInStore(DB *sql.DB) (equipArray []EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	result, err := eqMapper.GetEquipmentsInStore(DB)
+func (e *EquipmentModel) GetEquipmentsInStore(DB *sql.DB) (equipments []entity.Equipment, err error) {
+	equipmentMapper := mappers.Equipment{}
+	equipments, err = equipmentMapper.GetEquipmentsInStore(DB)
 	if err != nil {
 		return
-	}
-	var temp EquipmentModel
-	for _, v := range result {
-		temp.Id = v.Id
-		temp.Fk_class = v.Fk_parent
-		temp.Fk_subclass = v.Fk_class
-		temp.InventoryNumber = v.InventoryNumber
-		temp.EquipmentName = v.EquipmentName
-		temp.Status = getStatus(v.Status)
-		equipArray = append(equipArray, temp)
 	}
 	return
 }
 
 //получение всего оборудования
-func (e *EquipmentModel) GetAllEquipments(DB *sql.DB, params *revel.Params, Session map[string]string) (equipArray []EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
+func (e *EquipmentModel) GetAllEquipments(DB *sql.DB) (equipments []entity.Equipment, err error) {
+	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
-	token := params.Get("token")
-	var dbEquip []mappers.EquipmentTable
-	if token == "" {
-		dbEquip, err = eqMapper.GetAllEquipments(DB)
-		if err != nil {
-			return
-		}
-	} else {
-		session := Session[token]
-		if session != "" {
-			splitSession := strings.Split(session, ":")
-			if splitSession[1] == "employee" {
-				var userId int
-				userId, err = strconv.Atoi(splitSession[0])
-				if err != nil {
-					return
-				}
-				fmt.Println("user_ID", userId)
-
-				dbEquip, err = eqMapper.GetEquipmentsByUserId(DB, userId)
+	equipments, err = equipmentMapper.GetAllEquipments(DB)
+	employees, err := employeeMapper.GetAllEmployees(DB)
+	for i, _ := range equipments {
+		equipments[i].Status = getStatus(equipments[i].StatusI)
+		for _, m := range employees {
+			if int(equipments[i].Fk_user.Int64) == m.Id {
+				equipments[i].UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
 			}
+		}
+		if equipments[i].UserFIO == "" {
+			equipments[i].UserFIO = "Отсутствует"
 		}
 	}
+	return
+}
+
+func (e *EquipmentModel) GetEmployeeEquipments(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
+	equipmentMapper := mappers.Equipment{}
+	employeeMapper := mappers.Employee{}
+	equipments, err = equipmentMapper.GetEquipmentsByUserId(DB, equipment)
 	employees, err := employeeMapper.GetAllEmployees(DB)
-	var temp EquipmentModel
-	for _, v := range dbEquip {
-		temp.Id = v.Id
-		temp.Fk_class = v.Fk_parent
-		temp.Fk_subclass = v.Fk_class
-		temp.InventoryNumber = v.InventoryNumber
-		temp.EquipmentName = v.EquipmentName
-		temp.Status = getStatus(v.Status)
+	for i, _ := range equipments {
+		equipments[i].Status = getStatus(equipments[i].StatusI)
 		for _, m := range employees {
-			if int(v.Fk_user.Int64) == m.Id {
-				temp.UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
-			} else {
-				temp.UserFIO = "Отсутствует"
+			if int(equipments[i].Fk_user.Int64) == m.Id {
+				equipments[i].UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
 			}
 		}
-		equipArray = append(equipArray, temp)
+		if equipments[i].UserFIO == "" {
+			equipments[i].UserFIO = "Отсутствует"
+		}
 	}
 	return
 }
@@ -229,41 +179,24 @@ func getStatus(status int) (newStatus string) {
 }
 
 //получение полного дерева учета оборудования
-func (e *EquipmentModel) GetFullTree(DB *sql.DB, params *revel.Params, Session map[string]string) (fullTree []FullTree, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	token := params.Get("token")
-	fmt.Println("token", token)
-	var dbEquipments []mappers.EquipmentTable
-	if token == "" {
-		dbEquipments, err = eqMapper.GetFullTree(DB)
-	} else {
-		session := Session[token]
-		if session != "" {
-			splitSession := strings.Split(session, ":")
-			if splitSession[1] == "employee" {
-				var userId int
-				userId, err = strconv.Atoi(splitSession[0])
-				if err != nil {
-					return
-				}
-				dbEquipments, err = eqMapper.GetEmployeeTree(DB, userId)
-			}
-		}
-	}
+func (e *EquipmentModel) GetEmployeeTree(DB *sql.DB, equipment entity.Equipment) (fullTree []entity.FullTree, err error) {
+	equipmentMapper := mappers.Equipment{}
+	var equipments []entity.Equipment
+	equipments, err = equipmentMapper.GetEmployeeTreeById(DB, equipment.Id)
 	if err != nil {
 		return
 	}
-	var trees []EquipmentModel
-	for _, v := range dbEquipments {
-		var temp EquipmentModel
+	var trees []entity.Equipment
+	for _, v := range equipments {
+		var temp entity.Equipment
 		temp.ClassName = v.Class
-		temp.Fk_class = v.Fk_parent
+		temp.Fk_parent = v.Fk_parent
 		temp.Open = true
-		subclass := Subclass{v.Fk_class, v.Subclass}
+		subclass := entity.Subclass{v.Fk_class, v.Subclass}
 		temp.Data = append(temp.Data, subclass)
 		find := false
 		for i, q := range trees { //поиск уже добавленной записи в дерево
-			if q.Fk_class == v.Fk_parent {
+			if q.Fk_parent == v.Fk_parent {
 				find = true
 				trees[i].Data = append(trees[i].Data, subclass)
 				break
@@ -273,77 +206,90 @@ func (e *EquipmentModel) GetFullTree(DB *sql.DB, params *revel.Params, Session m
 			trees = append(trees, temp)
 		}
 	}
-	tree := FullTree{}
+	tree := entity.FullTree{}
 	tree.Value = "Все"
-	tree.Class = "0"
+	tree.Id = 0
 	tree.Open = true
-	tree.EquipModel = trees
+	tree.Equipment = trees
+	fullTree = append(fullTree, tree)
+	return
+}
+
+func (e *EquipmentModel) GetFullTree(DB *sql.DB, equipment entity.Equipment) (fullTree []entity.FullTree, err error) {
+	equipmentMapper := mappers.Equipment{}
+	var equipments []entity.Equipment
+	equipments, err = equipmentMapper.GetFullTree(DB)
+	if err != nil {
+		return
+	}
+	var trees []entity.Equipment
+	for _, v := range equipments {
+		var temp entity.Equipment
+		temp.ClassName = v.Class
+		temp.Fk_parent = v.Fk_parent
+		temp.Open = true
+		subclass := entity.Subclass{v.Fk_class, v.Subclass}
+		temp.Data = append(temp.Data, subclass)
+		find := false
+		for i, q := range trees { //поиск уже добавленной записи в дерево
+			if q.Fk_parent == v.Fk_parent {
+				find = true
+				trees[i].Data = append(trees[i].Data, subclass)
+				break
+			}
+		}
+		if !find {
+			trees = append(trees, temp)
+		}
+	}
+	tree := entity.FullTree{}
+	tree.Value = "Все"
+	tree.Id = 0
+	tree.Open = true
+	tree.Equipment = trees
 	fullTree = append(fullTree, tree)
 	return
 }
 
 //добавление оборудования
-func (e *EquipmentModel) AddEquipment(DB *sql.DB, c *revel.Params) (eqData EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	paramJson := c.JSON
-	err = json.Unmarshal(paramJson, &eqMapper)
+func (e *EquipmentModel) AddEquipment(DB *sql.DB, equipmentEntity entity.Equipment) (equipment entity.Equipment, err error) {
+	var equipmentMapper mappers.Equipment
+	equipmentEntity.StatusI = 0
+	lastInsertedId, err := equipmentMapper.AddEquipment(DB, equipmentEntity)
 	if err != nil {
 		return
 	}
-	eqMapper.Status = 0
-	lastInsertedId, err := eqMapper.AddEquipment(DB)
+	equipment, err = equipmentMapper.GetEquipmentById(DB, lastInsertedId)
 	if err != nil {
 		return
 	}
-	result, err := eqMapper.GetEquipmentById(DB, lastInsertedId)
-	if err != nil {
-		return
-	}
-	eqData.Id = result.Id
-	eqData.Fk_class = result.Fk_parent
-	eqData.Fk_subclass = result.Fk_class
-	eqData.EquipmentName = result.EquipmentName
-	eqData.InventoryNumber = result.InventoryNumber
-	eqData.Status = getStatus(result.Status)
 	return
 }
 
-func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, params *revel.Params) (equipArray []EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	userId := params.Get("user")
-	convUserId, err := strconv.Atoi(userId)
-	dbEquip, err := eqMapper.GetEquipmentsByUserId(DB, convUserId)
+func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
+	eqMapper := mappers.Equipment{}
+
+	equipments, err = eqMapper.GetEquipmentsByUserId(DB, equipment)
 	if err != nil {
 		return
-	}
-	var temp EquipmentModel
-	for _, v := range dbEquip {
-		temp.Id = v.Id
-		temp.Fk_user = convUserId
-		temp.Fk_class = v.Fk_parent
-		temp.Fk_subclass = v.Fk_class
-		temp.Status = "На складе" //для переноса на склад от сотрудника
-		temp.InventoryNumber = v.InventoryNumber
-		temp.EquipmentName = v.EquipmentName
-		equipArray = append(equipArray, temp)
 	}
 	return
 }
 
 //удаление оборудования
-func (e *EquipmentModel) DeleteEquipment(DB *sql.DB, params *revel.Params) (data EquipmentModel, err error) {
-	eqMapper := mappers.EquipmentTable{}
-	var id int
-	err = json.Unmarshal(params.JSON, &id)
+func (e *EquipmentModel) DeleteEquipment(DB *sql.DB, equipment entity.Equipment) (result entity.Equipment, err error) {
+
+	eqMapper := mappers.Equipment{}
+	eventMapper := mappers.InventoryEvent{}
+	_, err = eventMapper.DeleteEventByEmployee(DB, entity.Employee{Id: equipment.Id})
 	if err != nil {
 		return
 	}
-	rowsAffected, err := eqMapper.DeleteEquipment(DB, id)
+	deletedId, err := eqMapper.DeleteEquipment(DB, equipment)
 	if err != nil {
+
 		return
 	}
-	if rowsAffected > 0 {
-		data.Id = id
-	}
+	result.Id = deletedId
 	return
 }

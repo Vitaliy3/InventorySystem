@@ -2,24 +2,19 @@ package models
 
 import (
 	"database/sql"
-	"github.com/revel/revel"
+	"fmt"
+	"myapp/app/entity"
 	"myapp/app/mappers"
 )
 
 type InventoryEvent struct {
-	Id        int    `json:"id"`
-	UserFIO   string `json:"user"`
-	Event     string `json:"event"`
-	Date      string `json:"date"`
-	Equipment string `json:"equipment"`
+	entity.InventoryEvent
 }
 
-func (e *InventoryEvent) GetAllEvents(DB *sql.DB,params *revel.Params) (allEvents []InventoryEvent, err error) {
-	eventMapper := mappers.InventoryEvent{}
-	equipmentMapper := mappers.EquipmentTable{}
+func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (allEvents []entity.InventoryEvent, err error) {
+	inventoryEventMapper := mappers.InventoryEvent{}
+	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
-
-	invEvent := InventoryEvent{}
 	allEquip, err := equipmentMapper.GetAllEquipments(DB)
 	if err != nil {
 		return
@@ -28,36 +23,34 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB,params *revel.Params) (allEvent
 	if err != nil {
 		return
 	}
-	allEventsMap, err := eventMapper.GetAllEvents(DB)
+	allEvents, err = inventoryEventMapper.GetAllEvents(DB)
 	if err != nil {
 		return
 	}
-
-	for _, v := range allEventsMap {
-		invEvent.Id = v.Id
-		invEvent.Event = v.ActionEvent
-		invEvent.Date = v.Date
+	for i, _ := range allEvents {
 
 		for _, m := range allEmployees {
-			if int(v.Fk_user.Int64) == m.Id {
-				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
+			fmt.Println("here:", int(allEvents[i].Fk_user.Int64))
+			fmt.Println("here1:", m.Id)
+
+			if int(allEvents[i].Fk_user.Int64) == m.Id {
+				allEvents[i].UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
 		for _, n := range allEquip {
 
-			if v.Fk_equipment == n.Id {
-				invEvent.Equipment = n.EquipmentName
+			if allEvents[i].Fk_equipment == n.Id {
+				allEvents[i].Equipment = n.EquipmentName
 			}
 		}
-		allEvents = append(allEvents, invEvent)
 	}
 	return
 }
-func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,params *revel.Params) (allEvents []InventoryEvent, err error) {
-	var dateStart = params.Get("dateStart")
-	var dateEnd = params.Get("dateEnd")
+
+func (e *InventoryEvent) GetEventsForDate(DB *sql.DB, dateStart, dateEnd string) (allEvents []entity.InventoryEvent, err error) {
+
 	eventMapper := mappers.InventoryEvent{}
-	equipmentMapper := mappers.EquipmentTable{}
+	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
 
 	invEvent := InventoryEvent{}
@@ -69,27 +62,22 @@ func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,params *revel.Params) (allE
 	if err != nil {
 		return
 	}
-	allEventsMap, err := eventMapper.GetEventsForDate(DB,dateStart, dateEnd)
+	allEvents, err = eventMapper.GetEventsForDate(DB, dateStart, dateEnd)
 	if err != nil {
 		return
 	}
-	for _, v := range allEventsMap {
-		invEvent.Id = v.Id
-		invEvent.Event = v.ActionEvent
-		invEvent.Date = v.Date
-
+	for i, _ := range allEvents {
 		for _, m := range allEmployees {
-			if int(v.Fk_user.Int64) == m.Id {
+			if int(allEvents[i].Fk_user.Int64) == m.Id {
 				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
 		for _, n := range allEquip {
 
-			if v.Fk_equipment == n.Id {
+			if allEvents[i].Fk_equipment == n.Id {
 				invEvent.Equipment = n.EquipmentName
 			}
 		}
-		allEvents = append(allEvents, invEvent)
 	}
 	return
 }

@@ -1,4 +1,4 @@
-import {TreeDatatable} from '../views/const.js';
+import {MoveEquipDatatable, TreeDatatable} from '../views/const.js';
 
 export function sendQuery(url, method, data) {
     let response = fetch(url, {
@@ -16,11 +16,13 @@ export class Equipment {
         equipment.class = parseInt(equipment.class);
         equipment.subclass = parseInt(equipment.subclass);
         let json = JSON.stringify(equipment);
+
         return sendQuery('/addEquipment', 'POST', json)
     }
 
     deleteEquipment(equipment) {
-        return sendQuery('/deleteEquipment', 'DELETE', equipment.id)
+        let json = JSON.stringify(equipment);
+        return sendQuery('/deleteEquipment', 'DELETE', json)
     }
 
     updateEquipment(equipment) {
@@ -28,16 +30,17 @@ export class Equipment {
         return sendQuery('/updateEquipment', 'POST', json)
     }
 
-    getAllEquipment(token) {
-        return fetch('/getAllEquipments?token='+token)
+    getAllEquipments(token) {
+        $$(TreeDatatable).showProgress({});
+        return fetch('/getAllEquipments?token=' + token)
     }
 
     getEquipmentsInStore() {
-        $$(TreeDatatable).showProgress({});
+        $$(MoveEquipDatatable).showProgress({});
         return fetch('/getEquipmentsInStore')
     }
 
-    getUserEquipments(selectedEmployee) {
+    getEquipmentsByUser(selectedEmployee) {
         return fetch('/getEquipmentByUser?user=' + selectedEmployee);
     }
 
@@ -46,18 +49,21 @@ export class Equipment {
     }
 
 
-    writeProduct(equipment) {
-        return sendQuery('/writeEquipment', 'POST', equipment.id);
+    writeEquipment(equipment) {
+        let json = JSON.stringify(equipment);
+        return sendQuery('/writeEquipment', 'POST', json);
     }
 
     dragToUser(equipment) {
+        console.log(equipment);
+
         let unParsed = JSON.stringify(equipment);
-        console.log(unParsed);
         return sendQuery('/dragToUser', 'POST', unParsed);
     }
 
     dragToStore(equipment) {
-        return sendQuery('/dragToStore', 'POST', equipment.id);
+        let json = JSON.stringify(equipment);
+        return sendQuery('/dragToStore', 'POST', json);
     }
 }
 

@@ -1,5 +1,5 @@
 import {registerUserForm} from './registerUserForm.js';
-import {Employee} from '../../../models/MUserModel.js';
+import {Employee} from '../../../models/MEmployeeModel.js';
 import {UpdateUserForm, UsersDatatable} from '../../const.js';
 import {updateUserForm} from './updateUserForm.js';
 
@@ -16,6 +16,8 @@ export const UsersToolbar = {
             height: 50,
             click: updateUser
         },
+        {view: "button", id: "deleteUser", value: "Удалить сотрудника", width: 200, height: 50, click: deleteEmoloyee},
+
         {view: "button", id: "resetPassword", value: "Сбросить пароль", width: 200, height: 50, click: resetPassword},
     ],
 }
@@ -42,20 +44,26 @@ function updateUser() {
 }
 
 //удаление пользователя
-function deleteUser() {
+function deleteEmoloyee() {
+
     let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
-        let user = new Employee();
-        let promise = user.deleteEmployee(row);
-        promise.then(response => {
-            return response.json();
-        }).then(result => {
-            if (result.Error == "") {
-                $$(UsersDatatable).remove(result.Data.id);
-            } else {
-                webix.message(result.Error);
-            }
-        })
+        webix.confirm({
+            title: "Удаление сотрудника",
+            text: "Вы уверены?"
+        }).then(() => {
+            let user = new Employee();
+            let promise = user.deleteUser(row);
+            promise.then(response => {
+                return response.json();
+            }).then(result => {
+                if (result.Error == "") {
+                    $$(UsersDatatable).remove(result.Data.id);
+                } else {
+                    webix.message(result.Error);
+                }
+            })
+        });
     } else {
         webix.message("not selected item");
     }

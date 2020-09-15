@@ -1,16 +1,51 @@
 package mappers
 
-import "database/sql"
+import (
+	"database/sql"
+	"myapp/app/entity"
+)
 
 type InventoryEvent struct {
-	Id           int
-	Fk_user      sql.NullInt64
-	Fk_equipment int
-	ActionEvent  string
-	Date         string
+	entity.InventoryEvent
+}
+func (e *Equipment) NewEvent(DB *sql.DB, event entity.InventoryEvent) (lastInsertedId int, err error) {
+	err = DB.QueryRow("insert into inventoryEvents (fk_equipment,fk_user,actionevent,date) values($1,$2,$3,'now')",
+		event.Fk_equipment, event.Fk_user, event.ActionEvent).Scan(&lastInsertedId)
+	if err != nil {
+		if err==sql.ErrNoRows{
+			err=nil
+		}
+		return
+	}
+	return
 }
 
-func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (inventoryEvent []InventoryEvent, err error) {
+
+func (e *InventoryEvent) DeleteEventByEmployee(DB *sql.DB, employee entity.Employee) (deletedId int, err error) {
+err = DB.QueryRow("delete from inventoryevents where fk_equipment=$1 returning id", employee.Id).Scan(&deletedId)
+if err != nil {
+if err==sql.ErrNoRows{
+err=nil
+}
+return
+}
+return
+}
+
+
+func (e *InventoryEvent) DeleteEventByFkUser(DB *sql.DB, employee entity.Employee) (deletedId int, err error) {
+	err = DB.QueryRow("delete from inventoryevents where fk_user=$1 returning id", employee.Id).Scan(&deletedId)
+	if err != nil {
+		if err==sql.ErrNoRows{
+			err=nil
+		}
+		return
+	}
+	return
+}
+
+
+func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (inventoryEvent []entity.InventoryEvent, err error) {
 	rows, err := DB.Query("select id, fk_user, fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') from inventoryEvents")
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -18,33 +53,35 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (inventoryEvent []InventoryEve
 		}
 		return
 	}
+	var event entity.InventoryEvent
 	defer rows.Close()
 	for rows.Next() {
-		err = rows.Scan(&e.Id, &e.Fk_user, &e.Fk_equipment, &e.ActionEvent, &e.Date)
+		err = rows.Scan(&event.Id, &event.Fk_user, &event.Fk_equipment, &event.ActionEvent, &event.Date)
 		if err != nil {
 			return
 		}
-		inventoryEvent = append(inventoryEvent, *e)
+		inventoryEvent = append(inventoryEvent, event)
 
 	}
 	return
 }
-func (e *InventoryEvent) GetEventsForDate(DB *sql.DB,startDate string, endDate string) (inventoryEvent []InventoryEvent, err error) {
+func (e *InventoryEvent) GetEventsForDate(DB *sql.DB, startDate string, endDate string) (inventoryEvent []entity.InventoryEvent, err error) {
 	rows, err := DB.Query("select id,fk_user,fk_equipment,actionEvent,to_char(date, 'DD-MM-YYYY') "+
 		"from inventoryEvents where date between $1 and $2 ", startDate, endDate)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
+	var event entity.InventoryEvent
 	for rows.Next() {
-		err = rows.Scan(&e.Id, &e.Fk_user, &e.Fk_equipment, &e.ActionEvent, &e.Date)
+		err = rows.Scan(&event.Id, &event.Fk_user, &event.Fk_equipment, &event.ActionEvent, &event.Date)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				err = nil
 			}
 			return
 		}
-		inventoryEvent = append(inventoryEvent, *e)
+		inventoryEvent = append(inventoryEvent, event)
 	}
 	return
 }

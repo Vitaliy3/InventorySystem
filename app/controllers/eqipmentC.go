@@ -1,10 +1,13 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/revel/revel"
 	"myapp/app"
+	"myapp/app/entity"
 	"myapp/app/models"
+	"strconv"
+	"strings"
 )
 
 type Equipment struct {
@@ -15,10 +18,22 @@ func (c Equipment) Index() revel.Result {
 	return c.Render()
 }
 
+//выдача товара сотруднику
 func (c Equipment) DragToUser() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	renderInterface := app.RenderInterface{}
-	equipModel := models.EquipmentModel{}
-	result, err := equipModel.DragToUser(app.DB, c.Params)
+	equipmentModel := models.EquipmentModel{}
+	equipment := entity.Equipment{}
+
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := equipmentModel.DragToUser(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -28,10 +43,21 @@ func (c Equipment) DragToUser() revel.Result {
 
 }
 
+//помещение товара на склад
 func (c Equipment) DragToStore() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEquipments.DragToStore(app.DB, c.Params)
+	var equipment entity.Equipment
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := DataEquipments.DragToStore(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -43,10 +69,19 @@ func (c Equipment) DragToStore() revel.Result {
 
 //получение оборудования,которое находится у определенного пользователя
 func (c Equipment) GetEquipmentByUser() revel.Result {
-	DataEquipments := models.EquipmentModel{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	equipmentModel := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-
-	result, err := DataEquipments.GetEquipmentByUser(app.DB, c.Params)
+	id := c.Params.Get("user")
+	convId, err := strconv.Atoi(id)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := equipmentModel.GetEquipmentByUser(app.DB, entity.Equipment{Id: convId})
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -57,6 +92,10 @@ func (c Equipment) GetEquipmentByUser() revel.Result {
 
 //получение оборудования,которое находится на складе
 func (c Equipment) GetEquipmentsInStore() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.GetEquipmentsInStore(app.DB)
@@ -71,43 +110,91 @@ func (c Equipment) GetEquipmentsInStore() revel.Result {
 //получение полного дерева учета оборудования
 func (c Equipment) GetFullTree() revel.Result {
 
+	if CheckPerm(c.Controller, "employee") || CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEquipments.GetFullTree(app.DB, c.Params, Session)
+	token := c.Params.Get("token")
+	session := Session[token]
+	if session == "" {
+		return c.Render()
+	}
+	splitSession := strings.Split(session, ":")
+	var userId int
+	var err error
+	var tree []entity.FullTree
+	if splitSession[1] == "employee" {
+		userId, err = strconv.Atoi(splitSession[0])
+		if err != nil {
+			return c.Render()
+		}
+		tree, err = DataEquipments.GetEmployeeTree(app.DB, entity.Equipment{Id: userId})
+	} else if splitSession[1] == "admin" {
+		tree, err = DataEquipments.GetFullTree(app.DB, entity.Equipment{Id: userId})
+
+	}
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
-		renderInterface.Data = result
+		renderInterface.Data = tree
 	}
 	return c.RenderJSON(renderInterface)
 }
 
 //получение всего оборудования
 func (c Equipment) GetAllEquipments() revel.Result {
-	if CheckPerm(c.Controller, "admin") {
+
+	if CheckPerm(c.Controller, "admin") || CheckPerm(c.Controller, "employee") {
 	} else {
 		return c.Render()
 	}
-
-	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-
-	result, err := DataEquipments.GetAllEquipments(app.DB, c.Params, Session)
-	if err != nil {
-		renderInterface.Error = err.Error()
-	} else {
-		renderInterface.Data = result
+	token := c.Params.Get("token")
+	session := Session[token]
+	if session == "" {
+		return c.Render()
 	}
-	fmt.Println("RENDERDATA", renderInterface.Data)
-	return c.RenderJSON(renderInterface)
+	splitSession := strings.Split(session, ":")
+	var userId int
+	var equipments []entity.Equipment
+	var err error
+	var equipmentModel models.EquipmentModel
+	if splitSession[1] == "employee" {
+		userId, err = strconv.Atoi(splitSession[0])
+		if err != nil {
+			return c.Render()
+		}
+
+		equipments, err = equipmentModel.GetEquipmentByUser(app.DB, entity.Equipment{Id: userId})
+	} else if splitSession[1] == "admin" {
+		equipments, err = equipmentModel.GetAllEquipments(app.DB)
+	}
+		if err != nil {
+			renderInterface.Error = err.Error()
+		} else {
+			renderInterface.Data = equipments
+		}
+		return c.RenderJSON(renderInterface)
 }
 
 //списать оборудование
 func (c Equipment) WriteEquipment() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEquipments := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 
-	result, err := DataEquipments.WriteEquipment(app.DB, c.Params)
+	var equipment entity.Equipment
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := DataEquipments.WriteEquipment(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -118,10 +205,20 @@ func (c Equipment) WriteEquipment() revel.Result {
 
 //изменение оборудования
 func (c Equipment) UpdateEquipment() revel.Result {
-	DataEquipments := models.EquipmentModel{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	equipmentModel := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
+	var equipment entity.Equipment
 
-	result, err := DataEquipments.UpdateEquipment(app.DB, c.Params)
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := equipmentModel.UpdateEquipment(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -132,11 +229,19 @@ func (c Equipment) UpdateEquipment() revel.Result {
 
 //добавление оборудования
 func (c Equipment) AddEquipment() revel.Result {
-	DataEquipments := models.EquipmentModel{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	equipmentModel := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-
-	result, err := DataEquipments.AddEquipment(app.DB, c.Params)
-	fmt.Println("RESULT", result)
+	var equipment entity.Equipment
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := equipmentModel.AddEquipment(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -147,10 +252,19 @@ func (c Equipment) AddEquipment() revel.Result {
 
 //удаление оборудования
 func (c Equipment) DeleteEquipment() revel.Result {
-	DataEquipments := models.EquipmentModel{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	equipmentModel := models.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
-
-	result, err := DataEquipments.DeleteEquipment(app.DB, c.Params)
+	var equipment entity.Equipment
+	err := json.Unmarshal(c.Params.JSON, &equipment)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := equipmentModel.DeleteEquipment(app.DB, equipment)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {

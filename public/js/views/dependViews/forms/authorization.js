@@ -1,4 +1,4 @@
-import { Employee } from '../../../models/MUserModel.js';
+import { Employee } from '../../../models/MEmployeeModel.js';
 export const authorizeForm = webix.ui({
     view: "window",
     width: 400,

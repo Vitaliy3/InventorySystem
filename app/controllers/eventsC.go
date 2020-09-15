@@ -11,9 +11,14 @@ type Events struct {
 }
 
 func (c Events) GetAllEvents() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+
 	DataEvent := models.InventoryEvent{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEvent.GetAllEvents(app.DB,c.Params)
+	result, err := DataEvent.GetAllEvents(app.DB)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -26,8 +31,9 @@ func (c Events) GetAllEvents() revel.Result {
 func (c Events) GetEventsForDate() revel.Result {
 	DataEvent := models.InventoryEvent{}
 	renderInterface := app.RenderInterface{}
-
-	result, err := DataEvent.GetEventsForDate(app.DB,c.Params)
+	var dateStart = c.Params.Get("dateStart")
+	var dateEnd = c.Params.Get("dateEnd")
+	result, err := DataEvent.GetEventsForDate(app.DB,dateStart,dateEnd)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {

@@ -1,4 +1,4 @@
-import {Employee} from '../../../models/MUserModel.js';
+import {Employee} from '../../../models/MEmployeeModel.js';
 import {UpdateUserForm, UsersDatatable} from './../../const.js';
 
 export const updateUserForm = webix.ui({

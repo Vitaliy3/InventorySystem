@@ -1,11 +1,10 @@
-import {UserEventsDatatable} from '../views/const.js';
+import {EmployeeEventsDatatable} from '../views/const.js';
 
 export class UserEvent {
     getAllEvents() {
-        $$(UserEventsDatatable).showProgress({});
+        $$(EmployeeEventsDatatable).showProgress({});
         return fetch('/getAllEvents')
     }
-
 
     getEventsForDate(dateFromTo) {
         let date = JSON.parse(dateFromTo);

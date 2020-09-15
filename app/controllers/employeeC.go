@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/revel/revel"
 	"myapp/app"
+	"myapp/app/entity"
 	"myapp/app/models"
 )
 
@@ -12,9 +14,20 @@ type User struct {
 
 //добавление сотрудников
 func (c User) AddEmployee() revel.Result {
-	DataEmployee := models.Employee{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEmployee.AddEmployee(app.DB, c.Params)
+	var employee entity.Employee
+	employeeModel := models.Employee{}
+
+	err := json.Unmarshal(c.Params.JSON, &employee)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := employeeModel.AddEmployee(app.DB, employee)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -25,9 +38,13 @@ func (c User) AddEmployee() revel.Result {
 
 //получение всех сотрудников
 func (c User) GetAllEmployees() revel.Result {
-	DataEmployee := models.Employee{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	employeeModel := models.Employee{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEmployee.GetAllEmployees(app.DB)
+	result, err := employeeModel.GetAllEmployees(app.DB)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -38,9 +55,20 @@ func (c User) GetAllEmployees() revel.Result {
 
 //изменение данных о сотруднике
 func (c User) UpdateEmployee() revel.Result {
-	DataEmployee := models.Employee{}
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	employeeModel := models.Employee{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEmployee.UpdateEmployee(app.DB,c.Params)
+	employee := entity.Employee{}
+
+	err := json.Unmarshal(c.Params.JSON, &employee)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := employeeModel.UpdateEmployee(app.DB, employee)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -51,9 +79,20 @@ func (c User) UpdateEmployee() revel.Result {
 
 //сброс пароля у сотрудника
 func (c User) ResetPassEmployee() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEmployee.ResetPassEmployee(app.DB,c.Params)
+	var employee entity.Employee
+
+	err := json.Unmarshal(c.Params.JSON, &employee)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := DataEmployee.ResetPassEmployee(app.DB, employee)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -64,9 +103,20 @@ func (c User) ResetPassEmployee() revel.Result {
 
 //удаление сотрудника
 func (c User) DeleteEmployee() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
 	DataEmployee := models.Employee{}
 	renderInterface := app.RenderInterface{}
-	result, err := DataEmployee.DeleteEmployee(app.DB,c.Params)
+	var employee entity.Employee
+
+	err := json.Unmarshal(c.Params.JSON, &employee)
+	if err != nil {
+		renderInterface.Error = err.Error()
+		return c.RenderJSON(renderInterface)
+	}
+	result, err := DataEmployee.DeleteEmployee(app.DB, employee)
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {

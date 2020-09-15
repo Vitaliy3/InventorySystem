@@ -36,7 +36,7 @@ export const equipmentsToolbar = {
             value: "Удалить оборудование",
             height: 50,
             align: "",
-            click: deleteProduct
+            click: deleteEquipmentToolbar
         },
         {
             view: "button",
@@ -79,15 +79,14 @@ function updateProduct() {
     }
 }
 
-function deleteProduct() {
+function deleteEquipmentToolbar() {
     webix.confirm({
         title: "Удаление оборудования",
         text: "Вы уверены?"
     }).then(() => {
-
         let row = $$(TreeDatatable).getSelectedItem();
         if (row) {
-            let product = new Equipment({});
+            let product = new Equipment();
             let promise = product.deleteEquipment(row);
             promise.then(response => {
                 return response.json();
@@ -114,7 +113,7 @@ function writeProduct() {
         let datatable = $$(TreeDatatable);
         let row = datatable.getSelectedItem();
         let equipment = new Equipment();
-        let promise = equipment.writeProduct(row);
+        let promise = equipment.writeEquipment(row);
         promise.then(response => {
             return response.json();
         }).then(result => {

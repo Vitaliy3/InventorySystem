@@ -11,8 +11,6 @@ export const moveToolbar = {
             view: "template",
             css: {"opacity": "0"},
             template: "<div></div>"
-
-
         },
         {
             view: combo,
@@ -48,7 +46,7 @@ function findEquipmentsByUser() {
     let selected = $$(combo).getValue();
     $$(DragProdDatatable).clearAll();
     console.log(selected);
-    let promise = eqipment.getUserEquipments(selected);
+    let promise = eqipment.getEquipmentsByUser(selected);
     promise.then(response => {
         return response.json();
     }).then(result => {
