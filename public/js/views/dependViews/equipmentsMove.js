@@ -16,11 +16,10 @@ export const moveToolbar = {
             view: combo,
             value: 2,
             id: combo,
-            width: 295  ,
+            width: 295,
             align: "right",
             options: {
                 body: {
-
                     template: "<span style='display:none'>#id#</span> <span>#name#</span>"
                 },
             }
@@ -36,7 +35,9 @@ export const dragEquipmentTable = {
     width: 400,
     select: true,
     columns: [
-        {id: "name", header: "Название", class: "class", fillspace: true,},
+        {id: "Class", header: "Класс", fillspace: true,},
+        {id: "Subclass", header: "Подкласс", width:150,},
+        {id: "name", header: "Название", fillspace: true,},
         {id: "inventoryNumber", header: "Инвентарный номер", fillspace: true},
     ]
 };
@@ -53,6 +54,7 @@ function findEquipmentsByUser() {
         if (result.Error == "") {
             if (result.Data == null) {
             } else {
+                console.log("data", result.Data);
                 $$(DragProdDatatable).parse(result.Data);
             }
         } else {
@@ -77,7 +79,7 @@ export const movingTree = {
                         onSelectChange: function () {
                             let item = $$(MoveEquipmentTree).getSelectedItem();
                             $$(MoveEquipDatatable).parse(getNeedProducts(item, MoveEquipmentTree));
-                            $$(MoveEquipDatatable).filterByAll();//refresh data after change tree column
+                            $$(MoveEquipDatatable).filterByAll();
                         }
                     }
                 },

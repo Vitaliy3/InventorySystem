@@ -7,14 +7,14 @@ export const UsersToolbar = {
     view: "toolbar",
     id: "UsersToolbar",
     cols: [
-        {view: "button", id: "adduser", value: "Добавить сотрудника", width: 200, height: 50, click: addUser},
+        {view: "button", id: "adduser", value: "Добавить сотрудника", width: 200, height: 50, click: addEmployee},
         {
             view: "button",
             id: "updateUser",
             value: "Изменить данные о сотруднике",
             width: 200,
             height: 50,
-            click: updateUser
+            click: updateEmployee
         },
         {view: "button", id: "deleteUser", value: "Удалить сотрудника", width: 200, height: 50, click: deleteEmoloyee},
 
@@ -23,19 +23,19 @@ export const UsersToolbar = {
 }
 
 //добавления пользователя
-function addUser() {
+function addEmployee() {
     registerUserForm.show();
 }
 
 //обновление данных пользователя
-function updateUser() {
+function updateEmployee() {
     let row = $$(UsersDatatable).getSelectedItem();
     if (row) {
         $$(UpdateUserForm).setValues({
             name: row.name,
             surname: row.surname,
             patronymic: row.patronymic,
-            login: row.login
+            login: row.login,
         });
         updateUserForm.show();
     } else {

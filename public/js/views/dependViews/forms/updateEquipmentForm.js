@@ -18,14 +18,14 @@ export const updateEquipmentForm = webix.ui({
 
             {
                 margin: 5, cols: [
-                    {view: "button", label: "Подтвердить", type: "form", click: updateItem},
-                    {view: "button", label: "Отмена", click: closeForm}
+                    {view: "button", label: "Подтвердить", type: "form", click: confirmUpdateItem},
+                    {view: "button", label: "Отмена", click: cancel}
                 ]
             }]
     }
 });
 
-function updateItem() {
+function confirmUpdateItem() {
     let formValues = $$("updateEquipmentForm").getValues();
     let row = $$("myList").getSelectedItem();
     row.name = formValues.name;
@@ -46,6 +46,6 @@ function updateItem() {
     );
 }
 
-function closeForm() {
+function cancel() {
     updateEquipmentForm.hide();
 }

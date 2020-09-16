@@ -21,7 +21,6 @@ func (c User) AddEmployee() revel.Result {
 	renderInterface := app.RenderInterface{}
 	var employee entity.Employee
 	employeeModel := models.Employee{}
-
 	err := json.Unmarshal(c.Params.JSON, &employee)
 	if err != nil {
 		renderInterface.Error = err.Error()

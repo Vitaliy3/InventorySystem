@@ -18,10 +18,11 @@ export const updateUserForm = webix.ui({
             {view: "text", name: "surname", label: "Фамилия", labelWidth: 90},
             {view: "text", name: "patronymic", label: "Отчество", labelWidth: 90},
             {view: "text", name: "login", label: "Логин", labelWidth: 90},
+            {view: "text", name: "password", label: "Пароль", labelWidth: 90},
             {
                 margin: 5, cols: [
-                    {view: "button", label: "Подтвердить", type: "form", click: updateUser},
-                    {view: "button", label: "Отмена", click: closeForm}
+                    {view: "button", label: "Подтвердить", type: "form", click: updateEmployee},
+                    {view: "button", label: "Отмена", click: cancel}
                 ]
             }],
         rules: {
@@ -49,7 +50,7 @@ export const updateUserForm = webix.ui({
     }
 });
 
-function updateUser() {
+function updateEmployee() {
     if ($$(UpdateUserForm).validate()) {
         let formValues = $$(UpdateUserForm).getValues();
         let row = $$(UsersDatatable).getSelectedItem();
@@ -57,23 +58,24 @@ function updateUser() {
         row.surname = formValues.surname;
         row.patronymic = formValues.patronymic;
         row.login = formValues.login;
+        row.password = formValues.password;
         let user = new Employee();
         let promise = user.updateUser(row);
         promise.then(response => {
             return response.json();
         }).then(result => {
-            if (result.Reject == null) {
+            if (result.Error == "") {
                 let datatable = $$(UsersDatatable);
                 datatable.updateItem(row.id, result.Data);
                 updateUserForm.hide();
                 webix.message("success update");
             } else {
-                webix.message(result.Reject);
+                webix.message(result.Error);
             }
         })
     }
 }
 
-function closeForm() {
+function cancel() {
     updateUserForm.hide();
 }

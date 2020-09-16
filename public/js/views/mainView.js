@@ -160,7 +160,7 @@ function loadData(id) {
         pushToTree(MoveEquipmentTree);//parse Tree
         $$(MoveEquipmentTree).clearAll();
         $$(MoveEquipDatatable).clearAll();
-        $$(combo).setValue("");
+        $$(DragProdDatatable).clearAll();
 
         let promise = "";
         let product = new Equipment();
@@ -187,180 +187,188 @@ function loadData(id) {
             return response.json();
         }).then(result => {
             if (result.Error == "") {
-                let joinUsers = [];
-                let temp = "";
-                for (let i = 0; i < result.Data.length; i++) {
-                    temp = {
-                        id: result.Data[i].id,
-                        name: result.Data[i].name + " " + result.Data[i].surname + " " + result.Data[i].patronymic
-                    };
-                    joinUsers.push(temp);
+                if (result.Data != null) {
+                    let joinUsers = [];
+                    let temp = "";
+                    for (let i = 0; i < result.Data.length; i++) {
+                        temp = {
+                            id: result.Data[i].id,
+                            name: result.Data[i].name + " " + result.Data[i].surname + " " + result.Data[i].patronymic
+                        };
+                        joinUsers.push(temp);
+                    }
+                    let list = $$(combo).getPopup().getList();
+                    list.clearAll();
+                    list.parse(joinUsers);
                 }
-                let list = $$(combo).getPopup().getList();
-                list.clearAll();
-                list.parse(joinUsers);
             } else {
                 webix.message(result.Error);
             }
         });
     }
 }
-    webix.ui({
-        rows: [
-            {view: "button", id: "authorize", value: "Выйти", width: 200, height: 50, align: "right", click: logout},
-            mainPage,
-        ]
-    });
 
-    function getCookie(name) {
-        let matches = document.cookie.match(new RegExp(
-            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-        ));
-        return matches ? decodeURIComponent(matches[1]) : undefined;
+webix.ui({
+    rows: [
+        {view: "button", id: "authorize", value: "Выйти", width: 200, height: 50, align: "right", click: logout},
+        mainPage,
+    ]
+});
+
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function getUserRole() {
+    let cookie = getCookie("token");
+    let splitCookie = cookie.split(':');
+    return splitCookie[1];
+}
+
+function getCurrentToken() {
+    let cookie = getCookie("token");
+    let splitCookie = cookie.split(':');
+    return splitCookie[0];
+}
+
+
+window.onload = function () {
+    let cookie = getCookie("token");
+    let splitCookie = cookie.split(':');
+    if (splitCookie[1] != "admin") {
+        $$("tabView").getTabbar().removeOption("moveProducts");
+        $$("tabView").getTabbar().removeOption("regUsers");
+        $$("tabView").getTabbar().removeOption("regUserEvents");
+        $$("myToolbar").hide();
+        $$("myList").hideColumn("status");
+        $$("myList").hideColumn("user");
     }
+    loadData("regProducts");
+};
 
-    function getUserRole() {
-        let cookie = getCookie("token");
-        let splitCookie = cookie.split(':');
-        return splitCookie[1];
-    }
-
-    function getCurrentToken() {
-        let cookie = getCookie("token");
-        let splitCookie = cookie.split(':');
-        return splitCookie[0];
-    }
-
-
-    window.onload = function () {
-        let cookie = getCookie("token");
-        let splitCookie = cookie.split(':');
-        if (splitCookie[1] != "admin") {
-            $$("tabView").getTabbar().removeOption("moveProducts");
-            $$("tabView").getTabbar().removeOption("regUsers");
-            $$("tabView").getTabbar().removeOption("regUserEvents");
-            $$("myToolbar").hide();
-            $$("myList").hideColumn("status");
-            $$("myList").hideColumn("user");
+function logout() {
+    let promise = fetch("/logout")
+    promise.then(json => {
+        return json.json()
+    }).then(result => {
+        if (result.Error == "") {
+            document.cookie = "auth" + '=; Max-Age=0';
+            document.cookie = "token" + '=; Max-Age=0';
+            document.location.href = result.Data;
+        } else {
+            webix.message(result.Error);
         }
-        loadData("regProducts");
-    };
-
-    function logout() {
-        let promise = fetch("/logout")
-        promise.then(json => {
-            return json.json()
-        }).then(result => {
-            if (result.Error == "") {
-                document.cookie = "auth" + '=; Max-Age=0';
-                document.cookie = "token" + '=; Max-Age=0';
-                document.location.href = result.Data;
-            } else {
-                webix.message(result.Error);
-            }
-        });
-    }
+    });
+}
 
 //спиннеры для загрузки
 
-    webix.extend($$(TreeDatatable), webix.ProgressBar);
-    webix.extend($$(UsersDatatable), webix.ProgressBar);
-    webix.extend($$(MoveEquipDatatable), webix.ProgressBar);
-    webix.extend($$(EmployeeEventsDatatable), webix.ProgressBar);
-    webix.extend($$(UsersDatatable), webix.ProgressBar);
+webix.extend($$(TreeDatatable), webix.ProgressBar);
+webix.extend($$(UsersDatatable), webix.ProgressBar);
+webix.extend($$(MoveEquipDatatable), webix.ProgressBar);
+webix.extend($$(EmployeeEventsDatatable), webix.ProgressBar);
+webix.extend($$(UsersDatatable), webix.ProgressBar);
 
 
 //фильтр для для выборки элементов всех подклассов класса в древовидном списке
-    $$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
-        {columnId: "class"},
-        {
-            getValue: function (node) {
-                return node.value;
-            },
-            setValue: function (node, value) {
-                node.value = value;
-            }
-        });
+$$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
+    {columnId: "class"},
+    {
+        getValue: function (node) {
+            return node.value;
+        },
+        setValue: function (node, value) {
+            node.value = value;
+        }
+    });
 
 //фильтр для для выборки элементов подкласса в древовидном списке
-    $$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
-        {columnId: "subclass"},
-        {
-            getValue: function (node) {
-                return node.value;
-            },
-            setValue: function (node, value) {
-                node.value = value;
-            }
-        });
+$$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
+    {columnId: "subclass"},
+    {
+        getValue: function (node) {
+            return node.value;
+        },
+        setValue: function (node, value) {
+            node.value = value;
+        }
+    });
 
 //фильтр для для выборки элементов всех подклассов класса в древовидном списке
-    $$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterClass"),
-        {columnId: "class"},
-        {
-            getValue: function (node) {
-                return node.value;
-            },
-            setValue: function (node, value) {
-                node.value = value;
-            }
-        });
+$$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterClass"),
+    {columnId: "class"},
+    {
+        getValue: function (node) {
+            return node.value;
+        },
+        setValue: function (node, value) {
+            node.value = value;
+        }
+    });
 
 //фильтр для для выборки элементов подкласса в древовидном списке
-    $$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterSubclass"),
-        {columnId: "subclass"},
-        {
-            getValue: function (node) {
-                return node.value;
-            },
-            setValue: function (node, value) {
-                node.value = value;
-            }
-        });
+$$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterSubclass"),
+    {columnId: "subclass"},
+    {
+        getValue: function (node) {
+            return node.value;
+        },
+        setValue: function (node, value) {
+            node.value = value;
+        }
+    });
 
 //событие на drap-grop из склада к сотруднику
-    $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
-        let dnd = webix.DragControl.getContext();
-        let value = dnd.from.getItem(dnd.source[0]);
-        let product = new Equipment(value);
-        let selected = $$(combo).getValue();
-        if (selected == 2) {
-            webix.message("Не выбран пользователь");
-            return false;
+$$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
+    let dnd = webix.DragControl.getContext();
+    let value = dnd.from.getItem(dnd.source[0]);
+    let product = new Equipment();
+    let selected = $$(combo).getValue();
+    if (selected == 2) {
+        webix.message("Не выбран пользователь");
+        return false;
+    }
+    let sendValue = {fk_user: selected, id: value.id};
+    sendValue.fk_user = parseInt(sendValue.fk_user);
+    let promise = product.dragToUser(sendValue);
+    promise.then(response => {
+        return response.json();
+    }).then(result => {
+        if (result.Error == "") {
+            $$(DragProdDatatable).parse(result.Data);
+            $$(MoveEquipDatatable).remove(result.Data.id);
+            return result.Data;
+        } else {
+            webix.message(result.Error);
         }
-        let sendValue = {fk_user: selected, id: value.id};
-        sendValue.fk_user = parseInt(sendValue.fk_user);
-        let promise = product.dragToUser(sendValue);
-        promise.then(response => {
-            return response.json();
-        }).then(result => {
-            if (result.Error == "") {
-                return result.Data;
-            } else {
-                webix.message(result.Error);
-            }
-        });
-        return true;
     });
+    return false;
+});
 
 //событие на drap-grop от сотрудника на склад
-    $$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
-        let dnd = webix.DragControl.getContext();
-        let value = dnd.from.getItem(dnd.source[0]);
-        let product = new Equipment();
-        let promise = product.dragToStore(value);
-        promise.then(response => {
-            return response.json();
-        }).then(result => {
-            if (result.Error == "") {
-            } else {
-                webix.message(result.Error);
-            }
-        });
-        return true;
+$$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
+    let dnd = webix.DragControl.getContext();
+    let value = dnd.from.getItem(dnd.source[0]);
+    let product = new Equipment();
+    let promise = product.dragToStore(value);
+    promise.then(response => {
+        return response.json();
+    }).then(result => {
+        if (result.Error == "") {
+            $$(MoveEquipDatatable).parse(result.Data);
+            $$(DragProdDatatable).remove(result.Data.id);
+
+        } else {
+            webix.message(result.Error);
+        }
     });
-    $$(MoveEquipDatatable).attachEvent("onAfterAdd", function (id, index) {
-        $$(MoveEquipDatatable).filterByAll();
-    });
+    return false;
+});
+$$(MoveEquipDatatable).attachEvent("onAfterAdd", function (id, index) {
+    $$(MoveEquipDatatable).filterByAll();
+});
 
 

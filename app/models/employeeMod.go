@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"myapp/app/entity"
@@ -28,9 +27,11 @@ func (e *Employee) GetAllEmployees(DB *sql.DB) (employeeArray []entity.Employee,
 }
 
 //изменение данных о сотруднике
-func (e *Employee) UpdateEmployee(DB *sql.DB, employeee entity.Employee) (employee entity.Employee, err error) {
+func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (employee entity.Employee, err error) {
 	mapper := mappers.Employee{}
-	lastUpdateId, err := mapper.UpdateEmployee(DB, employeee)
+	employeeIn.Password = HashAndSalt([]byte(employeeIn.Password))
+
+	lastUpdateId, err := mapper.UpdateEmployee(DB, employeeIn)
 	if err != nil {
 		return
 	}
@@ -72,9 +73,10 @@ func (e *Employee) AddEmployee(DB *sql.DB, employee2 entity.Employee) (employee 
 	return
 }
 
-func (e *Employee) ResetPassEmployee(DB *sql.DB, employeee entity.Employee) (employee entity.Employee, err error) {
+func (e *Employee) ResetPassEmployee(DB *sql.DB,employeeIn entity.Employee) (employee entity.Employee, err error) {
 	emMapper := mappers.Employee{}
-	updatedRowId, err := emMapper.ResetPassEmployee(DB, employee)
+	employeeIn.Password=HashAndSalt([]byte("123"))
+	updatedRowId, err := emMapper.ResetPassEmployee(DB, employeeIn)
 	if err != nil {
 		return
 	}
@@ -93,11 +95,10 @@ type Authorization struct {
 
 func (e *Employee) Auth(DB *sql.DB, login, password string) (authStruct Authorization, err error) {
 	employeeMap := mappers.Employee{}
-	user, err := employeeMap.Auth(DB, login)
+	user, err := employeeMap.GetEmployeeByLogin(DB, login)
 	if err != nil {
 		return
 	}
-	fmt.Println(ComparePasswords(user.Password, []byte(password)) )
 	if !ComparePasswords(user.Password, []byte(password)) {
 		err = errors.New("Неверное имя пользователя или пароль")
 		return

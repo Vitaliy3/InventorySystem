@@ -13,7 +13,7 @@ type Equipment struct {
 	EquipmentName   string ` json:"name" `
 	Status          string `json:"status"`
 	Subclass        string `json:"Subclass"`
-	Class           string
+	Class           string `json:"Class"`
 	UserFIO         string     ` json:"user" `
 	ClassName       string     ` json:"value" `
 	Data            []Subclass ` json:"data" `
@@ -25,7 +25,6 @@ type Subclass struct {
 }
 type FullTree struct {
 	Id int `json:"class"`
-	//Class     string      `json:"none"`
 	Value     string      ` json:"value" `
 	Equipment []Equipment ` json:"data" `
 	Open      bool        `json:"open"`

@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 	"myapp/app/entity"
 	"myapp/app/mappers"
 )
@@ -21,24 +20,25 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (allEvents []entity.InventoryE
 	}
 	allEmployees, err := employeeMapper.GetAllEmployees(DB)
 	if err != nil {
+
 		return
 	}
 	allEvents, err = inventoryEventMapper.GetAllEvents(DB)
 	if err != nil {
+
 		return
 	}
 	for i, _ := range allEvents {
 
 		for _, m := range allEmployees {
-			fmt.Println("here:", int(allEvents[i].Fk_user.Int64))
-			fmt.Println("here1:", m.Id)
-
 			if int(allEvents[i].Fk_user.Int64) == m.Id {
 				allEvents[i].UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
+		if allEvents[i].UserFIO==""{
+			allEvents[i].UserFIO="Отсутствует"
+		}
 		for _, n := range allEquip {
-
 			if allEvents[i].Fk_equipment == n.Id {
 				allEvents[i].Equipment = n.EquipmentName
 			}
@@ -72,10 +72,13 @@ func (e *InventoryEvent) GetEventsForDate(DB *sql.DB, dateStart, dateEnd string)
 				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
-		for _, n := range allEquip {
+		if allEvents[i].UserFIO==""{
+			allEvents[i].UserFIO="Отсутствует"
+		}
 
+		for _, n := range allEquip {
 			if allEvents[i].Fk_equipment == n.Id {
-				invEvent.Equipment = n.EquipmentName
+				allEvents[i].Equipment = n.EquipmentName
 			}
 		}
 	}

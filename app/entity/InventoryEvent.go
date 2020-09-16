@@ -8,6 +8,7 @@ type InventoryEvent struct {
 	Date         string `json:"date"`
 	Equipment    string `json:"equipment"`
 	Fk_user      sql.NullInt64
+	Fk_userI int
 	Fk_equipment int
 	ActionEvent  string `json:"event"`
 }

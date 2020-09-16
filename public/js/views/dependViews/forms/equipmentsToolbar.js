@@ -20,7 +20,7 @@ export const equipmentsToolbar = {
             id: "addEquipment",
             value: "Добавить оборудование",
             height: 50,
-            click: addProduct
+            click: addEquipment
         },
         {
             view: "button",
@@ -28,7 +28,7 @@ export const equipmentsToolbar = {
             value: "Редактировать оборудование",
             height: 50,
             align: "",
-            click: updateProduct
+            click: updateEquipment
         },
         {
             view: "button",
@@ -36,7 +36,7 @@ export const equipmentsToolbar = {
             value: "Удалить оборудование",
             height: 50,
             align: "",
-            click: deleteEquipmentToolbar
+            click: deleteEquipment
         },
         {
             view: "button",
@@ -44,14 +44,14 @@ export const equipmentsToolbar = {
             value: "Списать оборудование",
             height: 50,
             align: "",
-            click: writeProduct
+            click: writeEquipment
         },
     ],
 }
 
 
 //добавление оборудования
-function addProduct() {
+function addEquipment() {
     let row = $$(RegproductsTree).getSelectedItem();
     if (row) {
         if (row.$level == 3) {
@@ -66,7 +66,7 @@ function addProduct() {
 }
 
 //обновить данные пользователя
-function updateProduct() {
+function updateEquipment() {
     let row = $$(TreeDatatable).getSelectedItem();
     if (row) {
         $$('updateEquipmentForm').setValues({
@@ -79,7 +79,7 @@ function updateProduct() {
     }
 }
 
-function deleteEquipmentToolbar() {
+function deleteEquipment() {
     webix.confirm({
         title: "Удаление оборудования",
         text: "Вы уверены?"
@@ -104,7 +104,7 @@ function deleteEquipmentToolbar() {
     })
 }
 
-function writeProduct() {
+function writeEquipment() {
     webix.confirm({
         title: "Списание оборудования",
         text: "Вы уверены?"
@@ -117,11 +117,11 @@ function writeProduct() {
         promise.then(response => {
             return response.json();
         }).then(result => {
-            if (result.Reject == null) {
+            if (result.Error == "") {
                 console.log(result.Data);
                 datatable.updateItem(result.Data.id, {status: result.Data.status});
             } else {
-                console.log("reject null");
+                webix.message(result.Error);
             }
         });
     });

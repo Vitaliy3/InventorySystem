@@ -34,7 +34,7 @@ export const recordEquipments = {
                         onSelectChange: function () {
                             let item = $$(RegProductsTree).getSelectedItem();
                             $$(TreeDatatable).parse(getNeedProducts(item, RegProductsTree));
-                            $$(TreeDatatable).filterByAll();//refresh data after change tree column
+                            $$(TreeDatatable).filterByAll();
                         }
                     }
                 },

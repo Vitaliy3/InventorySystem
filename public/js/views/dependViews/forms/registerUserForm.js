@@ -20,7 +20,7 @@ export const registerUserForm = webix.ui({
             {
                 margin: 5, cols: [
                     {view: "button", label: "Зарегистрировать", type: "form", click: registerUser},
-                    {view: "button", label: "Отмена", click: closeForm}
+                    {view: "button", label: "Отмена", click: cancel}
                 ]
             }],
         rules: {
@@ -74,6 +74,6 @@ function registerUser() {
     }
 }
 
-function closeForm() {
+function cancel() {
     registerUserForm.hide();
 }

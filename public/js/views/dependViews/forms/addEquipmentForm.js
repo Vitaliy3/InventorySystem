@@ -19,7 +19,7 @@ export const addEquipmentForm = webix.ui({
             {
                 margin: 5, cols: [
                     {view: "button", label: "Добавить", type: "form", click: confirmAddEuipment},
-                    {view: "button", label: "Отмена", click: closeForm}
+                    {view: "button", label: "Отмена", click: cancel}
                 ]
             }],
         rules: {
@@ -64,6 +64,6 @@ function confirmAddEuipment() {
     }
 }
 
-function closeForm() {
+function cancel() {
     addEquipmentForm.hide();
 }

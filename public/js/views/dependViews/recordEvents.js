@@ -7,9 +7,25 @@ export const recordEventsDatapicker = {
     width: 320,
 
     elements: [
-        {view: "datepicker", label: "Начальная дата:", name: "start", stringResult: true, format: "%d  %M %Y",labelWidth:125,width:250},
-        {view: "datepicker", label: "Конечная дата:", name: "end", stringResult: true, format: "%d  %M %Y",labelWidth:125,width:250},
-        {view: "button", value: "Поиск", click: filterByDate,width:150}
+        {
+            view: "datepicker",
+            label: "Начальная дата:",
+            name: "start",
+            stringResult: true,
+            format: "%d  %M %Y",
+            labelWidth: 125,
+            width: 250
+        },
+        {
+            view: "datepicker",
+            label: "Конечная дата:",
+            name: "end",
+            stringResult: true,
+            format: "%d  %M %Y",
+            labelWidth: 125,
+            width: 250
+        },
+        {view: "button", value: "Поиск", click: filterByDate, width: 150}
     ]
 
 };
@@ -24,11 +40,14 @@ function filterByDate() {
     }).then(result => {
         if (result.Error == "") {
             $$(EmployeeEventsDatatable).clearAll();
-            $$(EmployeeEventsDatatable).parse(result.Data);
+            if (result.Data != null) {
+                console.log("DATA",result.Data);
+                $$(EmployeeEventsDatatable).parse(result.Data);
+            }
         } else {
             webix.message(result.Error);
         }
-    })
+    });
 }
 
 export const recordEvents = {

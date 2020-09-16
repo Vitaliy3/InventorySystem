@@ -12,9 +12,9 @@ type Equipment struct {
 
 //получение одной еденицы оборудования
 func (e *Equipment) GetEquipmentById(DB *sql.DB, id int) (equipment entity.Equipment, err error) {
-	row := DB.QueryRow("select equipments.id,fk_class,fk_user,inventoryNumber,equipmentName,status,c2.id from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.id =$1", id)
-	err = row.Scan(&equipment.Id, &equipment.Fk_class, &equipment.Fk_user, &equipment.InventoryNumber, &equipment.EquipmentName,
-		&equipment.StatusI, &equipment.Fk_parent)
+	row := DB.QueryRow("select distinct equipments.id,fk_class,c2.id,fk_user,inventorynumber,equipmentname,status,c2.name ,c1.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.id =$1", id)
+	err = row.Scan(&equipment.Id, &equipment.Fk_class, &equipment.Fk_parent, &equipment.Fk_user, &equipment.InventoryNumber,
+		&equipment.EquipmentName, &equipment.StatusI,&equipment.Class,&equipment.Subclass)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = nil
@@ -49,7 +49,7 @@ func (e *Equipment) GetAllEquipments(DB *sql.DB) (equipments []entity.Equipment,
 //все оборудование у сотрудника
 func (e *Equipment) GetEquipmentsByUserId(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
 
-	rows, err := DB.Query("select equipments.id,fk_class,c2.id,fk_user,inventoryNumber,equipmentName,status from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", equipment.Id)
+	rows, err := DB.Query("select equipments.id,fk_class,c2.id,fk_user,inventorynumber,equipmentname,status,c2.name ,c1.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", equipment.Id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = nil
@@ -59,7 +59,7 @@ func (e *Equipment) GetEquipmentsByUserId(DB *sql.DB, equipment entity.Equipment
 	defer rows.Close()
 	for rows.Next() {
 		err = rows.Scan(&equipment.Id, &equipment.Fk_class, &equipment.Fk_parent, &equipment.Fk_user, &equipment.InventoryNumber,
-			&equipment.EquipmentName, &equipment.Status)
+			&equipment.EquipmentName, &equipment.Status,&equipment.Class,&equipment.Subclass)
 		if err != nil {
 			return
 			continue
@@ -92,12 +92,11 @@ func (e *Equipment) GetEquipmentsInStore(DB *sql.DB) (equipments []entity.Equipm
 }
 
 //получение классов и подклассов для опреденного сотрудника
-func (e *Equipment) GetEmployeeTreeById(DB *sql.DB, userId int) (equipments []entity.Equipment, err error) {
-	rows, err := DB.Query("select c1.fk_parent ,c2.id,c1.name ,c2.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", userId)
+func (e *Equipment) GetEmployeeTreeById(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
+	rows, err := DB.Query("select distinct c1.fk_parent ,c1.id,c2.name ,c1.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", equipment.Fk_user1)
 	if err != nil {
 		return
 	}
-	var equipment entity.Equipment
 	defer rows.Close()
 	for rows.Next() {
 		err = rows.Scan(&equipment.Fk_parent, &equipment.Fk_class, &equipment.Class, &equipment.Subclass)

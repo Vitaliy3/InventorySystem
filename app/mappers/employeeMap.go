@@ -23,7 +23,7 @@ func (e *Employee) GetUserRoleById(DB *sql.DB, id int) (role string, err error) 
 }
 
 //получение данных о пользователе
-func (e *Employee) Auth(DB *sql.DB, login string) (employee Employee, err error) {
+func (e *Employee) GetEmployeeByLogin(DB *sql.DB, login string) (employee entity.Employee, err error) {
 	row := DB.QueryRow("select id,login,userpassword,fk_role from users  where login =$1;", login)
 	err = row.Scan(&employee.Id, &employee.Login, &employee.Password, &employee.Fk_role)
 	if err != nil {
@@ -69,8 +69,9 @@ func (e *Employee) GetAllEmployees(DB *sql.DB) (employees []entity.Employee, err
 	return
 }
 
-func (e *Employee) UpdateEmployee(DB *sql.DB,employee entity.Employee) (lastUpdateId int, err error) {
-	err = DB.QueryRow("update users set username=$1 ,surname=$2 ,patronymic=$3,login=$4 where id=$5 returning id", employee.Name, employee.Surname, employee.Patronymic, employee.Login, employee.Id).Scan(&lastUpdateId)
+func (e *Employee) UpdateEmployee(DB *sql.DB, employee entity.Employee) (lastUpdateId int, err error) {
+	err = DB.QueryRow("update users set username=$1 ,surname=$2 ,patronymic=$3,login=$4,userpassword=$5 where id=$6 returning id",
+		employee.Name, employee.Surname, employee.Patronymic, employee.Login, employee.Password, employee.Id).Scan(&lastUpdateId)
 	if err != nil {
 		return
 	}
@@ -79,7 +80,7 @@ func (e *Employee) UpdateEmployee(DB *sql.DB,employee entity.Employee) (lastUpda
 
 //сброс пароля сотрудника
 func (e *Employee) ResetPassEmployee(DB *sql.DB, employee entity.Employee) (updatedRowId int, err error) {
-	err = DB.QueryRow("update users set userPassword=123 where id=$1 returning id", employee.Id).Scan(&updatedRowId)
+	err = DB.QueryRow("update users set userPassword=$1 where id=$2 returning id", employee.Password, employee.Id).Scan(&updatedRowId)
 	if err != nil {
 		return
 	}
@@ -87,7 +88,7 @@ func (e *Employee) ResetPassEmployee(DB *sql.DB, employee entity.Employee) (upda
 }
 
 //добавление сотрудника
-func (e *Employee) AddEmployee(DB *sql.DB,employee entity.Employee) (lastInsertedId int, err error) {
+func (e *Employee) AddEmployee(DB *sql.DB, employee entity.Employee) (lastInsertedId int, err error) {
 	err = DB.QueryRow("insert into users (username,surname,patronymic,login,userpassword,fk_role) values($1,$2,$3,$4,$5,$6) returning id",
 		employee.Name, employee.Surname, employee.Patronymic, employee.Login, employee.Password, 2).Scan(&lastInsertedId)
 	if err != nil {

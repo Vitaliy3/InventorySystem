@@ -8,8 +8,8 @@ export class UserEvent {
 
 
     getEventsForDate(dateFromTo) {
+        $$(UserEventsDatatable).showProgress({});
         let date = JSON.parse(dateFromTo);
-        console.log(date);
         date.start = date.start.split(' ')[0];
         date.end = date.end.split(' ')[0];
         return fetch('/getEventsForDate/?dateStart=' + date.start + '&dateEnd=' + date.end);

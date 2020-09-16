@@ -55,10 +55,8 @@ export class Equipment {
     }
 
     dragToUser(equipment) {
-        console.log(equipment);
-
-        let unParsed = JSON.stringify(equipment);
-        return sendQuery('/dragToUser', 'POST', unParsed);
+        let json = JSON.stringify(equipment);
+        return sendQuery('/dragToUser', 'POST', json);
     }
 
     dragToStore(equipment) {

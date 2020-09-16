@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 	"myapp/app/entity"
 	"myapp/app/mappers"
 )
@@ -16,24 +15,20 @@ type FullTree struct {
 
 //перемещение оборудования со склада пользователю
 func (e *EquipmentModel) DragToUser(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
-	fmt.Println("DragToUser:",equipment.Fk_user)
-
 	equipmentMapper := mappers.Equipment{}
 	updatedRowId, err := equipmentMapper.DragEquipmentToUser(DB, equipment)
 	if err != nil {
 		return
 	}
-	row, err := equipmentMapper.GetEquipmentById(DB, updatedRowId)
+	equip, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	fmt.Println("fkuser:",row.Fk_user)
-
-	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_user: row.Fk_user, Fk_equipment: row.Id, ActionEvent: "Выдача сотруднику"})
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI: equipment.Fk_user1, Fk_equipment: equipment.Id, ActionEvent: "Выдача сотруднику"})
 	if err != nil {
 		return
 	}
-	equip.Status = getStatus(row.StatusI)
+	equip.Status = getStatus(equipment.StatusI)
 	return
 }
 
@@ -45,20 +40,15 @@ func (e *EquipmentModel) DragToStore(DB *sql.DB, equipment entity.Equipment) (eq
 	if err != nil {
 		return
 	}
-	row, err := equipmentMapper.GetEquipmentById(DB, updatedRowId)
+	equip, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_user: sql.NullInt64{Valid: false}, Fk_equipment: row.Id, ActionEvent: "Перемещение на склад"})
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI:0, Fk_equipment: equip.Id, ActionEvent: "Перемещение на склад"})
 	if err != nil {
 		return
 	}
-	equip.Id = row.Id
-	equip.Fk_class = row.Fk_parent
-	equip.Fk_class = row.Fk_class
-	equip.EquipmentName = row.EquipmentName
-	equip.InventoryNumber = row.InventoryNumber
-	equip.Status = getStatus(row.StatusI)
+	equip.Status = getStatus(equip.StatusI)
 	return
 }
 
@@ -97,21 +87,21 @@ func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, equipment entity.Equipment)
 }
 
 //списать оборудование
-func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (equip EquipmentModel, err error) {
+func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	eqMapper := mappers.Equipment{}
 
 	updatedId, err := eqMapper.WriteEquipment(DB, equipment)
 	if err != nil {
+
 		return
 	}
-	row, err := eqMapper.GetEquipmentById(DB, updatedId)
+	equipmentOut, err = eqMapper.GetEquipmentById(DB, updatedId)
 	if err != nil {
+
 		return
 	}
-	if row.StatusI == 2 {
-		equip.Id = row.Id
-		equip.Status = "Списано"
-		return
+	if equipmentOut.StatusI == 2 {
+		equipmentOut.Status = "Списано"
 	}
 	return
 }
@@ -120,8 +110,8 @@ func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipment entity.Equipment) 
 func (e *EquipmentModel) GetEquipmentsInStore(DB *sql.DB) (equipments []entity.Equipment, err error) {
 	equipmentMapper := mappers.Equipment{}
 	equipments, err = equipmentMapper.GetEquipmentsInStore(DB)
-	if err != nil {
-		return
+	for i, _ := range equipments {
+		equipments[i].Status = getStatus(equipments[i].StatusI)
 	}
 	return
 }
@@ -182,7 +172,7 @@ func getStatus(status int) (newStatus string) {
 func (e *EquipmentModel) GetEmployeeTree(DB *sql.DB, equipment entity.Equipment) (fullTree []entity.FullTree, err error) {
 	equipmentMapper := mappers.Equipment{}
 	var equipments []entity.Equipment
-	equipments, err = equipmentMapper.GetEmployeeTreeById(DB, equipment.Id)
+	equipments, err = equipmentMapper.GetEmployeeTreeById(DB,equipment)
 	if err != nil {
 		return
 	}
@@ -215,7 +205,7 @@ func (e *EquipmentModel) GetEmployeeTree(DB *sql.DB, equipment entity.Equipment)
 	return
 }
 
-func (e *EquipmentModel) GetFullTree(DB *sql.DB, equipment entity.Equipment) (fullTree []entity.FullTree, err error) {
+func (e *EquipmentModel) GetFullTree(DB *sql.DB) (fullTree []entity.FullTree, err error) {
 	equipmentMapper := mappers.Equipment{}
 	var equipments []entity.Equipment
 	equipments, err = equipmentMapper.GetFullTree(DB)
@@ -263,6 +253,8 @@ func (e *EquipmentModel) AddEquipment(DB *sql.DB, equipmentEntity entity.Equipme
 	if err != nil {
 		return
 	}
+	equipment.Status="На складе"
+	equipment.UserFIO="Отсутствует"
 	return
 }
 

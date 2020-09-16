@@ -13,10 +13,10 @@ import (
 type Equipment struct {
 	*revel.Controller
 }
-
-func (c Equipment) Index() revel.Result {
-	return c.Render()
-}
+//
+//func (c Equipment) Index() revel.Result {
+//	return c.Render()
+//}
 
 //выдача товара сотруднику
 func (c Equipment) DragToUser() revel.Result {
@@ -130,9 +130,9 @@ func (c Equipment) GetFullTree() revel.Result {
 		if err != nil {
 			return c.Render()
 		}
-		tree, err = DataEquipments.GetEmployeeTree(app.DB, entity.Equipment{Id: userId})
+		tree, err = DataEquipments.GetEmployeeTree(app.DB, entity.Equipment{Fk_user1: userId})
 	} else if splitSession[1] == "admin" {
-		tree, err = DataEquipments.GetFullTree(app.DB, entity.Equipment{Id: userId})
+		tree, err = DataEquipments.GetFullTree(app.DB)
 
 	}
 	if err != nil {
