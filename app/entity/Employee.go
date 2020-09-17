@@ -9,3 +9,11 @@ type Employee struct {
 	Fk_role    int    `json:"fk_role"`
 }
 
+type Authorization struct {
+	Id    int
+	Token string
+	Login string
+	Password string
+	Role  string
+}
+

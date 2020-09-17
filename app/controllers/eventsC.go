@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/revel/revel"
 	"myapp/app"
-	"myapp/app/models"
+	"myapp/app/providers"
 )
 
 type Events struct {
@@ -16,7 +16,7 @@ func (c Events) GetAllEvents() revel.Result {
 		return c.Render()
 	}
 
-	DataEvent := models.InventoryEvent{}
+	DataEvent := providers.InventoryEvent{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEvent.GetAllEvents(app.DB)
 	if err != nil {
@@ -29,7 +29,7 @@ func (c Events) GetAllEvents() revel.Result {
 }
 
 func (c Events) GetEventsForDate() revel.Result {
-	DataEvent := models.InventoryEvent{}
+	DataEvent := providers.InventoryEvent{}
 	renderInterface := app.RenderInterface{}
 	var dateStart = c.Params.Get("dateStart")
 	var dateEnd = c.Params.Get("dateEnd")

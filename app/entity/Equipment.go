@@ -14,18 +14,25 @@ type Equipment struct {
 	Status          string `json:"status"`
 	Subclass        string `json:"Subclass"`
 	Class           string `json:"Class"`
-	UserFIO         string     ` json:"user" `
-	ClassName       string     ` json:"value" `
-	Data            []Subclass ` json:"data" `
-	Open            bool       `json:"open"`
+	UserFIO         string ` json:"user" `
+	ClassName       string ` json:"value" `
+}
+type TreeClass struct {
+	Fk_parent int        ` json:"class" `
+	Fk_class  int        ` json:"subclass" `
+	Subclass  string     `json:"Subclass"`
+	Class     string     `json:"Class"`
+	ClassName string     ` json:"value" `
+	Data      []Subclass ` json:"data" `
+	Open      bool       `json:"open"`
 }
 type Subclass struct {
 	Id           int    ` json:"subclass" `
 	SubclassName string ` json:"value" `
 }
 type FullTree struct {
-	Id int `json:"class"`
-	Value     string      ` json:"value" `
-	Equipment []Equipment ` json:"data" `
-	Open      bool        `json:"open"`
+	Id    int         `json:"class"`
+	Value string      ` json:"value" `
+	Tree  []TreeClass ` json:"data" `
+	Open  bool        `json:"open"`
 }

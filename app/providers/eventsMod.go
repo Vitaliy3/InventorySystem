@@ -1,4 +1,4 @@
-package models
+package providers
 
 import (
 	"database/sql"
@@ -10,7 +10,7 @@ type InventoryEvent struct {
 	entity.InventoryEvent
 }
 
-func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (allEvents []entity.InventoryEvent, err error) {
+func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (events []entity.InventoryEvent, err error) {
 	inventoryEventMapper := mappers.InventoryEvent{}
 	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
@@ -23,24 +23,24 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (allEvents []entity.InventoryE
 
 		return
 	}
-	allEvents, err = inventoryEventMapper.GetAllEvents(DB)
+	events, err = inventoryEventMapper.GetAllEvents(DB)
 	if err != nil {
 
 		return
 	}
-	for i, _ := range allEvents {
+	for i, _ := range events {
 
 		for _, m := range allEmployees {
-			if int(allEvents[i].Fk_user.Int64) == m.Id {
-				allEvents[i].UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
+			if int(events[i].Fk_user.Int64) == m.Id {
+				events[i].UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
-		if allEvents[i].UserFIO==""{
-			allEvents[i].UserFIO="Отсутствует"
+		if events[i].UserFIO==""{
+			events[i].UserFIO="Отсутствует"
 		}
 		for _, n := range allEquip {
-			if allEvents[i].Fk_equipment == n.Id {
-				allEvents[i].Equipment = n.EquipmentName
+			if events[i].Fk_equipment == n.Id {
+				events[i].Equipment = n.EquipmentName
 			}
 		}
 	}

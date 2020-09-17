@@ -5,7 +5,7 @@ import (
 	"github.com/revel/revel"
 	"myapp/app"
 	"myapp/app/entity"
-	"myapp/app/models"
+	"myapp/app/providers"
 )
 
 type User struct {
@@ -20,7 +20,7 @@ func (c User) AddEmployee() revel.Result {
 	}
 	renderInterface := app.RenderInterface{}
 	var employee entity.Employee
-	employeeModel := models.Employee{}
+	employeeModel := providers.Employee{}
 	err := json.Unmarshal(c.Params.JSON, &employee)
 	if err != nil {
 		renderInterface.Error = err.Error()
@@ -41,7 +41,7 @@ func (c User) GetAllEmployees() revel.Result {
 	} else {
 		return c.Render()
 	}
-	employeeModel := models.Employee{}
+	employeeModel := providers.Employee{}
 	renderInterface := app.RenderInterface{}
 	result, err := employeeModel.GetAllEmployees(app.DB)
 	if err != nil {
@@ -58,7 +58,7 @@ func (c User) UpdateEmployee() revel.Result {
 	} else {
 		return c.Render()
 	}
-	employeeModel := models.Employee{}
+	employeeModel := providers.Employee{}
 	renderInterface := app.RenderInterface{}
 	employee := entity.Employee{}
 
@@ -82,7 +82,7 @@ func (c User) ResetPassEmployee() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEmployee := models.Employee{}
+	DataEmployee := providers.Employee{}
 	renderInterface := app.RenderInterface{}
 	var employee entity.Employee
 
@@ -106,7 +106,7 @@ func (c User) DeleteEmployee() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEmployee := models.Employee{}
+	DataEmployee := providers.Employee{}
 	renderInterface := app.RenderInterface{}
 	var employee entity.Employee
 

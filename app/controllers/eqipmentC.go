@@ -5,7 +5,7 @@ import (
 	"github.com/revel/revel"
 	"myapp/app"
 	"myapp/app/entity"
-	"myapp/app/models"
+	"myapp/app/providers"
 	"strconv"
 	"strings"
 )
@@ -25,7 +25,7 @@ func (c Equipment) DragToUser() revel.Result {
 		return c.Render()
 	}
 	renderInterface := app.RenderInterface{}
-	equipmentModel := models.EquipmentModel{}
+	equipmentModel := providers.EquipmentModel{}
 	equipment := entity.Equipment{}
 
 	err := json.Unmarshal(c.Params.JSON, &equipment)
@@ -49,7 +49,7 @@ func (c Equipment) DragToStore() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEquipments := models.EquipmentModel{}
+	DataEquipments := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	var equipment entity.Equipment
 	err := json.Unmarshal(c.Params.JSON, &equipment)
@@ -73,7 +73,7 @@ func (c Equipment) GetEquipmentByUser() revel.Result {
 	} else {
 		return c.Render()
 	}
-	equipmentModel := models.EquipmentModel{}
+	equipmentModel := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	id := c.Params.Get("user")
 	convId, err := strconv.Atoi(id)
@@ -81,7 +81,7 @@ func (c Equipment) GetEquipmentByUser() revel.Result {
 		renderInterface.Error = err.Error()
 		return c.RenderJSON(renderInterface)
 	}
-	result, err := equipmentModel.GetEquipmentByUser(app.DB, entity.Equipment{Id: convId})
+	result, err := equipmentModel.GetEquipmentByUserId(app.DB, entity.Equipment{Id: convId})
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {
@@ -96,7 +96,7 @@ func (c Equipment) GetEquipmentsInStore() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEquipments := models.EquipmentModel{}
+	DataEquipments := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	result, err := DataEquipments.GetEquipmentsInStore(app.DB)
 	if err != nil {
@@ -114,7 +114,7 @@ func (c Equipment) GetFullTree() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEquipments := models.EquipmentModel{}
+	DataEquipments := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	token := c.Params.Get("token")
 	session := Session[token]
@@ -160,14 +160,14 @@ func (c Equipment) GetAllEquipments() revel.Result {
 	var userId int
 	var equipments []entity.Equipment
 	var err error
-	var equipmentModel models.EquipmentModel
+	var equipmentModel providers.EquipmentModel
 	if splitSession[1] == "employee" {
 		userId, err = strconv.Atoi(splitSession[0])
 		if err != nil {
 			return c.Render()
 		}
 
-		equipments, err = equipmentModel.GetEquipmentByUser(app.DB, entity.Equipment{Id: userId})
+		equipments, err = equipmentModel.GetEquipmentByUserId(app.DB, entity.Equipment{Id: userId})
 	} else if splitSession[1] == "admin" {
 		equipments, err = equipmentModel.GetAllEquipments(app.DB)
 	}
@@ -185,7 +185,7 @@ func (c Equipment) WriteEquipment() revel.Result {
 	} else {
 		return c.Render()
 	}
-	DataEquipments := models.EquipmentModel{}
+	DataEquipments := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 
 	var equipment entity.Equipment
@@ -209,7 +209,7 @@ func (c Equipment) UpdateEquipment() revel.Result {
 	} else {
 		return c.Render()
 	}
-	equipmentModel := models.EquipmentModel{}
+	equipmentModel := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	var equipment entity.Equipment
 
@@ -233,7 +233,7 @@ func (c Equipment) AddEquipment() revel.Result {
 	} else {
 		return c.Render()
 	}
-	equipmentModel := models.EquipmentModel{}
+	equipmentModel := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	var equipment entity.Equipment
 	err := json.Unmarshal(c.Params.JSON, &equipment)
@@ -256,7 +256,7 @@ func (c Equipment) DeleteEquipment() revel.Result {
 	} else {
 		return c.Render()
 	}
-	equipmentModel := models.EquipmentModel{}
+	equipmentModel := providers.EquipmentModel{}
 	renderInterface := app.RenderInterface{}
 	var equipment entity.Equipment
 	err := json.Unmarshal(c.Params.JSON, &equipment)

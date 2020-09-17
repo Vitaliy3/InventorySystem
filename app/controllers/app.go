@@ -4,7 +4,8 @@ import (
 	"encoding/base64"
 	"github.com/revel/revel"
 	"myapp/app"
-	"myapp/app/models"
+	"myapp/app/entity"
+	"myapp/app/providers"
 	"net/http"
 	"strconv"
 	"strings"
@@ -51,7 +52,7 @@ func (c App) Login() revel.Result {
 
 func (c App) Auth() revel.Result {
 	renderInterface := app.RenderInterface{}
-	employeeMod := models.Employee{}
+	employeeMod := providers.Employee{}
 	var login, password string
 	cookies, _ := c.Request.Cookie("auth")
 	splitCookie := strings.Split(cookies.GetValue(), ":")
@@ -59,7 +60,7 @@ func (c App) Auth() revel.Result {
 	authData := strings.Split(string(decoded), ":")
 	login = authData[0]
 	password = authData[1]
-	result, err := employeeMod.Auth(app.DB, login, password)
+	result, err := employeeMod.Auth(app.DB,entity.Authorization{Login:login,Password:password})
 	if err != nil {
 		renderInterface.Error = err.Error()
 	} else {

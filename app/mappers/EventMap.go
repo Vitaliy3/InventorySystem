@@ -30,8 +30,8 @@ func (e *Equipment) NewEvent(DB *sql.DB, event entity.InventoryEvent) (lastInser
 	return
 }
 
-func (e *InventoryEvent) DeleteEventByEmployee(DB *sql.DB, employee entity.Employee) (deletedId int, err error) {
-	err = DB.QueryRow("delete from inventoryevents where fk_equipment=$1 returning id", employee.Id).Scan(&deletedId)
+func (e *InventoryEvent) DeleteEventByEmployee(DB *sql.DB, employee entity.Employee) (deleteId int, err error) {
+	err = DB.QueryRow("delete from inventoryevents where fk_equipment=$1 returning id", employee.Id).Scan(&deleteId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = nil

@@ -1,4 +1,4 @@
-package models
+package providers
 
 import (
 	"crypto/md5"
@@ -17,9 +17,9 @@ type Employee struct {
 }
 
 //получение всех сотрудников
-func (e *Employee) GetAllEmployees(DB *sql.DB) (employeeArray []entity.Employee, err error) {
+func (e *Employee) GetAllEmployees(DB *sql.DB) (employees []entity.Employee, err error) {
 	mapper := mappers.Employee{}
-	employeeArray, err = mapper.GetAllEmployees(DB)
+	employees, err = mapper.GetAllEmployees(DB)
 	if err != nil {
 		return
 	}
@@ -27,7 +27,7 @@ func (e *Employee) GetAllEmployees(DB *sql.DB) (employeeArray []entity.Employee,
 }
 
 //изменение данных о сотруднике
-func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (employee entity.Employee, err error) {
+func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
 	mapper := mappers.Employee{}
 	employeeIn.Password = HashAndSalt([]byte(employeeIn.Password))
 
@@ -35,7 +35,7 @@ func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (emplo
 	if err != nil {
 		return
 	}
-	employee, err = mapper.GetEmployeeById(DB, lastUpdateId)
+	employeeOut, err = mapper.GetEmployeeById(DB, lastUpdateId)
 	if err != nil {
 		return
 	}
@@ -43,63 +43,57 @@ func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (emplo
 }
 
 //удаление сотрудника
-func (e *Employee) DeleteEmployee(DB *sql.DB, employeee entity.Employee) (employee entity.Employee, err error) {
+func (e *Employee) DeleteEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
 	emMapper := mappers.Employee{}
 	eventMapper := mappers.InventoryEvent{}
 
-	_, err = eventMapper.DeleteEventByFkUser(DB, employeee)
+	_, err = eventMapper.DeleteEventByFkUser(DB, employeeIn)
 	if err != nil {
 		return
 	}
-	lastDeleteId, err := emMapper.DeleteEmployee(DB, employeee)
+	lastDeleteId, err := emMapper.DeleteEmployee(DB, employeeIn)
 	if err != nil {
 		return
 	}
-	employee.Id = lastDeleteId
+	employeeOut.Id = lastDeleteId
 	return
 }
 
-func (e *Employee) AddEmployee(DB *sql.DB, employee2 entity.Employee) (employee entity.Employee, err error) {
-	employee2.Password = HashAndSalt([]byte(employee2.Password))
+func (e *Employee) AddEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut	 entity.Employee, err error) {
+	employeeIn.Password = HashAndSalt([]byte(employeeIn.Password))
 	employeeMap := mappers.Employee{}
-	lastInsertedId, err := employeeMap.AddEmployee(DB, employee2)
+	lastInsertedId, err := employeeMap.AddEmployee(DB, employeeIn)
 	if err != nil {
 		return
 	}
-	employee, err = employeeMap.GetEmployeeById(DB, lastInsertedId)
+	employeeOut, err = employeeMap.GetEmployeeById(DB, lastInsertedId)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (e *Employee) ResetPassEmployee(DB *sql.DB,employeeIn entity.Employee) (employee entity.Employee, err error) {
+func (e *Employee) ResetPassEmployee(DB *sql.DB,employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
 	emMapper := mappers.Employee{}
 	employeeIn.Password=HashAndSalt([]byte("123"))
 	updatedRowId, err := emMapper.ResetPassEmployee(DB, employeeIn)
 	if err != nil {
 		return
 	}
-	if employee.Id != updatedRowId {
+	if employeeOut.Id != updatedRowId {
 		err = errors.New("not reset")
 		return
 	}
 	return
 }
 
-type Authorization struct {
-	Id    int
-	Token string
-	Role  string
-}
-
-func (e *Employee) Auth(DB *sql.DB, login, password string) (authStruct Authorization, err error) {
+func (e *Employee) Auth(DB *sql.DB, authIn entity.Authorization) (authOut entity.Authorization, err error) {
 	employeeMap := mappers.Employee{}
-	user, err := employeeMap.GetEmployeeByLogin(DB, login)
+	user, err := employeeMap.GetEmployeeByLogin(DB, authIn.Login)
 	if err != nil {
 		return
 	}
-	if !ComparePasswords(user.Password, []byte(password)) {
+	if !ComparePasswords(user.Password, []byte(authIn.Password)) {
 		err = errors.New("Неверное имя пользователя или пароль")
 		return
 	}
@@ -107,10 +101,10 @@ func (e *Employee) Auth(DB *sql.DB, login, password string) (authStruct Authoriz
 	if err != nil {
 		return
 	}
-	newToken := gravatarMD5(login)
-	authStruct.Id = user.Id
-	authStruct.Role = userRole
-	authStruct.Token = newToken
+	newToken := gravatarMD5(authIn.Login)
+	authOut.Id = user.Id
+	authOut.Role = userRole
+	authOut.Token = newToken
 	return
 }
 

@@ -1,4 +1,4 @@
-package models
+package providers
 
 import (
 	"database/sql"
@@ -14,50 +14,50 @@ type FullTree struct {
 }
 
 //перемещение оборудования со склада пользователю
-func (e *EquipmentModel) DragToUser(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+func (e *EquipmentModel) DragToUser(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	equipmentMapper := mappers.Equipment{}
-	updatedRowId, err := equipmentMapper.DragEquipmentToUser(DB, equipment)
+	updatedRowId, err := equipmentMapper.DragEquipmentToUser(DB, equipmentIn)
 	if err != nil {
 		return
 	}
-	equip, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
+	equipmentOut, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI: equipment.Fk_user1, Fk_equipment: equipment.Id, ActionEvent: "Выдача сотруднику"})
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI: equipmentIn.Fk_user1, Fk_equipment: equipmentIn.Id, ActionEvent: "Выдача сотруднику"})
 	if err != nil {
 		return
 	}
-	equip.Status = getStatus(equipment.StatusI)
+	equipmentOut.Status = getStatus(equipmentIn.StatusI)
 	return
 }
 
 //перемещение оборудования от сотрудника на склад
-func (e *EquipmentModel) DragToStore(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+func (e *EquipmentModel) DragToStore(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	equipmentMapper := mappers.Equipment{}
 
-	updatedRowId, err := equipmentMapper.DragEquipmentToStore(DB, equipment)
+	updatedRowId, err := equipmentMapper.DragEquipmentToStore(DB, equipmentIn)
 	if err != nil {
 		return
 	}
-	equip, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
+	equipmentOut, err = equipmentMapper.GetEquipmentById(DB, updatedRowId)
 	if err != nil {
 		return
 	}
-	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI:0, Fk_equipment: equip.Id, ActionEvent: "Перемещение на склад"})
+	_, err = equipmentMapper.NewEvent(DB, entity.InventoryEvent{Fk_userI:0, Fk_equipment: equipmentOut.Id, ActionEvent: "Перемещение на склад"})
 	if err != nil {
 		return
 	}
-	equip.Status = getStatus(equip.StatusI)
+	equipmentOut.Status = getStatus(equipmentOut.StatusI)
 	return
 }
 
 //изменение оборудования
-func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, equipment entity.Equipment) (equip entity.Equipment, err error) {
+func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	eqMapper := mappers.Equipment{}
 	employee := mappers.Employee{}
 
-	lastInsertedId, err := eqMapper.UpdateEquipment(DB, equipment)
+	lastInsertedId, err := eqMapper.UpdateEquipment(DB, equipmentIn)
 	if err != nil {
 		return
 	}
@@ -72,25 +72,25 @@ func (e *EquipmentModel) UpdateEquipment(DB *sql.DB, equipment entity.Equipment)
 	if err != nil {
 		return
 	}
-	equip.Id = row.Id
-	equip.Fk_class = row.Fk_parent
+	equipmentOut.Id = row.Id
+	equipmentOut.Fk_class = row.Fk_parent
 	if user.Name != "" {
-		equip.UserFIO = user.Name + " " + user.Surname + " " + user.Patronymic
+		equipmentOut.UserFIO = user.Name + " " + user.Surname + " " + user.Patronymic
 	} else {
-		equip.UserFIO = "Отсутсвует"
+		equipmentOut.UserFIO = "Отсутсвует"
 	}
-	equip.Fk_class = row.Fk_class
-	equip.EquipmentName = row.EquipmentName
-	equip.InventoryNumber = row.InventoryNumber
-	equip.Status = getStatus(row.StatusI)
+	equipmentOut.Fk_class = row.Fk_class
+	equipmentOut.EquipmentName = row.EquipmentName
+	equipmentOut.InventoryNumber = row.InventoryNumber
+	equipmentOut.Status = getStatus(row.StatusI)
 	return
 }
 
 //списать оборудование
-func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (equipmentOut entity.Equipment, err error) {
+func (e *EquipmentModel) WriteEquipment(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	eqMapper := mappers.Equipment{}
 
-	updatedId, err := eqMapper.WriteEquipment(DB, equipment)
+	updatedId, err := eqMapper.WriteEquipment(DB, equipmentIn)
 	if err != nil {
 
 		return
@@ -136,24 +136,24 @@ func (e *EquipmentModel) GetAllEquipments(DB *sql.DB) (equipments []entity.Equip
 	return
 }
 
-func (e *EquipmentModel) GetEmployeeEquipments(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
-	equipmentMapper := mappers.Equipment{}
-	employeeMapper := mappers.Employee{}
-	equipments, err = equipmentMapper.GetEquipmentsByUserId(DB, equipment)
-	employees, err := employeeMapper.GetAllEmployees(DB)
-	for i, _ := range equipments {
-		equipments[i].Status = getStatus(equipments[i].StatusI)
-		for _, m := range employees {
-			if int(equipments[i].Fk_user.Int64) == m.Id {
-				equipments[i].UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
-			}
-		}
-		if equipments[i].UserFIO == "" {
-			equipments[i].UserFIO = "Отсутствует"
-		}
-	}
-	return
-}
+//func (e *EquipmentModel) GetEmployeeByUserId(DB *sql.DB, equipmentIn entity.Equipment) (equipments []entity.Equipment, err error) {
+//	equipmentMapper := mappers.Equipment{}
+//	employeeMapper := mappers.Employee{}
+//	equipments, err = equipmentMapper.GetEquipmentsByUserId(DB, equipmentIn)
+//	employees, err := employeeMapper.GetAllEmployees(DB)
+//	for i, _ := range equipments {
+//		equipments[i].Status = getStatus(equipments[i].StatusI)
+//		for _, m := range employees {
+//			if int(equipments[i].Fk_user.Int64) == m.Id {
+//				equipments[i].UserFIO = m.Name + " " + m.Surname + " " + m.Patronymic
+//			}
+//		}
+//		if equipments[i].UserFIO == "" {
+//			equipments[i].UserFIO = "Отсутствует"
+//		}
+//	}
+//	return
+//}
 
 //определение статуса оборудования
 func getStatus(status int) (newStatus string) {
@@ -169,17 +169,17 @@ func getStatus(status int) (newStatus string) {
 }
 
 //получение полного дерева учета оборудования
-func (e *EquipmentModel) GetEmployeeTree(DB *sql.DB, equipment entity.Equipment) (fullTree []entity.FullTree, err error) {
+func (e *EquipmentModel) GetEmployeeTreeByUserId(DB *sql.DB, equipmentIn entity.Equipment) (fullTree []entity.FullTree, err error) {
 	equipmentMapper := mappers.Equipment{}
-	var equipments []entity.Equipment
-	equipments, err = equipmentMapper.GetEmployeeTreeById(DB,equipment)
+	var employeeTree []entity.TreeClass
+	employeeTree, err = equipmentMapper.GetEmployeeTreeByUserId(DB, equipmentIn)
 	if err != nil {
 		return
 	}
-	var trees []entity.Equipment
-	for _, v := range equipments {
-		var temp entity.Equipment
-		temp.ClassName = v.Class
+	var trees []entity.TreeClass
+	for _, v := range employeeTree {
+		var temp entity.TreeClass
+		temp.Class = v.Class
 		temp.Fk_parent = v.Fk_parent
 		temp.Open = true
 		subclass := entity.Subclass{v.Fk_class, v.Subclass}
@@ -200,21 +200,21 @@ func (e *EquipmentModel) GetEmployeeTree(DB *sql.DB, equipment entity.Equipment)
 	tree.Value = "Все"
 	tree.Id = 0
 	tree.Open = true
-	tree.Equipment = trees
+	tree.Tree = trees
 	fullTree = append(fullTree, tree)
 	return
 }
 
 func (e *EquipmentModel) GetFullTree(DB *sql.DB) (fullTree []entity.FullTree, err error) {
 	equipmentMapper := mappers.Equipment{}
-	var equipments []entity.Equipment
-	equipments, err = equipmentMapper.GetFullTree(DB)
+	var treeClasses []entity.TreeClass
+	treeClasses, err = equipmentMapper.GetFullTree(DB)
 	if err != nil {
 		return
 	}
-	var trees []entity.Equipment
-	for _, v := range equipments {
-		var temp entity.Equipment
+	var trees []entity.TreeClass
+	for _, v := range treeClasses {
+		var temp entity.TreeClass
 		temp.ClassName = v.Class
 		temp.Fk_parent = v.Fk_parent
 		temp.Open = true
@@ -236,32 +236,32 @@ func (e *EquipmentModel) GetFullTree(DB *sql.DB) (fullTree []entity.FullTree, er
 	tree.Value = "Все"
 	tree.Id = 0
 	tree.Open = true
-	tree.Equipment = trees
+	tree.Tree = trees
 	fullTree = append(fullTree, tree)
 	return
 }
 
 //добавление оборудования
-func (e *EquipmentModel) AddEquipment(DB *sql.DB, equipmentEntity entity.Equipment) (equipment entity.Equipment, err error) {
+func (e *EquipmentModel) AddEquipment(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 	var equipmentMapper mappers.Equipment
-	equipmentEntity.StatusI = 0
-	lastInsertedId, err := equipmentMapper.AddEquipment(DB, equipmentEntity)
+	equipmentIn.StatusI = 0
+	lastInsertedId, err := equipmentMapper.AddEquipment(DB, equipmentIn)
 	if err != nil {
 		return
 	}
-	equipment, err = equipmentMapper.GetEquipmentById(DB, lastInsertedId)
+	equipmentOut, err = equipmentMapper.GetEquipmentById(DB, lastInsertedId)
 	if err != nil {
 		return
 	}
-	equipment.Status="На складе"
-	equipment.UserFIO="Отсутствует"
+	equipmentOut.Status="На складе"
+	equipmentOut.UserFIO="Отсутствует"
 	return
 }
 
-func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
+func (e *EquipmentModel) GetEquipmentByUserId(DB *sql.DB, equipmentIn entity.Equipment) (equipments []entity.Equipment, err error) {
 	eqMapper := mappers.Equipment{}
 
-	equipments, err = eqMapper.GetEquipmentsByUserId(DB, equipment)
+	equipments, err = eqMapper.GetEquipmentsByUserId(DB, equipmentIn)
 	if err != nil {
 		return
 	}
@@ -269,19 +269,19 @@ func (e *EquipmentModel) GetEquipmentByUser(DB *sql.DB, equipment entity.Equipme
 }
 
 //удаление оборудования
-func (e *EquipmentModel) DeleteEquipment(DB *sql.DB, equipment entity.Equipment) (result entity.Equipment, err error) {
+func (e *EquipmentModel) DeleteEquipment(DB *sql.DB, equipmentIn entity.Equipment) (equipmentOut entity.Equipment, err error) {
 
 	eqMapper := mappers.Equipment{}
 	eventMapper := mappers.InventoryEvent{}
-	_, err = eventMapper.DeleteEventByEmployee(DB, entity.Employee{Id: equipment.Id})
+	_, err = eventMapper.DeleteEventByEmployee(DB, entity.Employee{Id: equipmentIn.Id})
 	if err != nil {
 		return
 	}
-	deletedId, err := eqMapper.DeleteEquipment(DB, equipment)
+	deletedId, err := eqMapper.DeleteEquipment(DB, equipmentIn)
 	if err != nil {
 
 		return
 	}
-	result.Id = deletedId
+	equipmentOut.Id = deletedId
 	return
 }

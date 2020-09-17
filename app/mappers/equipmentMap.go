@@ -2,6 +2,7 @@ package mappers
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 	"myapp/app/entity"
 )
@@ -92,40 +93,42 @@ func (e *Equipment) GetEquipmentsInStore(DB *sql.DB) (equipments []entity.Equipm
 }
 
 //получение классов и подклассов для опреденного сотрудника
-func (e *Equipment) GetEmployeeTreeById(DB *sql.DB, equipment entity.Equipment) (equipments []entity.Equipment, err error) {
+func (e *Equipment) GetEmployeeTreeByUserId(DB *sql.DB, equipment entity.Equipment) (classes []entity.TreeClass, err error) {
 	rows, err := DB.Query("select distinct c1.fk_parent ,c1.id,c2.name ,c1.name from equipments join classes c1 on equipments.fk_class =c1.id join classes c2 on c1.fk_parent =c2.id where equipments.fk_user=$1", equipment.Fk_user1)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
+	var class entity.TreeClass
 	for rows.Next() {
-		err = rows.Scan(&equipment.Fk_parent, &equipment.Fk_class, &equipment.Class, &equipment.Subclass)
+		err = rows.Scan(&class.Fk_parent, &class.Fk_class, &class.Class, &class.Subclass)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				err = nil
 			}
 		}
-		equipments = append(equipments, equipment)
+		classes = append(classes, class)
 	}
 	return
 }
 
 //получение всех классов и подклассов
-func (e *Equipment) GetFullTree(DB *sql.DB) (equipments []entity.Equipment, err error) {
+func (e *Equipment) GetFullTree(DB *sql.DB) (classes []entity.TreeClass, err error) {
 	rows, err := DB.Query("select c1.fk_parent ,c1 .id, classes.name,c1.name from classes join classes c1 on classes.id =c1.fk_parent")
 	if err != nil {
 		return
 	}
 	defer rows.Close()
-	var equipment entity.Equipment
+	var class entity.TreeClass
 	for rows.Next() {
-		err = rows.Scan(&equipment.Fk_parent, &equipment.Fk_class, &equipment.Class, &equipment.Subclass)
+		err = rows.Scan(&class.Fk_parent, &class.Fk_class, &class.Class, &class.Subclass)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				err = nil
 			}
 		}
-		equipments = append(equipments, equipment)
+		fmt.Println(class)
+		classes = append(classes, class)
 	}
 	return
 }
@@ -141,8 +144,8 @@ func (e *Equipment) AddEquipment(DB *sql.DB, equipment entity.Equipment) (lastIn
 }
 
 //выдача оборудования сотруднику
-func (e *Equipment) DragEquipmentToUser(DB *sql.DB, equipment entity.Equipment) (lastInsertedId int, err error) {
-	err = DB.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id", equipment.Fk_user1, equipment.Id).Scan(&lastInsertedId)
+	func (e *Equipment) DragEquipmentToUser(DB *sql.DB, equipment entity.Equipment) (lastUpdatedId int, err error) {
+	err = DB.QueryRow("update equipments set fk_user=$1,status=1 where id=$2 returning id", equipment.Fk_user1, equipment.Id).Scan(&lastUpdatedId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = nil
@@ -153,8 +156,8 @@ func (e *Equipment) DragEquipmentToUser(DB *sql.DB, equipment entity.Equipment) 
 }
 
 //перещемение оборудование на склад
-func (e *Equipment) DragEquipmentToStore(DB *sql.DB, equipment entity.Equipment) (lastInsertedId int, err error) {
-	err = DB.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id", equipment.Id).Scan(&lastInsertedId)
+func (e *Equipment) DragEquipmentToStore(DB *sql.DB, equipment entity.Equipment) (lastUpdatedId int, err error) {
+	err = DB.QueryRow("update equipments set fk_user=null,status=0 where id=$1 returning id", equipment.Id).Scan(&lastUpdatedId)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = nil
@@ -184,8 +187,8 @@ func (e *Equipment) DeleteEquipment(DB *sql.DB, equipment entity.Equipment) (del
 }
 
 //списывание оборудования
-func (e *Equipment) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (updatedElementId int, err error) {
-	err = DB.QueryRow("update equipments set status=2 where id=$1 returning id", equipment.Id).Scan(&updatedElementId)
+func (e *Equipment) WriteEquipment(DB *sql.DB, equipment entity.Equipment) (updatedId int, err error) {
+	err = DB.QueryRow("update equipments set status=2 where id=$1 returning id", equipment.Id).Scan(&updatedId)
 	if err != nil {
 		return
 	}
