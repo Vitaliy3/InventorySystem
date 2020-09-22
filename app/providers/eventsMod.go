@@ -8,35 +8,39 @@ import (
 
 type InventoryEvent struct {
 	entity.InventoryEvent
+	invEventMapper mappers.InventoryEvent
 }
 
-func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (events []entity.InventoryEvent, err error) {
-	inventoryEventMapper := mappers.InventoryEvent{}
+//получение всех событий
+func (e *InventoryEvent) GetAll(DB *sql.DB) (events []entity.InventoryEvent, err error) {
 	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
-	allEquip, err := equipmentMapper.GetAllEquipments(DB)
+
+	allEquip, err := equipmentMapper.GetAll(DB)
 	if err != nil {
 		return
 	}
-	allEmployees, err := employeeMapper.GetAllEmployees(DB)
+
+	allEmployees, err := employeeMapper.GetAll(DB)
 	if err != nil {
 
 		return
 	}
-	events, err = inventoryEventMapper.GetAllEvents(DB)
+
+	events, err = e.invEventMapper.GetAll(DB)
 	if err != nil {
 
 		return
 	}
+
 	for i, _ := range events {
-
 		for _, m := range allEmployees {
 			if int(events[i].Fk_user.Int64) == m.Id {
 				events[i].UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
-		if events[i].UserFIO==""{
-			events[i].UserFIO="Отсутствует"
+		if events[i].UserFIO == "" {
+			events[i].UserFIO = "Отсутствует"
 		}
 		for _, n := range allEquip {
 			if events[i].Fk_equipment == n.Id {
@@ -47,22 +51,23 @@ func (e *InventoryEvent) GetAllEvents(DB *sql.DB) (events []entity.InventoryEven
 	return
 }
 
-func (e *InventoryEvent) GetEventsForDate(DB *sql.DB, dateStart, dateEnd string) (allEvents []entity.InventoryEvent, err error) {
-
-	eventMapper := mappers.InventoryEvent{}
+//получение событий за определенный промежуток времени
+func (e *InventoryEvent) GetForDate(DB *sql.DB, dateStart, dateEnd string) (allEvents []entity.InventoryEvent, err error) {
 	equipmentMapper := mappers.Equipment{}
 	employeeMapper := mappers.Employee{}
 
 	invEvent := InventoryEvent{}
-	allEquip, err := equipmentMapper.GetAllEquipments(DB)
+	allEquip, err := equipmentMapper.GetAll(DB)
 	if err != nil {
 		return
 	}
-	allEmployees, err := employeeMapper.GetAllEmployees(DB)
+
+	allEmployees, err := employeeMapper.GetAll(DB)
 	if err != nil {
 		return
 	}
-	allEvents, err = eventMapper.GetEventsForDate(DB, dateStart, dateEnd)
+
+	allEvents, err = e.invEventMapper.GetForDate(DB, dateStart, dateEnd)
 	if err != nil {
 		return
 	}
@@ -72,10 +77,9 @@ func (e *InventoryEvent) GetEventsForDate(DB *sql.DB, dateStart, dateEnd string)
 				invEvent.UserFIO = m.Surname + " " + m.Surname + " " + m.Patronymic
 			}
 		}
-		if allEvents[i].UserFIO==""{
-			allEvents[i].UserFIO="Отсутствует"
+		if allEvents[i].UserFIO == "" {
+			allEvents[i].UserFIO = "Отсутствует"
 		}
-
 		for _, n := range allEquip {
 			if allEvents[i].Fk_equipment == n.Id {
 				allEvents[i].Equipment = n.EquipmentName

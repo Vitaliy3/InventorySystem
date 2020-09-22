@@ -2,15 +2,13 @@ import {sendQuery} from "./MEquipmentM.js";
 import {UsersDatatable} from "../views/const.js";
 
 export class Employee {
-
-    updateUser(user) {
+    update(user) {
         let json = JSON.stringify(user);
         console.log(json);
         return sendQuery('/updateEmployee', 'POST', json);
-
     }
 
-    deleteUser(user) {
+    delete(user) {
         let json=JSON.stringify(user);
         console.log(json);
         return sendQuery('/deleteEmployee', 'DELETE', json);
@@ -18,11 +16,10 @@ export class Employee {
 
     resetPassword(user) {
         let json=JSON.stringify(user);
-
         return sendQuery('/resetPassEmployee', 'POST',json);
     }
 
-    registerUser(user) {
+    register(user) {
         let json = JSON.stringify(user);
         console.log(json);
 
@@ -30,7 +27,7 @@ export class Employee {
 
     }
 
-    getAllEmployees() {
+    getAll() {
         $$(UsersDatatable).showProgress({});
         return fetch('/getAllEmployees')
     }

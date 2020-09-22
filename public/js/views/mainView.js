@@ -1,7 +1,7 @@
-import {equipmentsToolbar} from './dependViews/forms/equipmentsToolbar.js';
-import {recordEquipments} from './dependViews/recordEquipments.js';
-import {usersList} from './dependViews/recordUsers.js';
-import {UsersToolbar} from "./dependViews/forms/employeeToolbar.js";
+import {equipmentsToolbar} from './components/equipment/components/equipmentsToolbar.js';
+import {recordEquipments} from './components/equipment/recordEquipments.js';
+import {usersList} from './components/emoloyee/recordEmoloyees.js';
+import {UsersToolbar} from "./components/emoloyee/components/toolbar.js";
 import {
     combo,
     DragProdDatatable,
@@ -14,10 +14,13 @@ import {
 } from './const.js';
 import {Equipment} from '../models/MEquipmentM.js';
 import {Employee} from '../models/MEmployeeModel.js';
-import {recordEvents, recordEventsDatapicker} from './dependViews/recordEvents.js';
+import {recordEventsDatepicker} from './components/event/components/datepickerToolbar.js';
+import {recordEvent} from './components/event/recordEvents.js';
 import {UserEvent} from '../models/MEmployeeEvents.js';
-import {moveToolbar, movingTree} from './dependViews/equipmentsMove.js';
+import {movingTree} from './components/equipmentsMove/equipmentsMove.js';
+import {moveToolbar} from './components/equipmentsMove/components/moveToolbar.js';
 
+//компонент с вкладками
 const mainPage = {
     width: 200,
     id: "tabView",
@@ -29,7 +32,6 @@ const mainPage = {
             }
         }
     },
-
     cells: [
         {
             header: "Учет оборудования",
@@ -51,8 +53,8 @@ const mainPage = {
             header: "События выдачи",
             id: "regUserEvents",
             rows: [
-                recordEventsDatapicker,
-                recordEvents
+                recordEventsDatepicker,
+                recordEvent
             ]
         },
         {
@@ -66,13 +68,14 @@ const mainPage = {
     ],
 };
 
-//загрузка данных в древовидную таблицу
+//загрузка данных в древовидный список
 function pushToTree(id) {
-    $$(id).clearAll();
     let promise = "";
     let product = new Equipment();
     let token = getCurrentToken();
-    promise = product.getFullTree(token);
+    $$(id).clearAll();
+    promise = product.getTree(token);
+
     promise.then(response => {
         return response.json();
     }).then(result => {
@@ -84,30 +87,28 @@ function pushToTree(id) {
     });
 }
 
-//зазрука при переходе на панели
+//зазрука при переходе на панели, id - идентификатор каждой панели
 function loadData(id) {
     if (id == "regProducts") {
-        pushToTree(RegproductsTree);//parse Tree
-        $$(TreeDatatable).clearAll();
         let promise = "";
-        let product = new Equipment();
+        let equipment = new Equipment();
         let token = getCurrentToken();
-        promise = product.getAllEquipments(token);
+        pushToTree(RegproductsTree);    //загрузка данных в древовидный список
+        $$(TreeDatatable).clearAll();
+        promise = equipment.getAll(token);  //получение всего оборудования
 
         promise.then(response => {
             return response.json();
         }).then(result => {
             if (result.Error == "") {
                 if (result.Data != null) {
-                    console.log(result.Data);
                     $$(TreeDatatable).parse(result.Data);
                     $$(TreeDatatable).filterByAll();
                 } else {
                     $$(TreeDatatable).hideProgress({});
-
                 }
             } else {
-                webix.message("err", result.Error);
+                webix.message(result.Error);
             }
         });
     }
@@ -115,7 +116,7 @@ function loadData(id) {
     if (id == "regUsers") {
         $$(UsersDatatable).clearAll();
         let user = new Employee();
-        let promise = user.getAllEmployees();
+        let promise = user.getAll();
         promise.then(response => {
             return response.json();
         }).then(result => {
@@ -125,7 +126,6 @@ function loadData(id) {
                     $$(UsersDatatable).filterByAll();
                 } else {
                     $$(UsersDatatable).hideProgress({});
-
                 }
             } else {
                 webix.message(result.Error);
@@ -136,7 +136,7 @@ function loadData(id) {
     if (id == "regUserEvents") {
         $$(EmployeeEventsDatatable).clearAll();
         let event = new UserEvent();
-        let promise = event.getAllEvents();
+        let promise = event.getAll();
         promise.then(response => {
             return response.json();
         }).then(result => {
@@ -157,20 +157,19 @@ function loadData(id) {
     }
 
     if (id == "moveProducts") {
+        let promise = "";
+        let product = new Equipment();
         pushToTree(MoveEquipmentTree);//parse Tree
         $$(MoveEquipmentTree).clearAll();
         $$(MoveEquipDatatable).clearAll();
         $$(DragProdDatatable).clearAll();
 
-        let promise = "";
-        let product = new Equipment();
         promise = product.getEquipmentsInStore();
         promise.then(response => {
             return response.json();
         }).then(result => {
             if (result.Error == "") {
                 if (result.Data != null) {
-                    console.log(result.Data);
                     $$(MoveEquipDatatable).parse(result.Data);
                     $$(MoveEquipDatatable).filterByAll();
                 } else {
@@ -180,9 +179,10 @@ function loadData(id) {
                 webix.message(result.Error);
             }
         });
-        //заполнение select
+        //заполнение выпадающего списка в перемещении оборудования
         let user = new Employee();
-        let users = user.getAllEmployees();
+        let users = user.getAll();
+
         users.then(response => {
             return response.json();
         }).then(result => {
@@ -208,6 +208,7 @@ function loadData(id) {
     }
 }
 
+//отображает все компоненты на странице
 webix.ui({
     rows: [
         {view: "button", id: "authorize", value: "Выйти", width: 200, height: 50, align: "right", click: logout},
@@ -215,6 +216,7 @@ webix.ui({
     ]
 });
 
+//получение куки по имени
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -222,19 +224,14 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-function getUserRole() {
-    let cookie = getCookie("token");
-    let splitCookie = cookie.split(':');
-    return splitCookie[1];
-}
-
+//получение текущего токена
 function getCurrentToken() {
     let cookie = getCookie("token");
     let splitCookie = cookie.split(':');
     return splitCookie[0];
 }
 
-
+//меняет отображение в зависимости от роли пользователя
 window.onload = function () {
     let cookie = getCookie("token");
     let splitCookie = cookie.split(':');
@@ -249,23 +246,23 @@ window.onload = function () {
     loadData("regProducts");
 };
 
+//выход из аккаунта
 function logout() {
-    let promise = fetch("/logout")
+    let promise = fetch("/logout"); //запрос на выход
     promise.then(json => {
         return json.json()
     }).then(result => {
         if (result.Error == "") {
-            document.cookie = "auth" + '=; Max-Age=0';
-            document.cookie = "token" + '=; Max-Age=0';
-            document.location.href = result.Data;
+            document.cookie = "auth" + '=; Max-Age=0'; //удаление куки
+            document.cookie = "token" + '=; Max-Age=0'; //удаление куки
+            document.location.href = result.Data; //перенаправление по URI
         } else {
             webix.message(result.Error);
         }
     });
 }
 
-//спиннеры для загрузки
-
+// добавление спиннеров
 webix.extend($$(TreeDatatable), webix.ProgressBar);
 webix.extend($$(UsersDatatable), webix.ProgressBar);
 webix.extend($$(MoveEquipDatatable), webix.ProgressBar);
@@ -273,7 +270,7 @@ webix.extend($$(EmployeeEventsDatatable), webix.ProgressBar);
 webix.extend($$(UsersDatatable), webix.ProgressBar);
 
 
-//фильтр для для выборки элементов всех подклассов класса в древовидном списке
+//фильтр для для выборки элементов всех подклассов класса в древовидном списке учета обрудования
 $$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
     {columnId: "class"},
     {
@@ -285,7 +282,7 @@ $$(TreeDatatable).registerFilter(document.getElementById("myfilterClass"),
         }
     });
 
-//фильтр для для выборки элементов подкласса в древовидном списке
+//фильтр для для выборки элементов подкласса в древовидном списке учета оборудования
 $$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
     {columnId: "subclass"},
     {
@@ -297,7 +294,7 @@ $$(TreeDatatable).registerFilter(document.getElementById("myfilterSubclass"),
         }
     });
 
-//фильтр для для выборки элементов всех подклассов класса в древовидном списке
+//фильтр для для выборки элементов всех подклассов класса в древовидном списке перемещения оборудования
 $$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterClass"),
     {columnId: "class"},
     {
@@ -309,7 +306,7 @@ $$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterClass"),
         }
     });
 
-//фильтр для для выборки элементов подкласса в древовидном списке
+//фильтр для для выборки элементов подкласса в древовидном списке перемещения оборудования
 $$(MoveEquipDatatable).registerFilter(document.getElementById("myfilterSubclass"),
     {columnId: "subclass"},
     {
@@ -327,20 +324,25 @@ $$(DragProdDatatable).attachEvent("onBeforeDrop", function (context, ev) {
     let value = dnd.from.getItem(dnd.source[0]);
     let product = new Equipment();
     let selected = $$(combo).getValue();
+
     if (selected == 2) {
         webix.message("Не выбран пользователь");
         return false;
     }
-    let sendValue = {fk_user: selected, id: value.id};
+    if (value.Fk_user.Valid) { //проверка на то,в какую таблицу производится перемещение
+        return false;
+    }
+
+    let sendValue = {fk_user: selected, id: value.id}; //ид пользователя и ид перемещаемого оборуования
     sendValue.fk_user = parseInt(sendValue.fk_user);
     let promise = product.dragToUser(sendValue);
+
     promise.then(response => {
         return response.json();
     }).then(result => {
         if (result.Error == "") {
             $$(DragProdDatatable).parse(result.Data);
             $$(MoveEquipDatatable).remove(result.Data.id);
-            return result.Data;
         } else {
             webix.message(result.Error);
         }
@@ -353,6 +355,10 @@ $$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
     let dnd = webix.DragControl.getContext();
     let value = dnd.from.getItem(dnd.source[0]);
     let product = new Equipment();
+
+    if (!value.Fk_user.Valid) { //проверка на то,в какую таблицу производится перемещение
+        return false;
+    }
     let promise = product.dragToStore(value);
     promise.then(response => {
         return response.json();
@@ -360,15 +366,10 @@ $$(MoveEquipDatatable).attachEvent("onBeforeDrop", function (context, ev) {
         if (result.Error == "") {
             $$(MoveEquipDatatable).parse(result.Data);
             $$(DragProdDatatable).remove(result.Data.id);
-
         } else {
             webix.message(result.Error);
         }
     });
     return false;
 });
-$$(MoveEquipDatatable).attachEvent("onAfterAdd", function (id, index) {
-    $$(MoveEquipDatatable).filterByAll();
-});
-
 

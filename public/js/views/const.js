@@ -9,3 +9,7 @@ export const EventsToolbar = "EventToolbar";
 export const  combo="richselect";
 export const RegisterUserForm ="registerUserForm";
 export  const UpdateUserForm="updateUserForm";
+export const EmployeeToolbar ="EmployeeToolbar";
+export const UpdateEmployeeButton ="UpdateUserButton";
+export const DeleteEmployeeButton="DeleteUserButton";
+export const ResetPasswordButton="resetPassword";

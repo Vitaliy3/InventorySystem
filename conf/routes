@@ -13,32 +13,29 @@ GET /auth                                       App.Auth
 GET /logout                                     App.Logout
 
 //                           equipment
-GET /getAllEquipments                           Equipment.GetAllEquipments
-GET /getFullTree                                Equipment.GetFullTree
-GET /getEquipmentsInStore                       Equipment.GetEquipmentsInStore
-GET /getEquipmentByUser                         Equipment.GetEquipmentByUser
+GET /getAllEquipments                           Equipment.GetAll
+GET /getFullTree                                Equipment.GetTree
+GET /getEquipmentsInStore                       Equipment.GetInStore
+GET /getEquipmentByUser                         Equipment.GetByUserId
 
 POST /dragToUser                                Equipment.DragToUser
 POST /dragToStore                               Equipment.DragToStore
 
-
-POST /writeEquipment                            Equipment.WriteEquipment
-POST /addEquipment                              Equipment.AddEquipment
-POST /updateEquipment                           Equipment.UpdateEquipment
-
-DELETE /deleteEquipment                         Equipment.DeleteEquipment
+POST /writeEquipment                            Equipment.Write
+POST /addEquipment                              Equipment.Add
+POST /updateEquipment                           Equipment.Update
+DELETE /deleteEquipment                         Equipment.Delete
 
                               employee
-
-GET /getAllEmployees                            User.GetAllEmployees
-POST /addEmployee                               User.AddEmployee
-POST /updateEmployee                            User.UpdateEmployee
-POST /resetPassEmployee                         User.ResetPassEmployee
-DELETE /deleteEmployee                          User.DeleteEmployee
+GET /getAllEmployees                            User.GetAll
+POST /addEmployee                               User.Add
+POST /updateEmployee                            User.Update
+POST /resetPassEmployee                         User.ResetPassword
+DELETE /deleteEmployee                          User.Delete
 
                                InventoryEvents
-GET /getAllEvents                               Events.GetAllEvents
-GET /getEventsForDate                           Events.GetEventsForDate
+GET /getAllEvents                               Events.GetAll
+GET /getEventsForDate                           Events.GetForDate
 
 
 # Map static resources from the /app/public folder to the /public path

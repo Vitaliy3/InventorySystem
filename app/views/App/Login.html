@@ -7,12 +7,11 @@
 <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
 <body>
 <script>
-
     webix.ui({
         view: "window",
         id: "log_window",
         position: "center",
-        head:"Авторизация",
+        head: "Авторизация",
         width: 350,
         body: {
             view: "form",
@@ -29,10 +28,12 @@
             ]
         },
     });
+
     window.onload = function () {
         $$("log_window").show();
     };
 
+    //авторизация пользователя. Получает данные из формы и отправляет запрос на сервер
     function Auth() {
         let data = $$("log_form").getValues();
         let login = data.login;

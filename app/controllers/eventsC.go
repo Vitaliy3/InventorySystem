@@ -8,37 +8,42 @@ import (
 
 type Events struct {
 	*revel.Controller
+	eventModel      providers.InventoryEvent
+	renderInterface app.RenderInterface
 }
 
-func (c Events) GetAllEvents() revel.Result {
+//получение всех событий
+func (c Events) GetAll() revel.Result {
 	if CheckPerm(c.Controller, "admin") {
 	} else {
 		return c.Render()
 	}
 
-	DataEvent := providers.InventoryEvent{}
-	renderInterface := app.RenderInterface{}
-	result, err := DataEvent.GetAllEvents(app.DB)
+	result, err := c.eventModel.GetAll(app.Db)
 	if err != nil {
-		renderInterface.Error = err.Error()
+		c.renderInterface.Error = err.Error()
 	} else {
-		renderInterface.Data = result
+		c.renderInterface.Data = result
 
 	}
-	return c.RenderJSON(renderInterface)
+	return c.RenderJSON(c.renderInterface)
 }
 
-func (c Events) GetEventsForDate() revel.Result {
-	DataEvent := providers.InventoryEvent{}
-	renderInterface := app.RenderInterface{}
+//получение всех событий за опредленный промежуток времени
+func (c Events) GetForDate() revel.Result {
+	if CheckPerm(c.Controller, "admin") {
+	} else {
+		return c.Render()
+	}
+	//начальная и конечная дата для выборки
 	var dateStart = c.Params.Get("dateStart")
 	var dateEnd = c.Params.Get("dateEnd")
-	result, err := DataEvent.GetEventsForDate(app.DB,dateStart,dateEnd)
-	if err != nil {
-		renderInterface.Error = err.Error()
-	} else {
-		renderInterface.Data = result
 
+	result, err := c.eventModel.GetForDate(app.Db, dateStart, dateEnd)
+	if err != nil {
+		c.renderInterface.Error = err.Error()
+	} else {
+		c.renderInterface.Data = result
 	}
-	return c.RenderJSON(renderInterface)
+	return c.RenderJSON(c.renderInterface)
 }

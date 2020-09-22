@@ -12,7 +12,7 @@ export function sendQuery(url, method, data) {
 }
 
 export class Equipment {
-    addEquipment(equipment) {
+    add(equipment) {
         equipment.class = parseInt(equipment.class);
         equipment.subclass = parseInt(equipment.subclass);
         let json = JSON.stringify(equipment);
@@ -20,17 +20,17 @@ export class Equipment {
         return sendQuery('/addEquipment', 'POST', json)
     }
 
-    deleteEquipment(equipment) {
+    delete(equipment) {
         let json = JSON.stringify(equipment);
         return sendQuery('/deleteEquipment', 'DELETE', json)
     }
 
-    updateEquipment(equipment) {
+    update(equipment) {
         let json = JSON.stringify(equipment);
         return sendQuery('/updateEquipment', 'POST', json)
     }
 
-    getAllEquipments(token) {
+    getAll(token) {
         $$(TreeDatatable).showProgress({});
         return fetch('/getAllEquipments?token=' + token)
     }
@@ -40,16 +40,16 @@ export class Equipment {
         return fetch('/getEquipmentsInStore')
     }
 
-    getEquipmentsByUser(selectedEmployee) {
+    getByUser(selectedEmployee) {
         return fetch('/getEquipmentByUser?user=' + selectedEmployee);
     }
 
-    getFullTree(token) {
+    getTree(token) {
         return fetch('/getFullTree?token=' + token);
     }
 
 
-    writeEquipment(equipment) {
+    write(equipment) {
         let json = JSON.stringify(equipment);
         return sendQuery('/writeEquipment', 'POST', json);
     }

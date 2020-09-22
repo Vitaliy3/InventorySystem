@@ -14,12 +14,12 @@ import (
 
 type Employee struct {
 	entity.Employee
+	employeeMapper mappers.Employee
 }
 
 //получение всех сотрудников
-func (e *Employee) GetAllEmployees(DB *sql.DB) (employees []entity.Employee, err error) {
-	mapper := mappers.Employee{}
-	employees, err = mapper.GetAllEmployees(DB)
+func (e *Employee) GetAll(DB *sql.DB) (employees []entity.Employee, err error) {
+	employees, err = e.employeeMapper.GetAll(DB)
 	if err != nil {
 		return
 	}
@@ -27,15 +27,26 @@ func (e *Employee) GetAllEmployees(DB *sql.DB) (employees []entity.Employee, err
 }
 
 //изменение данных о сотруднике
-func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
-	mapper := mappers.Employee{}
-	employeeIn.Password = HashAndSalt([]byte(employeeIn.Password))
+func (e *Employee) Update(db *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
+	var password string
+	if employeeIn.Password == "" {
+		password, err = e.employeeMapper.GetPasswordById(db, employeeIn.Id)
+		employeeIn.Password = password
 
-	lastUpdateId, err := mapper.UpdateEmployee(DB, employeeIn)
+		if err != nil {
+			return
+		}
+	} else {
+		employeeIn.Password = hashAndSalt([]byte(employeeIn.Password)) //получаем хеш пароля
+	}
+
+	lastUpdateId, err := e.employeeMapper.Update(db, employeeIn)
 	if err != nil {
+
 		return
 	}
-	employeeOut, err = mapper.GetEmployeeById(DB, lastUpdateId)
+
+	employeeOut, err = e.employeeMapper.GetById(db, lastUpdateId)
 	if err != nil {
 		return
 	}
@@ -43,15 +54,14 @@ func (e *Employee) UpdateEmployee(DB *sql.DB, employeeIn entity.Employee) (emplo
 }
 
 //удаление сотрудника
-func (e *Employee) DeleteEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
-	emMapper := mappers.Employee{}
+func (e *Employee) Delete(db *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
 	eventMapper := mappers.InventoryEvent{}
 
-	_, err = eventMapper.DeleteEventByFkUser(DB, employeeIn)
+	_, err = eventMapper.DeleteByFkUser(db, employeeIn)
 	if err != nil {
 		return
 	}
-	lastDeleteId, err := emMapper.DeleteEmployee(DB, employeeIn)
+	lastDeleteId, err := e.employeeMapper.Delete(db, employeeIn)
 	if err != nil {
 		return
 	}
@@ -59,27 +69,31 @@ func (e *Employee) DeleteEmployee(DB *sql.DB, employeeIn entity.Employee) (emplo
 	return
 }
 
-func (e *Employee) AddEmployee(DB *sql.DB, employeeIn entity.Employee) (employeeOut	 entity.Employee, err error) {
-	employeeIn.Password = HashAndSalt([]byte(employeeIn.Password))
-	employeeMap := mappers.Employee{}
-	lastInsertedId, err := employeeMap.AddEmployee(DB, employeeIn)
+//добавление сотрудника
+func (e *Employee) Add(db *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
+	employeeIn.Password = hashAndSalt([]byte(employeeIn.Password)) //получение хеша пароля
+
+	lastInsertedId, err := e.employeeMapper.Add(db, employeeIn)
 	if err != nil {
 		return
 	}
-	employeeOut, err = employeeMap.GetEmployeeById(DB, lastInsertedId)
+
+	employeeOut, err = e.employeeMapper.GetById(db, lastInsertedId)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func (e *Employee) ResetPassEmployee(DB *sql.DB,employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
-	emMapper := mappers.Employee{}
-	employeeIn.Password=HashAndSalt([]byte("123"))
-	updatedRowId, err := emMapper.ResetPassEmployee(DB, employeeIn)
+//сброс пароля пользователя
+func (e *Employee) ResetPassword(db *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
+	employeeIn.Password = hashAndSalt([]byte("123")) //получение хеша пароля
+
+	updatedRowId, err := e.employeeMapper.ResetPassword(db, employeeIn)
 	if err != nil {
 		return
 	}
+
 	if employeeOut.Id != updatedRowId {
 		err = errors.New("not reset")
 		return
@@ -87,20 +101,23 @@ func (e *Employee) ResetPassEmployee(DB *sql.DB,employeeIn entity.Employee) (emp
 	return
 }
 
-func (e *Employee) Auth(DB *sql.DB, authIn entity.Authorization) (authOut entity.Authorization, err error) {
-	employeeMap := mappers.Employee{}
-	user, err := employeeMap.GetEmployeeByLogin(DB, authIn.Login)
+//авторизация пользователя
+func (e *Employee) Auth(db *sql.DB, authIn entity.Authorization) (authOut entity.Authorization, err error) {
+	user, err := e.employeeMapper.GetByLogin(db, authIn.Login)
 	if err != nil {
 		return
 	}
-	if !ComparePasswords(user.Password, []byte(authIn.Password)) {
+
+	if !comparePasswords(user.Password, []byte(authIn.Password)) { //сравение паролей
 		err = errors.New("Неверное имя пользователя или пароль")
 		return
 	}
-	userRole, err := employeeMap.GetUserRoleById(DB, user.Id)
+
+	userRole, err := e.employeeMapper.GetUserRoleById(db, user.Id)
 	if err != nil {
 		return
 	}
+
 	newToken := gravatarMD5(authIn.Login)
 	authOut.Id = user.Id
 	authOut.Role = userRole
@@ -108,16 +125,15 @@ func (e *Employee) Auth(DB *sql.DB, authIn entity.Authorization) (authOut entity
 	return
 }
 
-//создает токен
+//функция создания токена
 func gravatarMD5(login string) string {
 	h := md5.New()
 	h.Write([]byte(strings.ToLower(login)))
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-//создает хеш для пароля
-func HashAndSalt(pwd []byte) string {
-
+//функция создания хеша пароля
+func hashAndSalt(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {
 		log.Println(err)
@@ -125,12 +141,12 @@ func HashAndSalt(pwd []byte) string {
 	return string(hash)
 }
 
-//сравнивает хеш пароля и пароль
-func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
+//функция сравнения паролей
+func comparePasswords(hashedPwd string, plainPwd []byte) bool {
 	byteHash := []byte(hashedPwd)
 	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
 	if err != nil {
-		log.Println("err in compare", err)
+		log.Println("err compare passwords", err)
 		return false
 	}
 	return true
