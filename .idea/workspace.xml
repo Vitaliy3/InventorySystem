@@ -1,59 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="47cec5cc-743f-4444-8811-465dc71f3eb0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/employeeC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/employeeC.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/eqipmentC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/eqipmentC.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/eventsC.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/eventsC.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entity/Employee.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/entity/Employee.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entity/Equipment.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/entity/Equipment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entity/InventoryEvent.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/entity/InventoryEvent.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/init.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/init.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/mappers/EventMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/EventMap.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/mappers/employeeMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/employeeMap.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/mappers/equipmentMap.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/mappers/equipmentMap.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/providers/employeeMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/providers/employeeMod.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/providers/equipmentMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/providers/equipmentMod.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/providers/eventsMod.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/providers/eventsMod.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/App/Login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/App/Login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/debug.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/errors/404.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/errors/500.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/flash.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/footer.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/header.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/conf/routes" beforeDir="false" afterPath="$PROJECT_DIR$/conf/routes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/none" beforeDir="false" afterPath="$PROJECT_DIR$/none" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/bootstrap-3.3.6.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/jquery-2.2.4.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/models/MEmployeeEvents.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/models/MEmployeeModel.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/models/MEmployeeModel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/models/MEquipmentM.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/models/MEquipmentM.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/models/MUserEvents.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/Index(1).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/Index(3).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/const.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/const.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/equipmentsMove.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/addEquipmentForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/authorization.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/employeeToolbar.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/equipmentsToolbar.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/registerEmployeeForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/registerUserForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEmployeeForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/updateEquipmentForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/forms/updateUserForm.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipments.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEquipmentsUser.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordEvents.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/dependViews/recordUsers.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/index(2).html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/views/mainView.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/views/mainView.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/app/myapp/myapp.exe" beforeDir="false" afterPath="$PROJECT_DIR$/target/app/myapp/myapp.exe" afterDir="false" />
-    </list>
+    <list default="true" id="47cec5cc-743f-4444-8811-465dc71f3eb0" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
