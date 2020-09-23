@@ -56,7 +56,12 @@ func (e *Employee) Update(db *sql.DB, employeeIn entity.Employee) (employeeOut e
 //удаление сотрудника
 func (e *Employee) Delete(db *sql.DB, employeeIn entity.Employee) (employeeOut entity.Employee, err error) {
 	eventMapper := mappers.InventoryEvent{}
-
+	equipmentMapper := mappers.Equipment{}
+	result, err := equipmentMapper.GetByUserId(db, entity.Equipment{Id: employeeIn.Id})
+	if result != nil {
+		err = errors.New("Невозможно удалить, на сотруднике закреплено оборудование")
+		return
+	}
 	_, err = eventMapper.DeleteByFkUser(db, employeeIn)
 	if err != nil {
 		return

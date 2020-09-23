@@ -44,10 +44,11 @@ function confirmAddEuipment() {
         let myTree = $$(RegproductsTree);
         let item = myTree.getSelectedItem();//get class and subclass
         let product = new Equipment();
-        let promise = product.add(formValues);
 
         formValues.class = myTree.getItem(item.$parent).class;
         formValues.subclass = item.subclass;
+        let promise = product.add(formValues);
+console.log(formValues);
         promise.then(response => {
             return response.json();
         }).then(result => {

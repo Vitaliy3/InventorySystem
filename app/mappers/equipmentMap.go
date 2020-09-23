@@ -2,6 +2,7 @@ package mappers
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 	"myapp/app/entity"
 )
@@ -138,6 +139,7 @@ func (e *Equipment) GetTree(DB *sql.DB) (classes []entity.TreeClass, err error) 
 
 //добавление оборудования
 func (e *Equipment) Add(DB *sql.DB, equipment entity.Equipment) (lastInsertedId int, err error) {
+	fmt.Println("equipment",equipment)
 	err = DB.QueryRow("insert into equipments (fk_class,inventoryNumber,equipmentName,status)values($1,$2,$3,$4) returning id",
 		equipment.Fk_class, equipment.InventoryNumber, equipment.EquipmentName, equipment.StatusI).Scan(&lastInsertedId)
 	if err != nil {
